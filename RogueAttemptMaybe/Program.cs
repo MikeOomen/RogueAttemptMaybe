@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+<<<<<<< Updated upstream
+=======
+using System.IO.MemoryMappedFiles;
+>>>>>>> Stashed changes
 using System.Formats.Asn1;
 
 namespace RogueAttemptMaybe
@@ -27,6 +31,15 @@ namespace RogueAttemptMaybe
     //Classes?
     internal class Program
     {
+<<<<<<< Updated upstream
+=======
+        //main menu
+        static bool characterHasBeenMade = false;
+
+        //weapons
+        static string[] weapons =  File.ReadAllLines("Weapons.txt");
+
+>>>>>>> Stashed changes
         //Characters
         static string floorCharacter = "* ";
         static string character = "@ ";
@@ -39,7 +52,12 @@ namespace RogueAttemptMaybe
         static int innerMapSizeL = 6;
         static int innerMapSizeW = 6;
         //Input map here
+<<<<<<< Updated upstream
         static string[,] map1 = new string[8, 8] 
+=======
+        static string[,] map1 = new string[8, 8]
+
+>>>>>>> Stashed changes
         {
         {"|-" , "--" , "--" ,"--" , "--" ,"--" , "--" , "| "},
         {"| " , floorCharacter , floorCharacter ,floorCharacter , floorCharacter ,floorCharacter , floorCharacter , "| "},
@@ -50,6 +68,7 @@ namespace RogueAttemptMaybe
         {"| " , floorCharacter , floorCharacter ,floorCharacter , floorCharacter ,floorCharacter , floorCharacter , "| "},
         {"|-" , "--" , "--" , "--" , "--" , "--" , "--" , "| "}
         };
+<<<<<<< Updated upstream
         static void Main(string[] args)
         {
             Random rpos1 = new Random();
@@ -68,6 +87,37 @@ namespace RogueAttemptMaybe
             map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
             DrawMap1();
             AwaitMovementKey();
+=======
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello, World!");
+
+            Console.WriteLine("Welcome to the main menu.");
+            Console.WriteLine("Press enter to continue the character creation.");
+            Console.WriteLine(weapons[0]);   
+            Console.ReadLine();
+            characterHasBeenMade = true;
+           if (characterHasBeenMade == true)
+            {
+                Random rpos1 = new Random();
+                int pos1 = rpos1.Next(1, innerMapSizeL);
+                Random rpos2 = new Random();
+                int pos2 = rpos2.Next(1, innerMapSizeW);
+                currentPlayerPosition[0] = pos1;
+                currentPlayerPosition[1] = pos2;
+                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                Random rpos3 = new Random();
+                pos1 = rpos1.Next(1, innerMapSizeL);
+                Random rpos4 = new Random();
+                pos2 = rpos2.Next(1, innerMapSizeW);
+                currentEnemyPosition[0] = pos1;
+                currentEnemyPosition[1] = pos2;
+                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                DrawMap1();
+                AwaitMovementKey();
+            }
+>>>>>>> Stashed changes
         }
         static void Move(ConsoleKey key)
         {
