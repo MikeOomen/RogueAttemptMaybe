@@ -6,21 +6,21 @@ namespace RogueAttemptMaybe
 {
     //Hey
     //To-Do list:
-    //Map
+    //Map R
     //GUI *
     //Random (bruikbare) levels van 64x32 characters. *
 
     //Player:
-    //Move 1 space with arrows
+    //Move 1 space with arrows R
     //HP *      Ma
     //Money *
     //Attack *
     //Inventory *
 
     //Enemies:
-    //Movement
+    //Movement R
     //HP *      Ma
-    //Attack *
+    //Attack * R
 
     //MaybeMaybeMaybe:
     //Different types of enemies?
@@ -38,6 +38,11 @@ namespace RogueAttemptMaybe
         //static int mapSizeW = 8;
         static int innerMapSizeL = 6;
         static int innerMapSizeW = 6;
+        //Attack
+        static int testPlayerAttack = 10;
+        static int testEnemyAttack = 5;
+        static int playerHp = 10;
+        static bool enemyAlive = true;
         //Input map here
         static string[,] map1 = new string[8, 8] 
         {
@@ -52,6 +57,7 @@ namespace RogueAttemptMaybe
         };
         static void Main(string[] args)
         {
+            //Takes a random spawn for the player
             Random rpos1 = new Random();
             int pos1 = rpos1.Next(1,innerMapSizeL);
             Random rpos2 = new Random();
@@ -59,13 +65,15 @@ namespace RogueAttemptMaybe
             currentPlayerPosition[0] = pos1;
             currentPlayerPosition[1] = pos2;
             map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+            //Takes a random spawn for 1 enemy
             Random rpos3 = new Random();
-            pos1 = rpos1.Next(1, innerMapSizeL);
+            int pos3 = rpos3.Next(1, innerMapSizeL);
             Random rpos4 = new Random();
-            pos2 = rpos2.Next(1, innerMapSizeW);
-            currentEnemyPosition[0] = pos1;
-            currentEnemyPosition[1] = pos2;
+            int pos4 = rpos4.Next(1, innerMapSizeW);
+            currentEnemyPosition[0] = pos3;
+            currentEnemyPosition[1] = pos4;
             map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+            //Starts game
             DrawMap1();
             AwaitMovementKey();
         }
@@ -148,6 +156,7 @@ namespace RogueAttemptMaybe
         static void AwaitMovementKey()
         {
             //makes sure you actually use an arrow
+            CheckIfAttack();
             ConsoleKey key = Console.ReadKey().Key;
             if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow)
             {
@@ -160,127 +169,142 @@ namespace RogueAttemptMaybe
         }
         static void EnemyMove()
         {
-            int L = currentPlayerPosition[0] - currentEnemyPosition[0];
-            int W = currentPlayerPosition[1] - currentEnemyPosition[1];
-            if (W == 0)
+            if (enemyAlive == true)
             {
-                if (currentPlayerPosition[0] >= currentEnemyPosition[0])
+                int L = currentPlayerPosition[0] - currentEnemyPosition[0];
+                int W = currentPlayerPosition[1] - currentEnemyPosition[1];
+                if (W == 0)
                 {
-                    if (map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == floorCharacter)
+                    if (currentPlayerPosition[0] >= currentEnemyPosition[0])
                     {
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                        currentEnemyPosition[0] = currentEnemyPosition[0] + 1;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        if (map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == floorCharacter)
+                        {
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                            currentEnemyPosition[0] = currentEnemyPosition[0] + 1;
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        }
+                        else
+                        {
+                            L = 0;
+                        }
                     }
-                    else
+                    else if (currentPlayerPosition[0] <= currentEnemyPosition[0])
                     {
-                        L = 0;
+                        if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == floorCharacter)
+                        {
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                            currentEnemyPosition[0] = currentEnemyPosition[0] - 1;
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        }
+                        else
+                        {
+                            L = 0;
+                        }
                     }
                 }
-                else if (currentPlayerPosition[0] <= currentEnemyPosition[0])
+                else if (L == 0)
                 {
-                    if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == floorCharacter)
+                    if (currentPlayerPosition[1] <= currentEnemyPosition[1])
                     {
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                        currentEnemyPosition[0] = currentEnemyPosition[0] - 1;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        if (map1[currentEnemyPosition[0], currentEnemyPosition[1] - 1] == floorCharacter)
+                        {
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                            currentEnemyPosition[1] = currentEnemyPosition[1] - 1;
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        }
+                        else
+                        {
+                            W = 0;
+                        }
                     }
-                    else
+                    else if (currentPlayerPosition[1] >= currentEnemyPosition[1])
                     {
-                        L = 0;
+                        if (map1[currentEnemyPosition[0], currentEnemyPosition[1] + 1] == floorCharacter)
+                        {
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                            currentEnemyPosition[1] = currentEnemyPosition[1] + 1;
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        }
+                        else
+                        {
+                            W = 0;
+                        }
                     }
                 }
-            } else if (L == 0)
-            {
-                if (currentPlayerPosition[1] <= currentEnemyPosition[1])
+                else if (L < W)
                 {
-                    if (map1[currentEnemyPosition[0], currentEnemyPosition[1]-1] == floorCharacter)
+                    if (currentPlayerPosition[1] <= currentEnemyPosition[1])
                     {
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                        currentEnemyPosition[1] = currentEnemyPosition[1] - 1;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        if (map1[currentEnemyPosition[0], currentEnemyPosition[1] - 1] == floorCharacter)
+                        {
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                            currentEnemyPosition[1] = currentEnemyPosition[1] - 1;
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        }
+                        else
+                        {
+                            L = 0;
+                        }
                     }
-                    else
+                    else if (currentPlayerPosition[1] >= currentEnemyPosition[1])
                     {
-                        W = 0;
+                        if (map1[currentEnemyPosition[0], currentEnemyPosition[1] + 1] == floorCharacter)
+                        {
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                            currentEnemyPosition[1] = currentEnemyPosition[1] + 1;
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        }
+                        else
+                        {
+                            L = 0;
+                        }
                     }
                 }
-                else if (currentPlayerPosition[1] >= currentEnemyPosition[1])
+                else if (W < L)
                 {
-                    if (map1[currentEnemyPosition[0], currentEnemyPosition[1]+1] == floorCharacter)
+                    if (currentPlayerPosition[0] >= currentEnemyPosition[0])
                     {
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                        currentEnemyPosition[1] = currentEnemyPosition[1] + 1;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        if (map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == floorCharacter)
+                        {
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                            currentEnemyPosition[0] = currentEnemyPosition[0] + 1;
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        }
+                        else
+                        {
+                            W = 0;
+                        }
                     }
-                    else
+                    else if (currentPlayerPosition[0] <= currentEnemyPosition[0])
                     {
-                        W = 0;
-                    }
-                }
-            } else if (L < W)
-            {
-                if (currentPlayerPosition[1] <= currentEnemyPosition[1])
-                {
-                    if (map1[currentEnemyPosition[0], currentEnemyPosition[1]-1] == floorCharacter)
-                    {
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                        currentEnemyPosition[1] = currentEnemyPosition[1] - 1;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                    }
-                    else
-                    {
-                        L = 0;
-                    }
-                }
-                else if (currentPlayerPosition[1] >= currentEnemyPosition[1])
-                {
-                    if (map1[currentEnemyPosition[0], currentEnemyPosition[1]+1] == floorCharacter)
-                    {
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                        currentEnemyPosition[1] = currentEnemyPosition[1] + 1;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                    }
-                    else
-                    {
-                        L = 0;
-                    }
-                }
-            } else if (W < L)
-            {
-                if (currentPlayerPosition[0] >= currentEnemyPosition[0])
-                {
-                    if (map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == floorCharacter)
-                    {
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                        currentEnemyPosition[0] = currentEnemyPosition[0] + 1;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                    }
-                    else
-                    {
-                        W = 0;
-                    }
-                }
-                else if (currentPlayerPosition[0] <= currentEnemyPosition[0])
-                {
-                    if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == floorCharacter)
-                    {
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                        currentEnemyPosition[0] = currentEnemyPosition[0] - 1;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                    }
-                    else
-                    {
-                        W = 0;
+                        if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == floorCharacter)
+                        {
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                            currentEnemyPosition[0] = currentEnemyPosition[0] - 1;
+                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        }
+                        else
+                        {
+                            W = 0;
+                        }
                     }
                 }
             }
-
+        }
+        static void CheckIfAttack()
+        {
+            if (currentPlayerPosition[0]== currentEnemyPosition[0] -1 || currentPlayerPosition[0] == currentEnemyPosition[0] +1 || currentPlayerPosition[1]== currentEnemyPosition[1] -1 || currentPlayerPosition[1] == currentEnemyPosition[1]+1)
+            {
+                if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == character || map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == character|| map1[currentEnemyPosition[0], currentEnemyPosition[1] - 1] == character|| map1[currentEnemyPosition[0], currentEnemyPosition[1] + 1] == character)
+                {
+                    Console.WriteLine("WouldAttack");
+                }
+            }
         }
         static void DrawMap1()
         {
             //Clears the console so you dont see the previous stuff.
-            Console.Clear();
+            //Console.Clear();
             //Draws the map
             int total = 0;
             int length = 0;
