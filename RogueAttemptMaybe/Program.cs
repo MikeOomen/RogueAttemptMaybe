@@ -57,13 +57,15 @@ namespace RogueAttemptMaybe
         static float currentDmg;
         static float currentCrit;
         static float currentCritMulti;
-        static float testEnemyAttack = 5;
-        static float critChance = 50;
-        static float critMultiplier = 2.5f;
+        static float currentEnemyDmg;
+        static float currentEnemyCrit;
+        static float currentEnemyMulti;
         static float playerHp = 100;
         static float enemyHp = 100;
         static bool enemyAlive = true;
         static bool attackHappened = false;
+        static int enemyWeapon;
+        static Random rndEnemyWeapon = new Random();
         //Input map here
         static string[,] map1 = new string[16, 16];
         static bool firstTimeMap = true;
@@ -108,6 +110,7 @@ namespace RogueAttemptMaybe
                 currentEnemyPosition[0] = pos3;
                 currentEnemyPosition[1] = pos4;
                 //Starts game
+                NewEnemy();
                 DrawMap1();
                 firstTimeMap = false;
                 AwaitMovementKey();
@@ -354,16 +357,16 @@ namespace RogueAttemptMaybe
                             {
                                 Random rnd2 = new Random();
                                 float crit2 = rnd2.Next(0, 100);
-                                if (crit2 <= critChance)
+                                if (crit2 <= currentEnemyCrit)
                                 {
                                     Console.WriteLine("Crit");
-                                    playerHp = playerHp - (testEnemyAttack * critMultiplier);
+                                    playerHp = playerHp - (currentEnemyDmg * currentEnemyMulti);
                                     Console.WriteLine(playerHp + "Player");
                                 }
                                 else
                                 {
                                     Console.WriteLine("Not crit");
-                                    playerHp = playerHp - testEnemyAttack;
+                                    playerHp = playerHp - currentEnemyDmg;
                                     Console.WriteLine(playerHp + "Player");
                                 }
                                 Random rnd = new Random();
@@ -401,16 +404,16 @@ namespace RogueAttemptMaybe
                                 }
                                 Random rnd2 = new Random();
                                 float crit2 = rnd2.Next(0, 100);
-                                if (crit2 <= critChance)
+                                if (crit2 <= currentEnemyCrit)
                                 {
                                     Console.WriteLine("Crit");
-                                    playerHp = playerHp - (testEnemyAttack * critMultiplier);
+                                    playerHp = playerHp - (enemyWeapon * currentEnemyMulti);
                                     Console.WriteLine(playerHp + "Player");
                                 }
                                 else
                                 {
                                     Console.WriteLine("Not crit");
-                                    playerHp = playerHp - testEnemyAttack;
+                                    playerHp = playerHp - currentEnemyCrit;
                                     Console.WriteLine(playerHp + "Player");
                                 }
                                 attackHappened = true;
@@ -494,6 +497,13 @@ namespace RogueAttemptMaybe
                             break;
                         }
                 }
+            }
+            static void NewEnemy() 
+            {
+                 enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
+                currentEnemyDmg = weaponDmg[enemyWeapon];
+                currentEnemyCrit = weaponCritChance[enemyWeapon];
+                currentEnemyMulti = weaponCritMulti[enemyWeapon];
             }
             static void DrawMap1()
             {
