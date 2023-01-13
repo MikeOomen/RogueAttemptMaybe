@@ -58,6 +58,7 @@ namespace RogueAttemptMaybe
         static List<string> armorDisc = new List<string>();
         static List<string> armorName = new List<string>();
         static List<float> armorMoneyMulti = new List<float>();
+        static List<float> armorSellMulti = new List<float>();
         static int selectedWeapon;
         static string currentWeapon;
         static float currentDmg;
@@ -98,6 +99,10 @@ namespace RogueAttemptMaybe
                 if (4 < data.Length) 
                 {
                     armorMoneyMulti.Add(float.Parse(data[4]));
+                }
+                if (5 < data.Length) 
+                {
+                    armorSellMulti.Add(float.Parse(data[5]));
                 }
             }
             GameStart();
@@ -525,6 +530,16 @@ namespace RogueAttemptMaybe
                 currentEnemyDmg = weaponDmg[enemyWeapon];
                 currentEnemyCrit = weaponCritChance[enemyWeapon];
                 currentEnemyMulti = weaponCritMulti[enemyWeapon];
+                if (enemyWeapon == 2) 
+                {
+                    currentEnemyCrit = currentEnemyCrit - 25;
+                    currentEnemyMulti = currentEnemyMulti - 10;
+                }
+                if (enemyWeapon == 0) 
+                {
+                    currentEnemyCrit = currentEnemyCrit - 20;
+                    currentEnemyDmg = currentEnemyDmg - 15;
+                }
             }
             static void DrawMap1()
             {

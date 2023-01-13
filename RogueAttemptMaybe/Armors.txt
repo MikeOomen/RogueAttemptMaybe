@@ -1,4 +1,4 @@
-No armor,1.5,40, Shop prices will be double because the shop owner now needs money for therapy.,2
+No armor,1.5,40, Shop prices will be double because the shop keeper now needs money for therapy also money you get from selling items will be halfed.,2,0.5
 Rags,0,0
 Light armor,0.95,10
 Medium armor,0.90,0
