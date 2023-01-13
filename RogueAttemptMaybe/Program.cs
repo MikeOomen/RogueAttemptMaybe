@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Formats.Asn1;
@@ -28,6 +29,7 @@ namespace RogueAttemptMaybe
     internal class Program
     {
         //main menu
+        static string name;
         static bool characterHasBeenMade = false;
 
         //Characters
@@ -43,10 +45,15 @@ namespace RogueAttemptMaybe
         static int innerMapSizeW = 6;
         //Attack
         static string[] weapons = File.ReadAllLines("Weapons.txt");
-        static float weaponDmg;
-        static float weaponCritChange;
-        static float weaponCritMulti;
-        static string weaponName;
+        static List<float> weaponDmg = new List<float>();
+        static List<float> weaponCritChance = new List<float>();
+        static List<float> weaponCritMulti = new List<float>();
+        static List<string> weaponName = new List<string>();
+        static int selectedWeapon;
+        static string currentWeapon;
+        static float currentDmg;
+        static float currentCrit;
+        static float currentCritMulti;
         static float testPlayerAttack = 10;
         static float testEnemyAttack = 5;
         static float critChance = 50;
@@ -71,13 +78,26 @@ namespace RogueAttemptMaybe
         {
             for (int i = 0; i < weapons.Length; i++)
             {
-                weaponName = weapons[i];
+                string[] data = weapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
+                weaponName.Add(data[0]) ;
+                weaponDmg.Add(float.Parse(data[1]));
+                weaponCritChance.Add(float.Parse(data[2]));
+                weaponCritMulti.Add(float.Parse(data[3]));
             }
-            Console.WriteLine("Welcome to the main menu.");
-            Console.WriteLine("Press enter to continue the character creation.");
-            Console.WriteLine(weaponName[0]);   
-            Console.ReadLine();
-            characterHasBeenMade = true;
+            GameStart();
+            while (characterHasBeenMade == false) 
+            {
+                ConsoleKey select = Console.ReadKey().Key;
+                IsSelecting();
+                if (select == ConsoleKey.Enter) 
+                {
+                    currentWeapon = weaponName[selectedWeapon];
+                    currentDmg = weaponDmg[selectedWeapon];
+                    currentCrit = weaponCritChance[selectedWeapon];
+                    currentCritMulti = weaponCritMulti[selectedWeapon];
+                    characterHasBeenMade = true;
+                }
+            }
             if (characterHasBeenMade == true)
             {
             //Takes a random spawn for the player
@@ -325,12 +345,86 @@ namespace RogueAttemptMaybe
                     Console.WriteLine(playerHp);
                     Random i = new Random();
                     float i2 = i.Next(0 , 100);
-                    if (i2 <= critChance)
+                    if (i2 <= currentCrit)
                     {
                         Console.WriteLine("Crit");
-                        enemyHp = enemyHp - (testPlayerAttack * critMultiplier);
+                        enemyHp = enemyHp - (currentDmg * currentCritMulti);
                         Console.WriteLine(enemyHp);
                     }
+                }
+            }
+        }
+        static void GameStart() 
+        {
+            Console.WriteLine("Welcome to character creation");
+            Console.WriteLine("Insert your name and press enter to continue the character creation");
+            Console.WriteLine("-----------------------------------------------------------");
+            name = Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("Welcome to the main menu.");
+            Console.WriteLine("name:" + name);
+            Console.WriteLine("Select a weapon and press enter to continue");
+            Console.WriteLine("-----------------------------------------------------------");
+            for (int i = 0; i < weaponName.Count; i++)
+            {
+                Console.Write(weaponName[i] + " ");
+                Console.Write("Dmg:" + weaponDmg[i] + " ");
+                Console.Write("CC:" + weaponCritChance[i] + " ");
+                Console.WriteLine("CMul:" + weaponCritMulti[i]);
+                Console.WriteLine("-----------------------------------------------------------");
+            }
+                Console.WriteLine("Current weapon: None");
+        }
+        static void IsSelecting() 
+        {
+            ConsoleKey select = Console.ReadKey().Key;
+            if (select == ConsoleKey.UpArrow || select == ConsoleKey.DownArrow)
+            {
+                Console.Clear();
+                Console.WriteLine("Welcome to character creation.");
+                Console.WriteLine(name);
+                Console.WriteLine("Select a weapon and press enter to continue");
+                Console.WriteLine("-----------------------------------------------------------");
+                for (int i = 0; i < weaponName.Count; i++)
+                {
+                    Console.Write(weaponName[i] + " ");
+                    Console.Write("Dmg:" + weaponDmg[i] + " ");
+                    Console.Write("CC:" + weaponCritChance[i] + " ");
+                    Console.WriteLine("CMul:" + weaponCritMulti[i]);
+                    Console.WriteLine("-----------------------------------------------------------");
+                }
+            }
+                WeaponSelect(select);
+        }
+        static void WeaponSelect(ConsoleKey select) 
+        {
+            switch(select) 
+            {
+                case ConsoleKey.UpArrow: 
+                {
+                        if(selectedWeapon < weapons.Length) 
+                        {
+                            selectedWeapon = selectedWeapon + 1;
+                            Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                        } else if (selectedWeapon == weapons.Length - 1) 
+                        {
+                            selectedWeapon = 0;
+                            Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                        }
+                        break;
+                }
+                case ConsoleKey.DownArrow: 
+                {
+                        if(selectedWeapon > 0) 
+                        {
+                            selectedWeapon = selectedWeapon - 1;
+                            Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                        } else 
+                        {
+                            selectedWeapon = weapons.Length - 1;
+                            Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                        }
+                        break;
                 }
             }
         }
