@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO.MemoryMappedFiles;
+using System.IO;
 using System.Formats.Asn1;
+using Microsoft.VisualBasic.FileIO;
 
 namespace RogueAttemptMaybe
 {
@@ -33,7 +34,6 @@ namespace RogueAttemptMaybe
 
         //weapons
         static string[] weapons =  File.ReadAllLines("Weapons.txt");
-
         //Characters
         static string floorCharacter = "* ";
         static string character = "@ ";
@@ -60,8 +60,6 @@ namespace RogueAttemptMaybe
         };
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
-
             Console.WriteLine("Welcome to the main menu.");
             Console.WriteLine("Press enter to continue the character creation.");
             Console.WriteLine(weapons[0]);   
