@@ -18,38 +18,41 @@ namespace RogueAttemptMaybe
     //Money *
     //Attack *
     //Inventory *
+    //Classes *       Mi
 
     //Enemies: 
     //Movement R
     //HP *      Ma
     //Attack * R
     // Enemy types Mi
-
-    //MaybeMaybeMaybe:
-    //Different types of enemies? Mi
-    //Classes? Mi
     internal class Program
     {
         //main menu
         static bool characterHasBeenMade = false;
 
-        //weapons
-        static string[] weapons =  File.ReadAllLines("Weapons.txt");
         //Characters
         static string floorCharacter = "* ";
         static string character = "@ ";
         static string enemy1 = "E ";
         //Map sizes
         static int mapSizeL = 8;
-        static int[] currentPlayerPosition = {0,0};
+        static int[] currentPlayerPosition = { 0, 0 };
         static int[] currentEnemyPosition = { 0, 0 };
         //static int mapSizeW = 8;
         static int innerMapSizeL = 6;
         static int innerMapSizeW = 6;
         //Attack
-        static int testPlayerAttack = 10;
-        static int testEnemyAttack = 5;
-        static int playerHp = 10;
+        static string[] weapons = File.ReadAllLines("Weapons.txt");
+        static float weaponDmg;
+        static float weaponCritChange;
+        static float weaponCritMulti;
+        static string weaponName;
+        static float testPlayerAttack = 10;
+        static float testEnemyAttack = 5;
+        static float critChance = 50;
+        static float critMultiplier = 2.5f;
+        static float playerHp = 100;
+        static float enemyHp = 100;
         static bool enemyAlive = true;
         //Input map here
         static string[,] map1 = new string[8, 8]
@@ -66,9 +69,13 @@ namespace RogueAttemptMaybe
         };
         static void Main(string[] args)
         {
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                weaponName = weapons[i];
+            }
             Console.WriteLine("Welcome to the main menu.");
             Console.WriteLine("Press enter to continue the character creation.");
-            Console.WriteLine(weapons[0]);   
+            Console.WriteLine(weaponName[0]);   
             Console.ReadLine();
             characterHasBeenMade = true;
             if (characterHasBeenMade == true)
@@ -314,7 +321,16 @@ namespace RogueAttemptMaybe
             {
                 if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == character || map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == character|| map1[currentEnemyPosition[0], currentEnemyPosition[1] - 1] == character|| map1[currentEnemyPosition[0], currentEnemyPosition[1] + 1] == character)
                 {
-                    Console.WriteLine("WouldAttack");
+                    playerHp = playerHp - testEnemyAttack;
+                    Console.WriteLine(playerHp);
+                    Random i = new Random();
+                    float i2 = i.Next(0 , 100);
+                    if (i2 <= critChance)
+                    {
+                        Console.WriteLine("Crit");
+                        enemyHp = enemyHp - (testPlayerAttack * critMultiplier);
+                        Console.WriteLine(enemyHp);
+                    }
                 }
             }
         }
