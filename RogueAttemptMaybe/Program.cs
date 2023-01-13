@@ -48,10 +48,15 @@ namespace RogueAttemptMaybe
         static int innerMapSizeW = 14;
         //Attack
         static string[] weapons = File.ReadAllLines("Weapons.txt");
+        static string[] armors = File.ReadAllLines("Armors.txt");
         static List<float> weaponDmg = new List<float>();
         static List<float> weaponCritChance = new List<float>();
         static List<float> weaponCritMulti = new List<float>();
         static List<string> weaponName = new List<string>();
+        static List<float> armorDmgR = new List<float>();
+        static List<float> armorAgiStat = new List<float>();
+        static List<string> armorDisc = new List<string>();
+        static List<string> armorName = new List<string>();
         static int selectedWeapon;
         static string currentWeapon;
         static float currentDmg;
@@ -78,6 +83,14 @@ namespace RogueAttemptMaybe
                 weaponDmg.Add(float.Parse(data[1]));
                 weaponCritChance.Add(float.Parse(data[2]));
                 weaponCritMulti.Add(float.Parse(data[3]));
+            }
+            for (int i = 0; i < armors.Length; i++) 
+            {
+                string[] data = armors[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
+                armorName.Add(data[0]);
+                armorDmgR.Add(float.Parse(data[1]));
+                armorAgiStat.Add(float.Parse(data[2]));
+                armorDisc.Add(data[3]);
             }
             GameStart();
             while (characterHasBeenMade == false)
