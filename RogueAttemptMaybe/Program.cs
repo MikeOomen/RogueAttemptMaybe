@@ -438,7 +438,7 @@ namespace RogueAttemptMaybe
                     Console.Write(weaponName[i] + " ");
                     Console.Write("Dmg:" + weaponDmg[i] + " ");
                     Console.Write("CC:" + weaponCritChance[i] + " ");
-                    Console.WriteLine("CMul:" + weaponCritMulti[i]);
+                    Console.WriteLine("CMulti:" + weaponCritMulti[i]);
                     Console.WriteLine("-----------------------------------------------------------");
                 }
                 Console.WriteLine("Current weapon: None");
@@ -458,11 +458,11 @@ namespace RogueAttemptMaybe
                         Console.Write(weaponName[i] + " ");
                         Console.Write("Dmg:" + weaponDmg[i] + " ");
                         Console.Write("CC:" + weaponCritChance[i] + " ");
-                        Console.WriteLine("CMul:" + weaponCritMulti[i]);
+                        Console.WriteLine("CMulti:" + weaponCritMulti[i]);
                         Console.WriteLine("-----------------------------------------------------------");
                     }
-                }
-                WeaponSelect(select);
+                    WeaponSelect(select);
+                } 
             }
             static void WeaponSelect(ConsoleKey select)
             {
