@@ -57,7 +57,6 @@ namespace RogueAttemptMaybe
         static float currentDmg;
         static float currentCrit;
         static float currentCritMulti;
-        static float testPlayerAttack = 10;
         static float testEnemyAttack = 5;
         static float critChance = 50;
         static float critMultiplier = 2.5f;
@@ -369,7 +368,7 @@ namespace RogueAttemptMaybe
                                 }
                                 Random rnd = new Random();
                                 float crit1 = rnd.Next(0, 100);
-                                if (crit1 <= critChance)
+                                if (crit1 <= currentCrit)
                                 {
                                     Console.WriteLine("Crit");
                                     enemyHp = enemyHp - (currentDmg * currentCritMulti);
@@ -468,12 +467,12 @@ namespace RogueAttemptMaybe
                 {
                     case ConsoleKey.UpArrow:
                         {
-                            if (selectedWeapon < weapons.Length)
+                            if (selectedWeapon < weapons.Length - 1)
                             {
                                 selectedWeapon = selectedWeapon + 1;
                                 Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
                             }
-                            else if (selectedWeapon == weapons.Length - 1)
+                            else
                             {
                                 selectedWeapon = 0;
                                 Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
