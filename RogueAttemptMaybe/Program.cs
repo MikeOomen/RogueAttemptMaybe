@@ -372,13 +372,13 @@ namespace RogueAttemptMaybe
                                 if (crit1 <= critChance)
                                 {
                                     Console.WriteLine("Crit");
-                                    enemyHp = enemyHp - (testPlayerAttack * critMultiplier);
+                                    enemyHp = enemyHp - (currentDmg * currentCritMulti);
                                     Console.WriteLine(enemyHp + "Enemy");
                                 }
                                 else
                                 {
                                     Console.WriteLine("Not crit");
-                                    enemyHp = enemyHp - testPlayerAttack;
+                                    enemyHp = enemyHp - currentDmg;
                                     Console.WriteLine(enemyHp + "Enemy");
                                 }
                                 attackHappened = true;
