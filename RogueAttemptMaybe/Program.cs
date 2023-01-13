@@ -19,14 +19,15 @@ namespace RogueAttemptMaybe
     //Attack *
     //Inventory *
 
-    //Enemies:
+    //Enemies: 
     //Movement R
     //HP *      Ma
     //Attack * R
+    // Enemy types Mi
 
     //MaybeMaybeMaybe:
-    //Different types of enemies?
-    //Classes?
+    //Different types of enemies? Mi
+    //Classes? Mi
     internal class Program
     {
         //main menu
