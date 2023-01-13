@@ -20,14 +20,14 @@ namespace RogueAttemptMaybe
     //Move 1 space with arrows R
     //HP *      Ma
     //Money *
-    //Attack *
+    //Attack * Mi
     //Inventory *
     //Classes *       Mi
 
     //Enemies: 
     //Movement R
     //HP *      Ma
-    //Attack * R
+    //Attack * R/Mi
     // Enemy types Mi
     internal class Program
     {
@@ -57,6 +57,7 @@ namespace RogueAttemptMaybe
         static List<float> armorAgiStat = new List<float>();
         static List<string> armorDisc = new List<string>();
         static List<string> armorName = new List<string>();
+        static List<float> armorMoneyMulti = new List<float>();
         static int selectedWeapon;
         static string currentWeapon;
         static float currentDmg;
@@ -84,13 +85,20 @@ namespace RogueAttemptMaybe
                 weaponCritChance.Add(float.Parse(data[2]));
                 weaponCritMulti.Add(float.Parse(data[3]));
             }
-            for (int i = 0; i < armors.Length; i++) 
+            for (int i = 0; i < armors.Length; i++)
             {
                 string[] data = armors[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
                 armorName.Add(data[0]);
                 armorDmgR.Add(float.Parse(data[1]));
                 armorAgiStat.Add(float.Parse(data[2]));
-                armorDisc.Add(data[3]);
+                if (3 < data.Length) 
+                {
+                    armorDisc.Add(data[3]);
+                }
+                if (4 < data.Length) 
+                {
+                    armorMoneyMulti.Add(float.Parse(data[4]));
+                }
             }
             GameStart();
             while (characterHasBeenMade == false)
