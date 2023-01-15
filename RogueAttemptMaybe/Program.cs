@@ -19,19 +19,18 @@ namespace RogueAttemptMaybe
     //Money *
     //Attack * Mi
     //Inventory *
+    //Classes *       Mi
 
-    //Enemies:
+    //Enemies: 
     //Movement R
     //HP *      Ma
-    //Attack * R
-
-    //MaybeMaybeMaybe:
-    //Different types of enemies?
-    //Classes?
     //Attack * R/Mi
     // Enemy types Mi
     internal class Program
     {
+        //main menu
+        static string name;
+        static bool characterHasBeenMade = false;
         //Characters
         static string floorCharacter = "  ";
         static string character = "@ ";
@@ -40,7 +39,7 @@ namespace RogueAttemptMaybe
         //Map sizes
         static int[] currentPlayerPosition = { 0, 0 };
         static int[] currentEnemyPosition = { 0, 0 };
-        static int[] currentWallPosition = { 0, 0 , 0,0};
+        static int[] currentWallPosition = { 0, 0, 0, 0 };
         static int mapSizeL = 16;
         static int mapSizeW = 16;
         static int innerMapSizeL = 0;
@@ -48,13 +47,34 @@ namespace RogueAttemptMaybe
         static int biggestMapSize = 66;
         static int total = 0;
         //Attack
-        static int testPlayerAttack = 10;
-        static int testEnemyAttack = 5;
-        static int playerHp = 10;
+/*        static string[] weapons = File.ReadAllLines("Weapons.txt");
+        static string[] armors = File.ReadAllLines("Armors.txt");*/
+        static List<float> weaponDmg = new List<float>();
+        static List<float> weaponCritChance = new List<float>();
+        static List<float> weaponCritMulti = new List<float>();
+        static List<string> weaponName = new List<string>();
+        static List<float> armorDmgR = new List<float>();
+        static List<float> armorAgiStat = new List<float>();
+        static List<string> armorDisc = new List<string>();
+        static List<string> armorName = new List<string>();
+        static List<float> armorMoneyMulti = new List<float>();
+        static List<float> armorSellMulti = new List<float>();
+        static int selectedWeapon;
+        static string currentWeapon;
+        static float currentDmg;
+        static float currentCrit;
+        static float currentCritMulti;
+        static float currentEnemyDmg;
+        static float currentEnemyCrit;
+        static float currentEnemyMulti;
+        static float playerHp = 100;
+        static float enemyHp = 100;
         static bool enemyAlive = true;
         static bool attackHappened = false;
+        static int enemyWeapon;
+        static Random rndEnemyWeapon = new Random();
         //Input map here
-        static string[,] map1 = new string[biggestMapSize,biggestMapSize];
+        static string[,] map1 = new string[biggestMapSize, biggestMapSize];
         static bool firstTimeMap = true;
         static bool firstTimeWall = true;
         static int amountOfWalls = 32;
@@ -64,140 +84,209 @@ namespace RogueAttemptMaybe
         static void Main(string[] args)
         {
             MapSize();
-            //for (int i = 0; i < weapons.Length; i++)
+/*            for (int i = 0; i < weapons.Length; i++)
             {
-                //string[] data = weapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
-                //weaponName.Add(data[0]);
-                //weaponDmg.Add(float.Parse(data[1]));
-                //weaponCritChance.Add(float.Parse(data[2]));
-                //weaponCritMulti.Add(float.Parse(data[3]));
+                string[] data = weapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
+                weaponName.Add(data[0]);
+                weaponDmg.Add(float.Parse(data[1]));
+                weaponCritChance.Add(float.Parse(data[2]));
+                weaponCritMulti.Add(float.Parse(data[3]));
             }
-        }
-        static void Move(ConsoleKey key)
-        {
-            EnemyMove();
-            switch (key)
+            for (int i = 0; i < armors.Length; i++)
             {
-                case ConsoleKey.DownArrow:
+                string[] data = armors[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
+                armorName.Add(data[0]);
+                armorDmgR.Add(float.Parse(data[1]));
+                armorAgiStat.Add(float.Parse(data[2]));
+                if (3 < data.Length)
                 {
-                    if (map1[currentPlayerPosition[0] + 1 , currentPlayerPosition[1]] == floorCharacter)
-                    {
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
-                        currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                        CheckIfAttack("Player");
-                        DrawMap1();
-                        AwaitMovementKey();
-                    }
-                    else
-                    {
-                            CheckIfAttack("Player");
-                            DrawMap1();
-                        AwaitMovementKey();
-                    }
-                    break;
-                    }
-                case ConsoleKey.UpArrow:
-                {
-                    if (map1[currentPlayerPosition[0] - 1, currentPlayerPosition[1]] == floorCharacter)
-                    {
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
-                        currentPlayerPosition[0] = currentPlayerPosition[0] - 1;
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                            CheckIfAttack("Player");
-                            DrawMap1();
-                        AwaitMovementKey();
-                    }
-                    else
-                    {
-                            CheckIfAttack("Player");
-                            DrawMap1();
-                        AwaitMovementKey();
-                    }
-                    break;
+                    armorDisc.Add(data[3]);
                 }
-                case ConsoleKey.LeftArrow:
+                if (4 < data.Length)
                 {
-                    if (map1[currentPlayerPosition[0], currentPlayerPosition[1] - 1] == floorCharacter)
-                    {
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
-                        currentPlayerPosition[1] = currentPlayerPosition[1] - 1;
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                            CheckIfAttack("Player");
-                            DrawMap1();
-                        AwaitMovementKey();
-                    }
-                    else
-                    {
-                            CheckIfAttack("Player");
-                            DrawMap1();
-                        AwaitMovementKey();
-                    }
-                    break;
-                    }
-                case ConsoleKey.RightArrow:
-                {
-                    if (map1[currentPlayerPosition[0], currentPlayerPosition[1] + 1] == floorCharacter)
-                    {
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
-                        currentPlayerPosition[1] = currentPlayerPosition[1] + 1;
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                            CheckIfAttack("Player");
-                            DrawMap1();
-                        AwaitMovementKey();
-                    }
-                    else
-                    {
-                            CheckIfAttack("Player");
-                            DrawMap1();
-                        AwaitMovementKey();
-                    }
-                    break;
+                    armorMoneyMulti.Add(float.Parse(data[4]));
                 }
-                case ConsoleKey.N:
-                    {
-                        NewMap();
-                        break;
-                    }
+                if (5 < data.Length)
+                {
+                    armorSellMulti.Add(float.Parse(data[5]));
+                }
+            }*/
+            GameStart();
+            while (characterHasBeenMade == false)
+            {
+                ConsoleKey select = Console.ReadKey().Key;
+                IsSelecting();
+                if (select == ConsoleKey.Enter)
+                {
+                    currentWeapon = weaponName[selectedWeapon];
+                    currentDmg = weaponDmg[selectedWeapon];
+                    currentCrit = weaponCritChance[selectedWeapon];
+                    currentCritMulti = weaponCritMulti[selectedWeapon];
+                    characterHasBeenMade = true;
+                }
             }
-        }
-        static void EnemyMove()
-        {
-            if (enemyAlive == true)
+            if (characterHasBeenMade == true)
             {
-                int L = currentPlayerPosition[0] - currentEnemyPosition[0];
-                int W = currentPlayerPosition[1] - currentEnemyPosition[1];
-                if (W == 0)
+                //Takes a random spawn for the player
+                Random rpos1 = new Random();
+                int pos1 = rpos1.Next(1, innerMapSizeL);
+                Random rpos2 = new Random();
+                int pos2 = rpos2.Next(1, innerMapSizeW);
+                currentPlayerPosition[0] = pos1;
+                currentPlayerPosition[1] = pos2;
+                //Takes a random spawn for 1 enemy
+                Random rpos3 = new Random();
+                int pos3 = rpos3.Next(1, innerMapSizeL);
+                Random rpos4 = new Random();
+                int pos4 = rpos4.Next(1, innerMapSizeW);
+                currentEnemyPosition[0] = pos3;
+                currentEnemyPosition[1] = pos4;
+                //Starts game
+                NewEnemy();
+                DrawMap1();
+                firstTimeMap = false;
+                AwaitMovementKey();
+            }
+            static void Move(ConsoleKey key)
+            {
+                EnemyMove();
+                switch (key)
                 {
-                    if (currentPlayerPosition[0] >= currentEnemyPosition[0])
-                    {
-                        if (map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == floorCharacter)
+                    case ConsoleKey.DownArrow:
                         {
-                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                            currentEnemyPosition[0] = currentEnemyPosition[0] + 1;
-                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                            CheckIfAttack("Enemy");
+                            if (map1[currentPlayerPosition[0] + 1, currentPlayerPosition[1]] == floorCharacter)
+                            {
+                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                                currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
+                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                                CheckIfAttack("Player");
+                                DrawMap1();
+                                AwaitMovementKey();
+                            }
+                            else
+                            {
+                                CheckIfAttack("Player");
+                                DrawMap1();
+                                AwaitMovementKey();
+                            }
+                            break;
                         }
-                        else
+                    case ConsoleKey.UpArrow:
                         {
-                            L = 0;
+                            if (map1[currentPlayerPosition[0] - 1, currentPlayerPosition[1]] == floorCharacter)
+                            {
+                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                                currentPlayerPosition[0] = currentPlayerPosition[0] - 1;
+                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                                CheckIfAttack("Player");
+                                DrawMap1();
+                                AwaitMovementKey();
+                            }
+                            else
+                            {
+                                CheckIfAttack("Player");
+                                DrawMap1();
+                                AwaitMovementKey();
+                            }
+                            break;
+                        }
+                    case ConsoleKey.LeftArrow:
+                        {
+                            if (map1[currentPlayerPosition[0], currentPlayerPosition[1] - 1] == floorCharacter)
+                            {
+                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                                currentPlayerPosition[1] = currentPlayerPosition[1] - 1;
+                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                                CheckIfAttack("Player");
+                                DrawMap1();
+                                AwaitMovementKey();
+                            }
+                            else
+                            {
+                                CheckIfAttack("Player");
+                                DrawMap1();
+                                AwaitMovementKey();
+                            }
+                            break;
+                        }
+                    case ConsoleKey.RightArrow:
+                        {
+                            if (map1[currentPlayerPosition[0], currentPlayerPosition[1] + 1] == floorCharacter)
+                            {
+                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                                currentPlayerPosition[1] = currentPlayerPosition[1] + 1;
+                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                                CheckIfAttack("Player");
+                                DrawMap1();
+                                AwaitMovementKey();
+                            }
+                            else
+                            {
+                                CheckIfAttack("Player");
+                                DrawMap1();
+                                AwaitMovementKey();
+                            }
+                            break;
+                        }
+                    case ConsoleKey.N:
+                        {
+                            NewMap();
+                            break;
+                        }
+                }
+            }
+            static void AwaitMovementKey()
+            {
+                //makes sure you actually use an arrow
+                ConsoleKey key = Console.ReadKey().Key;
+                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow)
+                {
+                    Move(key);
+                }
+                else
+                {
+                    //If key isnt an arrow it restarts
+                    AwaitMovementKey();
+                }
+            }
+            static void EnemyMove()
+            {
+                if (enemyAlive == true)
+                {
+                    int L = currentPlayerPosition[0] - currentEnemyPosition[0];
+                    int W = currentPlayerPosition[1] - currentEnemyPosition[1];
+                    if (W == 0)
+                    {
+                        if (currentPlayerPosition[0] >= currentEnemyPosition[0])
+                        {
+                            if (map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == floorCharacter)
+                            {
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                                currentEnemyPosition[0] = currentEnemyPosition[0] + 1;
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                                CheckIfAttack("Enemy");
+                            }
+                            else
+                            {
+                                L = 0;
+                            }
+                        }
+                        else if (currentPlayerPosition[0] <= currentEnemyPosition[0])
+                        {
+                            if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == floorCharacter)
+                            {
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                                currentEnemyPosition[0] = currentEnemyPosition[0] - 1;
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                                CheckIfAttack("Enemy");
+                            }
+                            else
+                            {
+                                L = 0;
+                            }
                         }
                     }
-                    else if (currentPlayerPosition[0] <= currentEnemyPosition[0])
-                    {
-                        if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == floorCharacter)
-                        {
-                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                            currentEnemyPosition[0] = currentEnemyPosition[0] - 1;
-                            map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                            CheckIfAttack("Enemy");
-                        }
-                        else
-                        {
-                            L = 0;
-                        }
-                    }
-                    else
+                    else if (L == 0)
                     {
                         if (currentPlayerPosition[1] <= currentEnemyPosition[1])
                         {
@@ -227,232 +316,308 @@ namespace RogueAttemptMaybe
                                 W = 0;
                             }
                         }
-                        else if (L < W)
-                        {
-                            if (currentPlayerPosition[1] <= currentEnemyPosition[1])
-                            {
-                                if (map1[currentEnemyPosition[0], currentEnemyPosition[1] - 1] == floorCharacter)
-                                {
-                                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                                    currentEnemyPosition[1] = currentEnemyPosition[1] - 1;
-                                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                                    CheckIfAttack("Enemy");
-                                }
-                                else
-                                {
-                                    L = 0;
-                                }
-                            }
-                            else if (currentPlayerPosition[1] >= currentEnemyPosition[1])
-                            {
-                                if (map1[currentEnemyPosition[0], currentEnemyPosition[1] + 1] == floorCharacter)
-                                {
-                                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                                    currentEnemyPosition[1] = currentEnemyPosition[1] + 1;
-                                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                                    CheckIfAttack("Enemy");
-                                }
-                                else
-                                {
-                                    L = 0;
-                                }
-                            }
-                        }
-                        else if (W < L)
-                        {
-                            if (currentPlayerPosition[0] >= currentEnemyPosition[0])
-                            {
-                                if (map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == floorCharacter)
-                                {
-                                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                                    currentEnemyPosition[0] = currentEnemyPosition[0] + 1;
-                                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                                    CheckIfAttack("Enemy");
-                                }
-                                else
-                                {
-                                    W = 0;
-                                }
-                            }
-                            else if (currentPlayerPosition[0] <= currentEnemyPosition[0])
-                            {
-                                if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == floorCharacter)
-                                {
-                                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
-                                    currentEnemyPosition[0] = currentEnemyPosition[0] - 1;
-                                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                                    CheckIfAttack("Enemy");
-                                }
-                                else
-                                {
-                                    W = 0;
-                                }
-                            }
-                        }
                     }
-                //else if (L == 0)
-                }
-            }
-            static void AwaitMovementKey()
-            {
-                //makes sure you actually use an arrow
-                ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N)
-                {
-                    Move(key);
-                }
-                else
-                {
-                    AwaitMovementKey();
-                }
-            }
-        static void CheckIfAttack(string attacker)
-        {
-            if (currentPlayerPosition[0]== currentEnemyPosition[0] -1 || currentPlayerPosition[0] == currentEnemyPosition[0] +1 || currentPlayerPosition[1]== currentEnemyPosition[1] -1 || currentPlayerPosition[1] == currentEnemyPosition[1]+1)
-            {
-                if (attackHappened == false)
-                {
-                    Console.WriteLine("WouldAttack");
-                    if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == character || map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == character || map1[currentEnemyPosition[0], currentEnemyPosition[1] - 1] == character || map1[currentEnemyPosition[0], currentEnemyPosition[1] + 1] == character)
+                    else if (L < W)
                     {
-                        if (attacker == "Player")
+                        if (currentPlayerPosition[1] <= currentEnemyPosition[1])
                         {
-                            Random rnd2 = new Random();
-                            float crit2 = rnd2.Next(0, 100);
-                            /*if (crit2 <= critChance)
+                            if (map1[currentEnemyPosition[0], currentEnemyPosition[1] - 1] == floorCharacter)
                             {
-                                Console.WriteLine("Crit");
-                                playerHp = playerHp - (testEnemyAttack * critMultiplier);
-                                Console.WriteLine(playerHp + "Player");
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                                currentEnemyPosition[1] = currentEnemyPosition[1] - 1;
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                                CheckIfAttack("Enemy");
                             }
                             else
                             {
-                                Console.WriteLine("Not crit");
-                                playerHp = playerHp - testEnemyAttack;
-                                Console.WriteLine(playerHp + "Player");
+                                L = 0;
                             }
-                            Random rnd = new Random();
-                            float crit1 = rnd.Next(0, 100);
-                            if (crit1 <= critChance)
-                            {
-                                Console.WriteLine("Crit");
-                                enemyHp = enemyHp - (testPlayerAttack * critMultiplier);
-                                Console.WriteLine(enemyHp + "Enemy");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Not crit");
-                                enemyHp = enemyHp - testPlayerAttack;
-                                Console.WriteLine(enemyHp + "Enemy");
-                            }
-                            attackHappened = true;
                         }
-                        else if (attacker == "Enemy")
+                        else if (currentPlayerPosition[1] >= currentEnemyPosition[1])
                         {
-                            Random rnd = new Random();
-                            float crit1 = rnd.Next(0, 100);
-                            if (crit1 <= critChance)
+                            if (map1[currentEnemyPosition[0], currentEnemyPosition[1] + 1] == floorCharacter)
                             {
-                                Console.WriteLine("Crit");
-                                enemyHp = enemyHp - (testPlayerAttack * critMultiplier);
-                                Console.WriteLine(enemyHp + "Enemy");
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                                currentEnemyPosition[1] = currentEnemyPosition[1] + 1;
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                                CheckIfAttack("Enemy");
                             }
                             else
                             {
-                                Console.WriteLine("Not crit");
-                                enemyHp = enemyHp - testPlayerAttack;
-                                Console.WriteLine(enemyHp + "Enemy");
-
+                                L = 0;
                             }
-                            Random rnd2 = new Random();
-                            float crit2 = rnd2.Next(0, 100);
-                            if (crit2 <= critChance)
+                        }
+                    }
+                    else if (W < L)
+                    {
+                        if (currentPlayerPosition[0] >= currentEnemyPosition[0])
+                        {
+                            if (map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == floorCharacter)
                             {
-                                Console.WriteLine("Crit");
-                                playerHp = playerHp - (testEnemyAttack * critMultiplier);
-                                Console.WriteLine(playerHp + "Player");
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                                currentEnemyPosition[0] = currentEnemyPosition[0] + 1;
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                                CheckIfAttack("Enemy");
                             }
                             else
                             {
-                                Console.WriteLine("Not crit");
-                                playerHp = playerHp - testEnemyAttack;
-                                Console.WriteLine(playerHp + "Player");
+                                W = 0;
                             }
-                            attackHappened = true;*/
+                        }
+                        else if (currentPlayerPosition[0] <= currentEnemyPosition[0])
+                        {
+                            if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == floorCharacter)
+                            {
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = floorCharacter;
+                                currentEnemyPosition[0] = currentEnemyPosition[0] - 1;
+                                map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                                CheckIfAttack("Enemy");
+                            }
+                            else
+                            {
+                                W = 0;
+                            }
                         }
                     }
                 }
             }
-        }
+            static void CheckIfAttack(string attacker)
+            {
+                if (currentPlayerPosition[0] == currentEnemyPosition[0] - 1 || currentPlayerPosition[0] == currentEnemyPosition[0] + 1 || currentPlayerPosition[1] == currentEnemyPosition[1] - 1 || currentPlayerPosition[1] == currentEnemyPosition[1] + 1)
+                {
+                    if (attackHappened == false)
+                    {
+                        if (map1[currentEnemyPosition[0] - 1, currentEnemyPosition[1]] == character || map1[currentEnemyPosition[0] + 1, currentEnemyPosition[1]] == character || map1[currentEnemyPosition[0], currentEnemyPosition[1] - 1] == character || map1[currentEnemyPosition[0], currentEnemyPosition[1] + 1] == character)
+                        {
+                            Console.WriteLine("WouldAttack");
+                            if (attacker == "Player")
+                            {
+                                Random rnd2 = new Random();
+                                float crit2 = rnd2.Next(0, 100);
+                                if (crit2 <= currentEnemyCrit)
+                                {
+                                    Console.WriteLine("Crit");
+                                    playerHp = playerHp - (currentEnemyDmg * currentEnemyMulti);
+                                    Console.WriteLine(playerHp + "Player");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Not crit");
+                                    playerHp = playerHp - currentEnemyDmg;
+                                    Console.WriteLine(playerHp + "Player");
+                                }
+                                Random rnd = new Random();
+                                float crit1 = rnd.Next(0, 100);
+                                if (crit1 <= currentCrit)
+                                {
+                                    Console.WriteLine("Crit");
+                                    enemyHp = enemyHp - (currentDmg * currentCritMulti);
+                                    Console.WriteLine(enemyHp + "Enemy");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Not crit");
+                                    enemyHp = enemyHp - currentDmg;
+                                    Console.WriteLine(enemyHp + "Enemy");
+                                }
+                                attackHappened = true;
+                            }
+                            else if (attacker == "Enemy")
+                            {
+                                Random rnd = new Random();
+                                float crit1 = rnd.Next(0, 100);
+                                if (crit1 <= currentCrit)
+                                {
+                                    Console.WriteLine("Crit");
+                                    enemyHp = enemyHp - (currentDmg * currentCritMulti);
+                                    Console.WriteLine(enemyHp + "Enemy");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Not crit");
+                                    enemyHp = enemyHp - currentDmg;
+                                    Console.WriteLine(enemyHp + "Enemy");
+
+                                }
+                                Random rnd2 = new Random();
+                                float crit2 = rnd2.Next(0, 100);
+                                if (crit2 <= currentEnemyCrit)
+                                {
+                                    Console.WriteLine("Crit");
+                                    playerHp = playerHp - (enemyWeapon * currentEnemyMulti);
+                                    Console.WriteLine(playerHp + "Player");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Not crit");
+                                    playerHp = playerHp - currentEnemyCrit;
+                                    Console.WriteLine(playerHp + "Player");
+                                }
+                                attackHappened = true;
+                            }
+                        }
+                    }
+                }
+            }
+            static void GameStart()
+            {
+                Console.WriteLine("Welcome to character creation");
+                Console.WriteLine("Insert your name and press enter to continue the character creation");
+                Console.WriteLine("-----------------------------------------------------------");
+                name = Console.ReadLine();
+                Console.Clear();
+                Console.WriteLine("Welcome to the main menu.");
+                Console.WriteLine("name:" + name);
+                Console.WriteLine("Select a weapon and press enter to continue");
+                Console.WriteLine("-----------------------------------------------------------");
+                for (int i = 0; i < weaponName.Count; i++)
+                {
+                    Console.Write(weaponName[i] + " ");
+                    Console.Write("Dmg:" + weaponDmg[i] + " ");
+                    Console.Write("CC:" + weaponCritChance[i] + " ");
+                    Console.WriteLine("CMulti:" + weaponCritMulti[i]);
+                    Console.WriteLine("-----------------------------------------------------------");
+                }
+                Console.WriteLine("Current weapon: None");
+            }
+            static void IsSelecting()
+            {
+                ConsoleKey select = Console.ReadKey().Key;
+                if (select == ConsoleKey.UpArrow || select == ConsoleKey.DownArrow)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Welcome to character creation.");
+                    Console.WriteLine(name);
+                    Console.WriteLine("Select a weapon and press enter to continue");
+                    Console.WriteLine("-----------------------------------------------------------");
+                    for (int i = 0; i < weaponName.Count; i++)
+                    {
+                        Console.Write(weaponName[i] + " ");
+                        Console.Write("Dmg:" + weaponDmg[i] + " ");
+                        Console.Write("CC:" + weaponCritChance[i] + " ");
+                        Console.WriteLine("CMulti:" + weaponCritMulti[i]);
+                        Console.WriteLine("-----------------------------------------------------------");
+                    }
+                    WeaponSelect(select);
+                }
+            }
+            static void WeaponSelect(ConsoleKey select)
+            {
+/*                switch (select)
+                {
+                    case ConsoleKey.UpArrow:
+                        {
+                            if (selectedWeapon < weapons.Length - 1)
+                            {
+                                selectedWeapon = selectedWeapon + 1;
+                                Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                            }
+                            else
+                            {
+                                selectedWeapon = 0;
+                                Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                            }
+                            break;
+                        }
+                    case ConsoleKey.DownArrow:
+                        {
+                            if (selectedWeapon > 0)
+                            {
+                                selectedWeapon = selectedWeapon - 1;
+                                Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                            }
+                            else
+                            {
+                                selectedWeapon = weapons.Length - 1;
+                                Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                            }
+                            break;
+                        }
+                }*/
+            }
+            static void NewEnemy()
+            {
+                //enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
+                currentEnemyDmg = weaponDmg[enemyWeapon];
+                currentEnemyCrit = weaponCritChance[enemyWeapon];
+                currentEnemyMulti = weaponCritMulti[enemyWeapon];
+                if (enemyWeapon == 2)
+                {
+                    currentEnemyCrit = currentEnemyCrit - 25;
+                    currentEnemyMulti = currentEnemyMulti - 10;
+                }
+                if (enemyWeapon == 0)
+                {
+                    currentEnemyCrit = currentEnemyCrit - 20;
+                    currentEnemyDmg = currentEnemyDmg - 15;
+                }
+            }
             static void DrawMap1()
             {
+                //Clears the console so you dont see the previous stuff.
+                //Console.Clear();
+                //Makes it so 2 attacks cant happen at the same time
+                attackHappened = false;
+                //Draws the map
+                total = 0;
+                int length = 0;
+                length = 0;
+                int mapLength = 0;
+                int mapWidth = 0;
+                for (int width = 0; total < mapSizeL * mapSizeW; width++)
                 {
-                    //Clears the console so you dont see the previous stuff.
-                    //Console.Clear();
-                    //Makes it so 2 attacks cant happen at the same time
-                    attackHappened = false;
-                    //Draws the map
-                    total = 0;
-                    int length = 0;
-                    length = 0;
-                    int mapLength = 0;
-                    int mapWidth = 0;
-                    for (int width = 0; total < mapSizeL * mapSizeW; width++)
+                    total = width * length;
+                    if (width == mapSizeW)
                     {
-                        total = width * length;
+                        //go to next map line
+                        Console.WriteLine();
+                        mapLength++;
+                        mapWidth++;
+                        if (mapLength >= innerMapSizeL)
+                        {
+                            mapLength = innerMapSizeL;
+                        }
+                        if (mapWidth >= innerMapSizeL)
+                        {
+                            mapWidth = innerMapSizeW;
+                        }
                         if (width == mapSizeW)
                         {
-                            //go to next map line
-                            Console.WriteLine();
-                            mapLength++;
-                            mapWidth++;
-                            if (mapLength >= innerMapSizeL)
-                            {
-                                mapLength = innerMapSizeL;
-                            }
-                            if (mapWidth >= innerMapSizeL)
-                            {
-                                mapWidth = innerMapSizeW;
-                            }
-                            if (width == mapSizeW)
-                            {
-                                width = 0;
-                                length++;
-                            }
+                            width = 0;
+                            length++;
                         }
-                        if (firstTimeMap == true)
-                        {
-                            for (int i = 1; i < innerMapSizeL + 1; i++)
-                            {
-                                map1[mapWidth, i] = floorCharacter;
-                            }
-                            for (int i = 1; i < innerMapSizeW + 1; i++)
-                            {
-                                map1[mapLength, i] = floorCharacter;
-                            }
-                            if (length <= innerMapSizeL)
-                            {
-                                map1[length, 0] = "| ";
-                                map1[length, mapSizeW - 1] = "| ";
-                            }
-                            for (int i = 0; i < mapSizeW; i++)
-                            {
-                                map1[0, i] = "--";
-                            }
-                            for (int i = 0; i < mapSizeW; i++)
-                            {
-                                map1[mapSizeL - 1, i] = "--";
-                            }
-                            map1[0, 0] = "|";
-                            map1[mapSizeL - 1, mapSizeW - 1] = "-|";
-                            map1[0, mapSizeW - 1] = "-|";
-                            map1[mapSizeL - 1, 0] = "|";
-                            map1[mapSizeL, width] = "";
-                            map1[mapSizeL + 1, 0] = "";
-                        }
-                        Console.Write(map1[length, width]);
                     }
-                    //CG
+                    if (firstTimeMap == true)
+                    {
+                        for (int i = 1; i < innerMapSizeL + 1; i++)
+                        {
+                            map1[mapWidth, i] = floorCharacter;
+                        }
+                        for (int i = 1; i < innerMapSizeW + 1; i++)
+                        {
+                            map1[mapLength, i] = floorCharacter;
+                        }
+                        if (length <= innerMapSizeL)
+                        {
+                            map1[length, 0] = "| ";
+                            map1[length, mapSizeW - 1] = "| ";
+                        }
+                        for (int i = 0; i < mapSizeW; i++)
+                        {
+                            map1[0, i] = "--";
+                        }
+                        for (int i = 0; i < mapSizeW; i++)
+                        {
+                            map1[mapSizeL - 1, i] = "--";
+                        }
+                        map1[0, 0] = "|";
+                        map1[mapSizeL - 1, mapSizeW - 1] = "-|";
+                        map1[0, mapSizeW - 1] = "-|";
+                        map1[mapSizeL - 1, 0] = "|";
+                        map1[mapSizeL, width] = "";
+                        map1[mapSizeL + 1, 0] = "";
+                    }
+                    Console.Write(map1[length, width]);
                 }
                 if (firstTimeMap == true)
                 {
@@ -476,11 +641,11 @@ namespace RogueAttemptMaybe
                     firstTimeMap = false;
                     DrawMap1();
                 }
+                Console.WriteLine();
             }
-        }
             static void RandomPosition()
             {
-                if(firstTimeWall == true)
+                if (firstTimeWall == true)
                 {
                     Random randomWidth = new Random();
                     int i = randomWidth.Next(1, innerMapSizeW + 1);
@@ -508,7 +673,8 @@ namespace RogueAttemptMaybe
             {
                 Console.WriteLine("Warning: Max map size is 64!");
                 Console.WriteLine("Map Length");
-                string answerL = Console.ReadLine();
+                string answerL = "20";
+                answerL = Console.ReadLine();
                 try
                 {
                     int result = Int32.Parse(answerL);
@@ -520,17 +686,17 @@ namespace RogueAttemptMaybe
                         answerL = "nothing";
                     }
                     Console.WriteLine("Error 1: Cannot convert " + answerL + " to a number.");
-                    Environment.Exit(0);
+                    MapSize();
                 }
                 if (Int32.Parse(answerL) > biggestMapSize - 2)
                 {
                     Console.WriteLine("Error 2: Answer too big");
-                    Environment.Exit(0);
+                    MapSize();
                 }
                 else if (Int32.Parse(answerL) < 5)
                 {
                     Console.WriteLine("Error 3: Answer too small");
-                    Environment.Exit(0);
+                    MapSize();
                 }
                 mapSizeL = Int32.Parse(answerL);
                 Console.WriteLine("Map Width");
@@ -542,17 +708,17 @@ namespace RogueAttemptMaybe
                 catch (FormatException)
                 {
                     Console.WriteLine("Error 1: Cannot convert " + answerW + " to a number.");
-                    Environment.Exit(0);
+                    MapSize();
                 }
                 if (Int32.Parse(answerW) > biggestMapSize - 2)
                 {
                     Console.WriteLine("Error 2: Answer too big");
-                    Environment.Exit(0);
+                    MapSize();
                 }
                 else if (Int32.Parse(answerW) < 5)
                 {
                     Console.WriteLine("Error 3: Answer too small");
-                    Environment.Exit(0);
+                    MapSize();
                 }
                 mapSizeW = Int32.Parse(answerW);
                 innerMapSizeW = mapSizeW - 2;
@@ -563,6 +729,7 @@ namespace RogueAttemptMaybe
                 Console.WriteLine(innerMapSizeL + "InL");
                 Console.WriteLine(mapSizeW + "OutW");
                 Console.WriteLine(mapSizeL + "OutL");
+                DrawMap1();
             }
             static void NewMap()
             {
@@ -573,3 +740,4 @@ namespace RogueAttemptMaybe
             }
         }
     }
+}
