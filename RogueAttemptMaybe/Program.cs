@@ -77,6 +77,7 @@ namespace RogueAttemptMaybe
         static bool enemyAlive = true;
         static bool attackHappened = false;
         static int enemyWeapon;
+        static int enemyNumber = 0;
         static Random rndEnemyWeapon = new Random();
         //Input map here
         static string[,] map1 = new string[biggestMapSize, biggestMapSize];
@@ -535,20 +536,30 @@ namespace RogueAttemptMaybe
             }
             static void NewEnemy()
             {
-                enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
-                currentEnemyDmg = weaponDmg[enemyWeapon];
-                currentEnemyCrit = weaponCritChance[enemyWeapon];
-                currentEnemyMulti = weaponCritMulti[enemyWeapon];
-                if (enemyWeapon == 2)
+                if (enemyNumber == 0) 
+                {
+                    enemyWeapon = rndEnemyWeapon.Next(0, starterWeapons.Length);
+                    currentEnemyDmg = starterWeaponDmg[enemyWeapon];
+                    currentEnemyCrit = starterWeaponCritChance[enemyWeapon];
+                    currentEnemyMulti = starterWeaponCritMulti[enemyWeapon];
+                } else 
+                {
+                    enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
+                    currentEnemyDmg = weaponDmg[enemyWeapon];
+                    currentEnemyCrit = weaponCritChance[enemyWeapon];
+                    currentEnemyMulti = weaponCritMulti[enemyWeapon];                    
+                }
+                if (enemyWeapon == 2 && enemyNumber != 0)
                 {
                     currentEnemyCrit = currentEnemyCrit - 25;
                     currentEnemyMulti = currentEnemyMulti - 10;
                 }
-                if (enemyWeapon == 0)
+                if (enemyWeapon == 0 && enemyNumber != 0)
                 {
                     currentEnemyCrit = currentEnemyCrit - 20;
                     currentEnemyDmg = currentEnemyDmg - 15;
                 }
+                enemyNumber = enemyNumber + 1;
             }
             static void DrawMap1()
             {
