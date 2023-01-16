@@ -600,7 +600,7 @@ namespace RogueAttemptMaybe
                     {
                         for (int i = 1; i < innerMapSizeL + 1; i++)
                         {
-                            map1[mapWidth, i] = floorCharacter;
+                            //map1[mapWidth, i] = floorCharacter;
                         }
                         for (int i = 1; i < innerMapSizeW + 1; i++)
                         {
@@ -678,7 +678,8 @@ namespace RogueAttemptMaybe
             }
             static void MapSize()
             {
-                Console.WriteLine("Warning: Max map size is 64!");
+                Console.WriteLine("Warning: Max size is 64!");
+                Console.WriteLine("Warning: Min size is 5!");
                 Console.WriteLine("Map Length");
                 string answerL = "20";
                 answerL = Console.ReadLine();
