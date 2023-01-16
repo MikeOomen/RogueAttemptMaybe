@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Formats.Asn1;
-using Microsoft.VisualBasic.FileIO;
 
 namespace RogueAttemptMaybe
 {
@@ -22,7 +19,7 @@ namespace RogueAttemptMaybe
     //Money *
     //Attack * Mi
     //Inventory *
-    //Classes *       Mi
+    //Classes * Mi
 
     //Enemies: 
     //Movement R
@@ -34,18 +31,21 @@ namespace RogueAttemptMaybe
         //main menu
         static string name;
         static bool characterHasBeenMade = false;
-
         //Characters
-        static string floorCharacter = "* ";
+        static string floorCharacter = "  ";
         static string character = "@ ";
         static string enemy1 = "E ";
+        static string innerWall = "[]";
         //Map sizes
-        static int mapSizeL = 16;
         static int[] currentPlayerPosition = { 0, 0 };
         static int[] currentEnemyPosition = { 0, 0 };
+        static int[] currentWallPosition = { 0, 0, 0, 0 };
+        static int mapSizeL = 16;
         static int mapSizeW = 16;
-        static int innerMapSizeL = 14;
-        static int innerMapSizeW = 14;
+        static int innerMapSizeL = 0;
+        static int innerMapSizeW = 0;
+        static int biggestMapSize = 66;
+        static int total = 0;
         //Attack
         static string[] weapons = File.ReadAllLines("Weapons.txt");
         static string[] armors = File.ReadAllLines("Armors.txt");
@@ -74,8 +74,13 @@ namespace RogueAttemptMaybe
         static int enemyWeapon;
         static Random rndEnemyWeapon = new Random();
         //Input map here
-        static string[,] map1 = new string[16, 16];
+        static string[,] map1 = new string[biggestMapSize, biggestMapSize];
         static bool firstTimeMap = true;
+        static bool firstTimeWall = true;
+        static int amountOfWalls = 32;
+        static int wallMultiplier = 2;
+        static int walls = 0;
+        static int[] rndpos = new int[4];
         static void Main(string[] args)
         {
             for (int i = 0; i < weapons.Length; i++)
@@ -92,15 +97,15 @@ namespace RogueAttemptMaybe
                 armorName.Add(data[0]);
                 armorDmgR.Add(float.Parse(data[1]));
                 armorAgiStat.Add(float.Parse(data[2]));
-                if (3 < data.Length) 
+                if (3 < data.Length)
                 {
                     armorDisc.Add(data[3]);
                 }
-                if (4 < data.Length) 
+                if (4 < data.Length)
                 {
                     armorMoneyMulti.Add(float.Parse(data[4]));
                 }
-                if (5 < data.Length) 
+                if (5 < data.Length)
                 {
                     armorSellMulti.Add(float.Parse(data[5]));
                 }
@@ -121,23 +126,9 @@ namespace RogueAttemptMaybe
             }
             if (characterHasBeenMade == true)
             {
-                //Takes a random spawn for the player
-                Random rpos1 = new Random();
-                int pos1 = rpos1.Next(1, innerMapSizeL);
-                Random rpos2 = new Random();
-                int pos2 = rpos2.Next(1, innerMapSizeW);
-                currentPlayerPosition[0] = pos1;
-                currentPlayerPosition[1] = pos2;
-                //Takes a random spawn for 1 enemy
-                Random rpos3 = new Random();
-                int pos3 = rpos3.Next(1, innerMapSizeL);
-                Random rpos4 = new Random();
-                int pos4 = rpos4.Next(1, innerMapSizeW);
-                currentEnemyPosition[0] = pos3;
-                currentEnemyPosition[1] = pos4;
                 //Starts game
                 NewEnemy();
-                DrawMap1();
+                NewMap();
                 firstTimeMap = false;
                 AwaitMovementKey();
             }
@@ -147,79 +138,84 @@ namespace RogueAttemptMaybe
                 switch (key)
                 {
                     case ConsoleKey.DownArrow:
+                    {
+                        if (map1[currentPlayerPosition[0] + 1, currentPlayerPosition[1]] == floorCharacter)
                         {
-                            if (map1[currentPlayerPosition[0] + 1, currentPlayerPosition[1]] == floorCharacter)
-                            {
-                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
-                                currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
-                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                                CheckIfAttack("Player");
-                                DrawMap1();
-                                AwaitMovementKey();
-                            }
-                            else
-                            {
-                                CheckIfAttack("Player");
-                                DrawMap1();
-                                AwaitMovementKey();
-                            }
-                            break;
+                            map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                            currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
+                            map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                            CheckIfAttack("Player");
+                            DrawMap1();
+                            AwaitMovementKey();
                         }
+                        else
+                        {
+                            CheckIfAttack("Player");
+                            DrawMap1();
+                            AwaitMovementKey();
+                        }
+                        break;
+                    }
                     case ConsoleKey.UpArrow:
+                    {
+                        if (map1[currentPlayerPosition[0] - 1, currentPlayerPosition[1]] == floorCharacter)
                         {
-                            if (map1[currentPlayerPosition[0] - 1, currentPlayerPosition[1]] == floorCharacter)
-                            {
-                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
-                                currentPlayerPosition[0] = currentPlayerPosition[0] - 1;
-                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                                CheckIfAttack("Player");
-                                DrawMap1();
-                                AwaitMovementKey();
-                            }
-                            else
-                            {
-                                CheckIfAttack("Player");
-                                DrawMap1();
-                                AwaitMovementKey();
-                            }
-                            break;
+                            map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                            currentPlayerPosition[0] = currentPlayerPosition[0] - 1;
+                            map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                            CheckIfAttack("Player");
+                            DrawMap1();
+                            AwaitMovementKey();
                         }
+                        else
+                        {
+                            CheckIfAttack("Player");
+                            DrawMap1();
+                            AwaitMovementKey();
+                        }
+                        break;
+                    }
                     case ConsoleKey.LeftArrow:
+                    {
+                        if (map1[currentPlayerPosition[0], currentPlayerPosition[1] - 1] == floorCharacter)
                         {
-                            if (map1[currentPlayerPosition[0], currentPlayerPosition[1] - 1] == floorCharacter)
-                            {
-                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
-                                currentPlayerPosition[1] = currentPlayerPosition[1] - 1;
-                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                                CheckIfAttack("Player");
-                                DrawMap1();
-                                AwaitMovementKey();
-                            }
-                            else
-                            {
-                                CheckIfAttack("Player");
-                                DrawMap1();
-                                AwaitMovementKey();
-                            }
-                            break;
+                            map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                            currentPlayerPosition[1] = currentPlayerPosition[1] - 1;
+                            map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                            CheckIfAttack("Player");
+                            DrawMap1();
+                            AwaitMovementKey();
                         }
-                    case ConsoleKey.RightArrow:
+                        else
                         {
-                            if (map1[currentPlayerPosition[0], currentPlayerPosition[1] + 1] == floorCharacter)
-                            {
-                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
-                                currentPlayerPosition[1] = currentPlayerPosition[1] + 1;
-                                map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                                CheckIfAttack("Player");
-                                DrawMap1();
-                                AwaitMovementKey();
-                            }
-                            else
-                            {
-                                CheckIfAttack("Player");
-                                DrawMap1();
-                                AwaitMovementKey();
-                            }
+                            CheckIfAttack("Player");
+                            DrawMap1();
+                            AwaitMovementKey();
+                        }
+                        break;
+                    }
+                    case ConsoleKey.RightArrow:
+                    {
+                        if (map1[currentPlayerPosition[0], currentPlayerPosition[1] + 1] == floorCharacter)
+                        {
+                            map1[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                            currentPlayerPosition[1] = currentPlayerPosition[1] + 1;
+                            map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                            CheckIfAttack("Player");
+                            DrawMap1();
+                            AwaitMovementKey();
+                        }
+                        else
+                        {
+                            CheckIfAttack("Player");
+                            DrawMap1();
+                            AwaitMovementKey();
+                        }
+                        break;
+                    }
+                    case ConsoleKey.N:
+                        {
+                            NewMap();
                             break;
                         }
                 }
@@ -228,7 +224,7 @@ namespace RogueAttemptMaybe
             {
                 //makes sure you actually use an arrow
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow)
+                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N)
                 {
                     Move(key);
                 }
@@ -488,7 +484,7 @@ namespace RogueAttemptMaybe
                         Console.WriteLine("-----------------------------------------------------------");
                     }
                     WeaponSelect(select);
-                } 
+                }
             }
             static void WeaponSelect(ConsoleKey select)
             {
@@ -524,18 +520,18 @@ namespace RogueAttemptMaybe
                         }
                 }
             }
-            static void NewEnemy() 
+            static void NewEnemy()
             {
-                 enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
+                enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
                 currentEnemyDmg = weaponDmg[enemyWeapon];
                 currentEnemyCrit = weaponCritChance[enemyWeapon];
                 currentEnemyMulti = weaponCritMulti[enemyWeapon];
-                if (enemyWeapon == 2) 
+                if (enemyWeapon == 2)
                 {
                     currentEnemyCrit = currentEnemyCrit - 25;
                     currentEnemyMulti = currentEnemyMulti - 10;
                 }
-                if (enemyWeapon == 0) 
+                if (enemyWeapon == 0)
                 {
                     currentEnemyCrit = currentEnemyCrit - 20;
                     currentEnemyDmg = currentEnemyDmg - 15;
@@ -548,14 +544,15 @@ namespace RogueAttemptMaybe
                 //Makes it so 2 attacks cant happen at the same time
                 attackHappened = false;
                 //Draws the map
-                int total = 0;
+                total = 0;
                 int length = 0;
+                length = 0;
                 int mapLength = 0;
                 int mapWidth = 0;
-                for (int width = 0; total < map1.Length; width++)
+                for (int width = 0; total < mapSizeL * mapSizeW; width++)
                 {
-                    total++;
-                    if (width == mapSizeL)
+                    total = width * length;
+                    if (width == mapSizeW)
                     {
                         //go to next map line
                         Console.WriteLine();
@@ -569,7 +566,7 @@ namespace RogueAttemptMaybe
                         {
                             mapWidth = innerMapSizeW;
                         }
-                        if (width == mapSizeL)
+                        if (width == mapSizeW)
                         {
                             width = 0;
                             length++;
@@ -581,20 +578,148 @@ namespace RogueAttemptMaybe
                         {
                             map1[mapWidth, i] = floorCharacter;
                         }
-                        map1[width, 0] = "| ";
-                        map1[width, mapSizeL - 1] = "|";
-                        map1[0, width] = "--";
-                        map1[mapSizeW - 1, length] = "--";
-                        map1[0, 0] = "|-";
-                        map1[mapSizeW - 1, mapSizeL - 1] = "|";
-                        map1[0, mapSizeL - 1] = "|";
-                        map1[mapSizeW - 1, 0] = "|-";
-                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        for (int i = 1; i < innerMapSizeW + 1; i++)
+                        {
+                            map1[mapLength, i] = floorCharacter;
+                        }
+                        if (length <= innerMapSizeL)
+                        {
+                            map1[length, 0] = "| ";
+                            map1[length, mapSizeW - 1] = "| ";
+                        }
+                        for (int i = 0; i < mapSizeW; i++)
+                        {
+                            map1[0, i] = "--";
+                        }
+                        for (int i = 0; i < mapSizeW; i++)
+                        {
+                            map1[mapSizeL - 1, i] = "--";
+                        }
+                        map1[0, 0] = "|";
+                        map1[mapSizeL - 1, mapSizeW - 1] = "-|";
+                        map1[0, mapSizeW - 1] = "-|";
+                        map1[mapSizeL - 1, 0] = "|";
+                        map1[mapSizeL, width] = "";
+                        map1[mapSizeL + 1, 0] = "";
                     }
                     Console.Write(map1[length, width]);
                 }
+                if (firstTimeMap == true)
+                {
+                    Random rpos1 = new Random();
+                    int pos1 = rpos1.Next(1, innerMapSizeL);
+                    Random rpos2 = new Random();
+                    int pos2 = rpos2.Next(1, innerMapSizeW);
+                    currentPlayerPosition[0] = pos1;
+                    currentPlayerPosition[1] = pos2;
+                    //Takes a random spawn for 1 enemy
+                    Random rpos3 = new Random();
+                    int pos3 = rpos3.Next(1, innerMapSizeL);
+                    Random rpos4 = new Random();
+                    int pos4 = rpos4.Next(1, innerMapSizeW);
+                    currentEnemyPosition[0] = pos3;
+                    currentEnemyPosition[1] = pos4;
+                    firstTimeWall = true;
+                    WallLoop();
+                    map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                    firstTimeMap = false;
+                    DrawMap1();
+                }
                 Console.WriteLine();
+            }
+            static void RandomPosition()
+            {
+                if (firstTimeWall == true)
+                {
+                    Random randomWidth = new Random();
+                    int i = randomWidth.Next(1, innerMapSizeW + 1);
+                    Random randomLength = new Random();
+                    int j = randomWidth.Next(1, innerMapSizeL + 1);
+                    rndpos[1] = i;
+                    rndpos[0] = j;
+                }
+            }
+            static void WallLoop()
+            {
+                if (firstTimeWall == true)
+                {
+                    for (int i = 0; i < amountOfWalls; i++)
+                    {
+                        RandomPosition();
+                        map1[rndpos[0], rndpos[1]] = innerWall;
+                    }
+                }
+                firstTimeWall = false;
+            }
+            static void MapSize()
+            {
+                Console.WriteLine("Warning: Max map size is 64!");
+                Console.WriteLine("Map Length");
+                string answerL = "20";
+                answerL = Console.ReadLine();
+                try
+                {
+                    int result = Int32.Parse(answerL);
+                }
+                catch (FormatException)
+                {
+                    if (answerL == "")
+                    {
+                        answerL = "nothing";
+                    }
+                    Console.WriteLine("Error 1: Cannot convert " + answerL + " to a number.");
+                    MapSize();
+                }
+                if (Int32.Parse(answerL) > biggestMapSize - 2)
+                {
+                    Console.WriteLine("Error 2: Answer too big");
+                    MapSize();
+                }
+                else if (Int32.Parse(answerL) < 5)
+                {
+                    Console.WriteLine("Error 3: Answer too small");
+                    MapSize();
+                }
+                mapSizeL = Int32.Parse(answerL);
+                Console.WriteLine("Map Width");
+                string answerW = Console.ReadLine();
+                try
+                {
+                    int result = Int32.Parse(answerW);
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Error 1: Cannot convert " + answerW + " to a number.");
+                    MapSize();
+                }
+                if (Int32.Parse(answerW) > biggestMapSize - 2)
+                {
+                    Console.WriteLine("Error 2: Answer too big");
+                    MapSize();
+                }
+                else if (Int32.Parse(answerW) < 5)
+                {
+                    Console.WriteLine("Error 3: Answer too small");
+                    MapSize();
+                }
+                mapSizeW = Int32.Parse(answerW);
+                innerMapSizeW = mapSizeW - 2;
+                innerMapSizeL = mapSizeL - 2;
+                amountOfWalls = ((innerMapSizeL * innerMapSizeW)/15) * wallMultiplier;
+                Console.WriteLine(amountOfWalls + "Walls");
+                Console.WriteLine(innerMapSizeW + "InW");
+                Console.WriteLine(innerMapSizeL + "InL");
+                Console.WriteLine(mapSizeW + "OutW");
+                Console.WriteLine(mapSizeL + "OutL");
+                DrawMap1();
+            }
+            static void NewMap()
+            {
+                firstTimeMap = true;
+                MapSize();
+                DrawMap1();
+                AwaitMovementKey();
             }
         }
     }
