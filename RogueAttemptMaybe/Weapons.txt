@@ -5,6 +5,6 @@ Knife,5,25,2.5
 A wooden stick,200,99.99999,0.01
 Greatsword,15,5,1.4
 Mace,18,0,0
-bow,5,60,4
+bow,2,60,10
 Sharp bottle'O water,4,30,2.2
 Axe,12,8,3
