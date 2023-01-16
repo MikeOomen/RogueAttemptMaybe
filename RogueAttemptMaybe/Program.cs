@@ -19,7 +19,7 @@ namespace RogueAttemptMaybe
     //Money *
     //Attack * Mi
     //Inventory *
-    //Classes *       Mi
+    //Classes * Mi
 
     //Enemies: 
     //Movement R
@@ -35,7 +35,9 @@ namespace RogueAttemptMaybe
         static string floorCharacter = "  ";
         static string character = "@ ";
         static string enemy1 = "E ";
-        static string innerWall = "| ";
+        static string innerWall = "[]";
+        static string outerUp = "--";
+        static string outerSide = "| ";
         //Map sizes
         static int[] currentPlayerPosition = { 0, 0 };
         static int[] currentEnemyPosition = { 0, 0 };
@@ -47,8 +49,13 @@ namespace RogueAttemptMaybe
         static int biggestMapSize = 66;
         static int total = 0;
         //Attack
-/*        static string[] weapons = File.ReadAllLines("Weapons.txt");
-        static string[] armors = File.ReadAllLines("Armors.txt");*/
+        static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
+        static string[] weapons = File.ReadAllLines("Weapons.txt");
+        static string[] armors = File.ReadAllLines("Armors.txt");
+        static List<float> starterWeaponDmg = new List<float>();
+        static List<float> starterWeaponCritChance = new List<float>();
+        static List<float> starterWeaponCritMulti = new List<float>();
+        static List<string> starterWeaponName = new List<string>();
         static List<float> weaponDmg = new List<float>();
         static List<float> weaponCritChance = new List<float>();
         static List<float> weaponCritMulti = new List<float>();
@@ -72,6 +79,7 @@ namespace RogueAttemptMaybe
         static bool enemyAlive = true;
         static bool attackHappened = false;
         static int enemyWeapon;
+        static int enemyNumber = 0;
         static Random rndEnemyWeapon = new Random();
         //Input map here
         static string[,] map1 = new string[biggestMapSize, biggestMapSize];
@@ -83,8 +91,16 @@ namespace RogueAttemptMaybe
         static int[] rndpos = new int[4];
         static void Main(string[] args)
         {
-            MapSize();
-/*            for (int i = 0; i < weapons.Length; i++)
+            NewMap();
+            /*for (int i = 0; i < starterWeapons.Length; i++)
+            {
+                string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
+                starterWeaponName.Add(data[0]);
+                starterWeaponDmg.Add(float.Parse(data[1]));
+                starterWeaponCritChance.Add(float.Parse(data[2]));
+                starterWeaponCritMulti.Add(float.Parse(data[3]));
+            }
+            for (int i = 0; i < weapons.Length; i++)
             {
                 string[] data = weapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
                 weaponName.Add(data[0]);
@@ -110,7 +126,7 @@ namespace RogueAttemptMaybe
                 {
                     armorSellMulti.Add(float.Parse(data[5]));
                 }
-            }*/
+            }
             GameStart();
             while (characterHasBeenMade == false)
             {
@@ -127,26 +143,12 @@ namespace RogueAttemptMaybe
             }
             if (characterHasBeenMade == true)
             {
-                //Takes a random spawn for the player
-                Random rpos1 = new Random();
-                int pos1 = rpos1.Next(1, innerMapSizeL);
-                Random rpos2 = new Random();
-                int pos2 = rpos2.Next(1, innerMapSizeW);
-                currentPlayerPosition[0] = pos1;
-                currentPlayerPosition[1] = pos2;
-                //Takes a random spawn for 1 enemy
-                Random rpos3 = new Random();
-                int pos3 = rpos3.Next(1, innerMapSizeL);
-                Random rpos4 = new Random();
-                int pos4 = rpos4.Next(1, innerMapSizeW);
-                currentEnemyPosition[0] = pos3;
-                currentEnemyPosition[1] = pos4;
                 //Starts game
                 NewEnemy();
-                DrawMap1();
+                NewMap();
                 firstTimeMap = false;
                 AwaitMovementKey();
-            }
+            }*/
             static void Move(ConsoleKey key)
             {
                 EnemyMove();
@@ -239,7 +241,7 @@ namespace RogueAttemptMaybe
             {
                 //makes sure you actually use an arrow
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow)
+                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N)
                 {
                     Move(key);
                 }
@@ -470,12 +472,12 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("name:" + name);
                 Console.WriteLine("Select a weapon and press enter to continue");
                 Console.WriteLine("-----------------------------------------------------------");
-                for (int i = 0; i < weaponName.Count; i++)
+                for (int i = 0; i < starterWeaponName.Count; i++)
                 {
-                    Console.Write(weaponName[i] + " ");
-                    Console.Write("Dmg:" + weaponDmg[i] + " ");
-                    Console.Write("CC:" + weaponCritChance[i] + " ");
-                    Console.WriteLine("CMulti:" + weaponCritMulti[i]);
+                    Console.Write(starterWeaponName[i] + " ");
+                    Console.Write("Dmg:" + starterWeaponDmg[i] + " ");
+                    Console.Write("CC:" + starterWeaponCritChance[i] + " ");
+                    Console.WriteLine("CMulti:" + starterWeaponCritMulti[i]);
                     Console.WriteLine("-----------------------------------------------------------");
                 }
                 Console.WriteLine("Current weapon: None");
@@ -490,12 +492,12 @@ namespace RogueAttemptMaybe
                     Console.WriteLine(name);
                     Console.WriteLine("Select a weapon and press enter to continue");
                     Console.WriteLine("-----------------------------------------------------------");
-                    for (int i = 0; i < weaponName.Count; i++)
+                    for (int i = 0; i < starterWeaponName.Count; i++)
                     {
-                        Console.Write(weaponName[i] + " ");
-                        Console.Write("Dmg:" + weaponDmg[i] + " ");
-                        Console.Write("CC:" + weaponCritChance[i] + " ");
-                        Console.WriteLine("CMulti:" + weaponCritMulti[i]);
+                        Console.Write(starterWeaponName[i] + " ");
+                        Console.Write("Dmg:" + starterWeaponDmg[i] + " ");
+                        Console.Write("CC:" + starterWeaponCritChance[i] + " ");
+                        Console.WriteLine("CMulti:" + starterWeaponCritMulti[i]);
                         Console.WriteLine("-----------------------------------------------------------");
                     }
                     WeaponSelect(select);
@@ -503,19 +505,19 @@ namespace RogueAttemptMaybe
             }
             static void WeaponSelect(ConsoleKey select)
             {
-/*                switch (select)
+                switch (select)
                 {
                     case ConsoleKey.UpArrow:
                         {
-                            if (selectedWeapon < weapons.Length - 1)
+                            if (selectedWeapon < starterWeapons.Length - 1)
                             {
                                 selectedWeapon = selectedWeapon + 1;
-                                Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                                Console.WriteLine("Current weapon:" + starterWeaponName[selectedWeapon]);
                             }
                             else
                             {
                                 selectedWeapon = 0;
-                                Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                                Console.WriteLine("Current weapon:" + starterWeaponName[selectedWeapon]);
                             }
                             break;
                         }
@@ -524,33 +526,44 @@ namespace RogueAttemptMaybe
                             if (selectedWeapon > 0)
                             {
                                 selectedWeapon = selectedWeapon - 1;
-                                Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                                Console.WriteLine("Current weapon:" + starterWeaponName[selectedWeapon]);
                             }
                             else
                             {
-                                selectedWeapon = weapons.Length - 1;
-                                Console.WriteLine("Current weapon:" + weaponName[selectedWeapon]);
+                                selectedWeapon = starterWeapons.Length - 1;
+                                Console.WriteLine("Current weapon:" + starterWeaponName[selectedWeapon]);
                             }
                             break;
                         }
-                }*/
+                }
             }
             static void NewEnemy()
             {
-                //enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
-                currentEnemyDmg = weaponDmg[enemyWeapon];
-                currentEnemyCrit = weaponCritChance[enemyWeapon];
-                currentEnemyMulti = weaponCritMulti[enemyWeapon];
-                if (enemyWeapon == 2)
+                if (enemyNumber == 0)
+                {
+                    enemyWeapon = rndEnemyWeapon.Next(0, starterWeapons.Length);
+                    currentEnemyDmg = starterWeaponDmg[enemyWeapon];
+                    currentEnemyCrit = starterWeaponCritChance[enemyWeapon];
+                    currentEnemyMulti = starterWeaponCritMulti[enemyWeapon];
+                }
+                else
+                {
+                    enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
+                    currentEnemyDmg = weaponDmg[enemyWeapon];
+                    currentEnemyCrit = weaponCritChance[enemyWeapon];
+                    currentEnemyMulti = weaponCritMulti[enemyWeapon];
+                }
+                if (enemyWeapon == 2 && enemyNumber != 0)
                 {
                     currentEnemyCrit = currentEnemyCrit - 25;
                     currentEnemyMulti = currentEnemyMulti - 10;
                 }
-                if (enemyWeapon == 0)
+                if (enemyWeapon == 0 && enemyNumber != 0)
                 {
                     currentEnemyCrit = currentEnemyCrit - 20;
                     currentEnemyDmg = currentEnemyDmg - 15;
                 }
+                enemyNumber = enemyNumber + 1;
             }
             static void DrawMap1()
             {
@@ -591,7 +604,7 @@ namespace RogueAttemptMaybe
                     {
                         for (int i = 1; i < innerMapSizeL + 1; i++)
                         {
-                            map1[mapWidth, i] = floorCharacter;
+                            //map1[mapWidth, i] = floorCharacter;
                         }
                         for (int i = 1; i < innerMapSizeW + 1; i++)
                         {
@@ -599,21 +612,21 @@ namespace RogueAttemptMaybe
                         }
                         if (length <= innerMapSizeL)
                         {
-                            map1[length, 0] = "| ";
-                            map1[length, mapSizeW - 1] = "| ";
+                            map1[length, 0] = outerSide;
+                            map1[length, mapSizeW - 1] = outerSide;
                         }
                         for (int i = 0; i < mapSizeW; i++)
                         {
-                            map1[0, i] = "--";
+                            map1[0, i] = outerUp;
                         }
                         for (int i = 0; i < mapSizeW; i++)
                         {
-                            map1[mapSizeL - 1, i] = "--";
+                            map1[mapSizeL - 1, i] = outerUp;
                         }
                         map1[0, 0] = "|";
                         map1[mapSizeL - 1, mapSizeW - 1] = "-|";
                         map1[0, mapSizeW - 1] = "-|";
-                        map1[mapSizeL - 1, 0] = "|";
+                        map1[mapSizeL - 1, 0] = outerSide;
                         map1[mapSizeL, width] = "";
                         map1[mapSizeL + 1, 0] = "";
                     }
@@ -653,7 +666,6 @@ namespace RogueAttemptMaybe
                     int j = randomWidth.Next(1, innerMapSizeL + 1);
                     rndpos[1] = i;
                     rndpos[0] = j;
-                    Console.WriteLine("Placedwall");
                 }
             }
             static void WallLoop()
@@ -662,7 +674,6 @@ namespace RogueAttemptMaybe
                 {
                     for (int i = 0; i < amountOfWalls; i++)
                     {
-                        Console.WriteLine("Walls");
                         RandomPosition();
                         map1[rndpos[0], rndpos[1]] = innerWall;
                     }
@@ -671,7 +682,8 @@ namespace RogueAttemptMaybe
             }
             static void MapSize()
             {
-                Console.WriteLine("Warning: Max map size is 64!");
+                Console.WriteLine("Warning: Max size is 64!");
+                Console.WriteLine("Warning: Min size is 5!");
                 Console.WriteLine("Map Length");
                 string answerL = "20";
                 answerL = Console.ReadLine();
@@ -723,7 +735,7 @@ namespace RogueAttemptMaybe
                 mapSizeW = Int32.Parse(answerW);
                 innerMapSizeW = mapSizeW - 2;
                 innerMapSizeL = mapSizeL - 2;
-                amountOfWalls = (mapSizeL + mapSizeW) * wallMultiplier;
+                amountOfWalls = ((innerMapSizeL * innerMapSizeW) / 15) * wallMultiplier;
                 Console.WriteLine(amountOfWalls + "Walls");
                 Console.WriteLine(innerMapSizeW + "InW");
                 Console.WriteLine(innerMapSizeL + "InL");
