@@ -11,9 +11,6 @@
     <None Update="Armors.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="StarterWeapons.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Weapons.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
