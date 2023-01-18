@@ -38,6 +38,7 @@ namespace RogueAttemptMaybe
         static string innerWall = "[]";
         static string outerUp = "--";
         static string outerSide = "| ";
+        static string rightConers = "|-";
         //Map sizes
         static int[] currentPlayerPosition = { 0, 0 };
         static int[] currentEnemyPosition = { 0, 0 };
@@ -92,7 +93,7 @@ namespace RogueAttemptMaybe
         static void Main(string[] args)
         {
             NewMap();
-            /*for (int i = 0; i < starterWeapons.Length; i++)
+            for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
                 starterWeaponName.Add(data[0]);
@@ -148,7 +149,7 @@ namespace RogueAttemptMaybe
                 NewMap();
                 firstTimeMap = false;
                 AwaitMovementKey();
-            }*/
+            }
             static void Move(ConsoleKey key)
             {
                 EnemyMove();
@@ -602,33 +603,29 @@ namespace RogueAttemptMaybe
                     }
                     if (firstTimeMap == true)
                     {
-                        for (int i = 1; i < innerMapSizeL + 1; i++)
-                        {
-                            //map1[mapWidth, i] = floorCharacter;
-                        }
                         for (int i = 1; i < innerMapSizeW + 1; i++)
                         {
-                            map1[mapLength, i] = floorCharacter;
+                            map1[mapLength, i] = floorCharacter; //Floor
                         }
                         if (length <= innerMapSizeL)
                         {
-                            map1[length, 0] = outerSide;
-                            map1[length, mapSizeW - 1] = outerSide;
+                            map1[length, 0] = outerSide; //LeftWall
+                            map1[length, mapSizeW - 1] = outerSide; // RightWall
                         }
                         for (int i = 0; i < mapSizeW; i++)
                         {
-                            map1[0, i] = outerUp;
+                            map1[0, i] = outerUp; //UpWall
                         }
                         for (int i = 0; i < mapSizeW; i++)
                         {
-                            map1[mapSizeL - 1, i] = outerUp;
+                            map1[mapSizeL - 1, i] = outerUp; //DownWall
                         }
-                        map1[0, 0] = "|";
-                        map1[mapSizeL - 1, mapSizeW - 1] = "-|";
-                        map1[0, mapSizeW - 1] = "-|";
-                        map1[mapSizeL - 1, 0] = outerSide;
-                        map1[mapSizeL, width] = "";
-                        map1[mapSizeL + 1, 0] = "";
+                        map1[0, 0] = rightConers; //UpLeftCorner
+                        map1[mapSizeL - 1, mapSizeW - 1] = outerSide; //BottomRightCorner
+                        map1[0, mapSizeW - 1] = outerSide; //UpRightCorner
+                        map1[mapSizeL - 1, 0] = rightConers; //BottomLeftCorner
+                        map1[mapSizeL, width] = ""; //Hard fixes something
+                        map1[mapSizeL + 1, 0] = ""; //Hard fixes something
                     }
                     Console.Write(map1[length, width]);
                 }
