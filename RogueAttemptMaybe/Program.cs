@@ -729,49 +729,57 @@ namespace RogueAttemptMaybe
                 int startr1D = 0;
                 int mapSizeFixer = 0;
                 Random rsize1 = new Random();
-                int size1 = rsize1.Next(2, 5);
+                int size1 = rsize1.Next(3, 7);
                 Random rsize2 = new Random();
-                int size2 = rsize1.Next(2, 5);
+                int size2 = rsize1.Next(3, 7);
                 Console.WriteLine("Sides" + size1);
                 Console.WriteLine("Ups" + size2);
                 startr1L = pos2 - size1;
                 startr1W = pos2 + size1;
                 startr1U = pos1 - size2;
                 startr1D = pos1 + size2;
+                Console.WriteLine();
+                Console.WriteLine("Before Math");
+                Console.WriteLine("Room Coords: L" + pos1 + " and W" + pos2);
+                Console.WriteLine("L From U" + startr1U + " to D" + startr1D);
+                Console.WriteLine("W From L" + startr1L + " to W" + startr1W);
+                Console.WriteLine();
                 if (startr1L <= 1)
                 {
                     mapSizeFixer = -startr1L;
-                    Console.WriteLine(mapSizeFixer + "negative length");
-                    startr1W = startr1W + mapSizeFixer;
+                    Console.WriteLine(mapSizeFixer + " negative length");
+                    startr1W = startr1W + mapSizeFixer + 2;
                     startr1L = 2;
                 }
                 if (startr1U <= 0)
                 {
                     mapSizeFixer = -startr1U;
-                    Console.WriteLine(mapSizeFixer + "negative up");
-                    startr1D = startr1D + mapSizeFixer;
+                    Console.WriteLine(mapSizeFixer + " negative up");
+                    startr1D = startr1D + mapSizeFixer + 2;
                     startr1U = 1;
                 }
                 //Sides
                 if (startr1W >= innerMapSizeW)
                 {
                     mapSizeFixer = -startr1W;
-                    Console.WriteLine(mapSizeFixer + "negative width");
-                    //startr1L = startr1L + (mapSizeFixer - pos1);
-                    Console.WriteLine(innerMapSizeW);
+                    Console.WriteLine(mapSizeFixer + " negative width");
+                    startr1L = startr1L + (mapSizeFixer + innerMapSizeW);
+                    Console.WriteLine(innerMapSizeW + " Inner Map Size W");
                     startr1W = innerMapSizeW;
                 }
                 if (startr1D >= innerMapSizeL)
                 {
                     mapSizeFixer = -startr1D;
-                    Console.WriteLine(mapSizeFixer + "negative down");
-                    //startr1U = startr1U + (mapSizeFixer - pos2);
-                    Console.WriteLine(innerMapSizeL);
+                    Console.WriteLine(mapSizeFixer + " negative down");
+                    startr1U = startr1U + (mapSizeFixer + innerMapSizeL);
+                    Console.WriteLine(innerMapSizeL + " Inner Map Size L");
                     startr1D = innerMapSizeL;
                 }
-                Console.WriteLine("From Map L" + pos1 + " to Map W" + pos2);
-                Console.WriteLine("From L" + startr1L + " to W" + startr1W);
-                Console.WriteLine("From U" + startr1U + " to D" + startr1D);
+                Console.WriteLine();
+                Console.WriteLine("After Math");
+                Console.WriteLine("Room Coords: L" + pos1 + " and W" + pos2);
+                Console.WriteLine("L From U" + startr1U + " to D" + startr1D);
+                Console.WriteLine("W From L" + startr1L + " to W" + startr1W);
                 total = 0;
                 int length = 0;
                 for (int width = 1; total < mapSizeL * mapSizeW; width++)
@@ -782,7 +790,7 @@ namespace RogueAttemptMaybe
                     {
                         if (length < startr1D && length >= startr1U)
                         {
-                            map1[length, width] = width.ToString();
+                            map1[length, width] = floorCharacter;
                         }
                     }
                     if (width == startr1W && length < startr1D && length >= startr1U)
@@ -810,7 +818,7 @@ namespace RogueAttemptMaybe
                         //Left Corners
                         map1[length, width] = leftConers;
                     }
-                    map1[pos1, pos2] = "md";
+                    //map1[pos1, pos2] = "md";
                     //The checking where we are area
                     if (width > innerMapSizeW)
                     {
