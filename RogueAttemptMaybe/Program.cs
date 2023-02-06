@@ -35,7 +35,7 @@ namespace RogueAttemptMaybe
         static string floorCharacter = "  ";
         static string character = "@ ";
         static string enemy1 = "E ";
-        static string innerWall = "[]";
+        static string innerWall = "{}";
         static string outerUp = "--";
         static string outerSide = "| ";
         static string rightConers = "|-";
@@ -68,7 +68,7 @@ namespace RogueAttemptMaybe
         static List<float> armorMoneyMulti = new List<float>();
         static List<float> armorSellMulti = new List<float>();
         static int selectedWeapon;
-        static string currentWeapon;
+        static string currentWeapon = "Error";
         static float currentDmg;
         static float currentCrit;
         static float currentCritMulti;
@@ -88,11 +88,10 @@ namespace RogueAttemptMaybe
         static bool firstTimeWall = true;
         static int amountOfWalls = 32;
         static int wallMultiplier = 2;
-        static int walls = 0;
         static int[] rndpos = new int[4];
         static void Main(string[] args)
         {
-            NewMap();
+            //NewMap();
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -140,6 +139,13 @@ namespace RogueAttemptMaybe
                     currentCrit = weaponCritChance[selectedWeapon];
                     currentCritMulti = weaponCritMulti[selectedWeapon];
                     characterHasBeenMade = true;
+                    if (currentWeapon == "Error")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Error 5:");
+                        Console.WriteLine("You have no weapon!");
+                        Environment.Exit(0);
+                    }
                 }
             }
             if (characterHasBeenMade == true)
@@ -568,90 +574,102 @@ namespace RogueAttemptMaybe
             }
             static void DrawMap1()
             {
-                //Clears the console so you dont see the previous stuff.
-                //Console.Clear();
-                //Makes it so 2 attacks cant happen at the same time
-                attackHappened = false;
-                //Draws the map
-                total = 0;
-                int length = 0;
-                length = 0;
-                int mapLength = 0;
-                int mapWidth = 0;
-                for (int width = 0; total < mapSizeL * mapSizeW; width++)
+                try
                 {
-                    total = width * length;
-                    if (width == mapSizeW)
+                    //Clears the console so you dont see the previous stuff.
+                    //Console.Clear();
+                    //Makes it so 2 attacks cant happen at the same time
+                    attackHappened = false;
+                    //Draws the map
+                    total = 0;
+                    int length = 0;
+                    length = 0;
+                    int mapLength = 0;
+                    int mapWidth = 0;
+                    for (int width = 0; total < mapSizeL * mapSizeW; width++)
                     {
-                        //go to next map line
-                        Console.WriteLine();
-                        mapLength++;
-                        mapWidth++;
-                        if (mapLength >= innerMapSizeL)
-                        {
-                            mapLength = innerMapSizeL;
-                        }
-                        if (mapWidth >= innerMapSizeL)
-                        {
-                            mapWidth = innerMapSizeW;
-                        }
+                        total = width * length;
                         if (width == mapSizeW)
                         {
-                            width = 0;
-                            length++;
+                            //go to next map line
+                            Console.WriteLine();
+                            mapLength++;
+                            mapWidth++;
+                            if (mapLength >= innerMapSizeL)
+                            {
+                                mapLength = innerMapSizeL;
+                            }
+                            if (mapWidth >= innerMapSizeL)
+                            {
+                                mapWidth = innerMapSizeW;
+                            }
+                            if (width == mapSizeW)
+                            {
+                                width = 0;
+                                length++;
+                            }
                         }
+                        if (firstTimeMap == true)
+                        {
+                            for (int i = 1; i < innerMapSizeW + 1; i++)
+                            {
+                                map1[mapLength, i] = floorCharacter; //Floor
+                            }
+                            if (length <= innerMapSizeL)
+                            {
+                                map1[length, 0] = outerSide; //LeftWall
+                                map1[length, mapSizeW - 1] = outerSide; // RightWall
+                            }
+                            for (int i = 0; i < mapSizeW; i++)
+                            {
+                                map1[0, i] = outerUp; //UpWall
+                            }
+                            for (int i = 0; i < mapSizeW; i++)
+                            {
+                                map1[mapSizeL - 1, i] = outerUp; //DownWall
+                            }
+                            map1[0, 0] = rightConers; //UpLeftCorner
+                            map1[mapSizeL - 1, mapSizeW - 1] = outerSide; //BottomRightCorner
+                            map1[0, mapSizeW - 1] = outerSide; //UpRightCorner
+                            map1[mapSizeL - 1, 0] = rightConers; //BottomLeftCorner
+                            map1[mapSizeL, width] = ""; //Hard fixes something
+                            map1[mapSizeL + 1, 0] = ""; //Hard fixes something
+                        }
+                        Console.Write(map1[length, width]);
                     }
                     if (firstTimeMap == true)
                     {
-                        for (int i = 1; i < innerMapSizeW + 1; i++)
-                        {
-                            map1[mapLength, i] = floorCharacter; //Floor
-                        }
-                        if (length <= innerMapSizeL)
-                        {
-                            map1[length, 0] = outerSide; //LeftWall
-                            map1[length, mapSizeW - 1] = outerSide; // RightWall
-                        }
-                        for (int i = 0; i < mapSizeW; i++)
-                        {
-                            map1[0, i] = outerUp; //UpWall
-                        }
-                        for (int i = 0; i < mapSizeW; i++)
-                        {
-                            map1[mapSizeL - 1, i] = outerUp; //DownWall
-                        }
-                        map1[0, 0] = rightConers; //UpLeftCorner
-                        map1[mapSizeL - 1, mapSizeW - 1] = outerSide; //BottomRightCorner
-                        map1[0, mapSizeW - 1] = outerSide; //UpRightCorner
-                        map1[mapSizeL - 1, 0] = rightConers; //BottomLeftCorner
-                        map1[mapSizeL, width] = ""; //Hard fixes something
-                        map1[mapSizeL + 1, 0] = ""; //Hard fixes something
+                        Random rpos1 = new Random();
+                        int pos1 = rpos1.Next(1, innerMapSizeL);
+                        Random rpos2 = new Random();
+                        int pos2 = rpos2.Next(1, innerMapSizeW);
+                        currentPlayerPosition[0] = pos1;
+                        currentPlayerPosition[1] = pos2;
+                        //Takes a random spawn for 1 enemy
+                        Random rpos3 = new Random();
+                        int pos3 = rpos3.Next(1, innerMapSizeL);
+                        Random rpos4 = new Random();
+                        int pos4 = rpos4.Next(1, innerMapSizeW);
+                        currentEnemyPosition[0] = pos3;
+                        currentEnemyPosition[1] = pos4;
+                        firstTimeWall = true;
+                        WallLoop();
+                        map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                        map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                        firstTimeMap = false;
+                        DrawMap1();
                     }
-                    Console.Write(map1[length, width]);
+                    Console.WriteLine();
                 }
-                if (firstTimeMap == true)
+                catch (IndexOutOfRangeException)
                 {
-                    Random rpos1 = new Random();
-                    int pos1 = rpos1.Next(1, innerMapSizeL);
-                    Random rpos2 = new Random();
-                    int pos2 = rpos2.Next(1, innerMapSizeW);
-                    currentPlayerPosition[0] = pos1;
-                    currentPlayerPosition[1] = pos2;
-                    //Takes a random spawn for 1 enemy
-                    Random rpos3 = new Random();
-                    int pos3 = rpos3.Next(1, innerMapSizeL);
-                    Random rpos4 = new Random();
-                    int pos4 = rpos4.Next(1, innerMapSizeW);
-                    currentEnemyPosition[0] = pos3;
-                    currentEnemyPosition[1] = pos4;
-                    firstTimeWall = true;
-                    WallLoop();
-                    map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
-                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                    firstTimeMap = false;
-                    DrawMap1();
+                    Console.Clear();
+                    Console.WriteLine("Error 4:");
+                    Console.WriteLine("Something is outside the range of the map!");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    NewMap();
                 }
-                Console.WriteLine();
             }
             static void RandomPosition()
             {
@@ -694,17 +712,29 @@ namespace RogueAttemptMaybe
                     {
                         answerL = "nothing";
                     }
-                    Console.WriteLine("Error 1: Cannot convert " + answerL + " to a number.");
+                    Console.Clear();
+                    Console.WriteLine("Error 1:");
+                    Console.WriteLine("Cannot convert " + answerL + " to a number.");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
                     MapSize();
                 }
                 if (Int32.Parse(answerL) > biggestMapSize - 2)
                 {
-                    Console.WriteLine("Error 2: Answer too big");
+                    Console.Clear();
+                    Console.WriteLine("Error 2:");
+                    Console.WriteLine("Answer too big");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
                     MapSize();
                 }
                 else if (Int32.Parse(answerL) < 5)
                 {
-                    Console.WriteLine("Error 3: Answer too small");
+                    Console.Clear();
+                    Console.WriteLine("Error 3:");
+                    Console.WriteLine("Answer too small");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
                     MapSize();
                 }
                 mapSizeL = Int32.Parse(answerL);
@@ -716,17 +746,29 @@ namespace RogueAttemptMaybe
                 }
                 catch (FormatException)
                 {
-                    Console.WriteLine("Error 1: Cannot convert " + answerW + " to a number.");
+                    Console.Clear();
+                    Console.WriteLine("Error 1:");
+                    Console.WriteLine("Cannot convert " + answerW + " to a number.");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
                     MapSize();
                 }
                 if (Int32.Parse(answerW) > biggestMapSize - 2)
                 {
-                    Console.WriteLine("Error 2: Answer too big");
+                    Console.Clear();
+                    Console.WriteLine("Error 2:");
+                    Console.WriteLine("Answer too big");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
                     MapSize();
                 }
                 else if (Int32.Parse(answerW) < 5)
                 {
-                    Console.WriteLine("Error 3: Answer too small");
+                    Console.Clear();
+                    Console.WriteLine("Error 3:");
+                    Console.WriteLine("Answer too small");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
                     MapSize();
                 }
                 mapSizeW = Int32.Parse(answerW);
@@ -739,6 +781,7 @@ namespace RogueAttemptMaybe
                 Console.WriteLine(mapSizeW + "OutW");
                 Console.WriteLine(mapSizeL + "OutL");
                 DrawMap1();
+                AwaitMovementKey();
             }
             static void NewMap()
             {
