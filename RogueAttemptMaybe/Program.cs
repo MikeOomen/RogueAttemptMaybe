@@ -7,7 +7,8 @@ namespace RogueAttemptMaybe
     //Current bugs:
     //enemies attack your last position.
 
-
+    //Console.Beep(600 , 1000); , Long quiet beep
+    //Console.Beep(750 , 500); , Short louder beep
     //To-Do list:
     //Map R
     //GUI *
@@ -51,6 +52,10 @@ namespace RogueAttemptMaybe
         static int innerMapSizeW = 0;
         static int biggestMapSize = 66;
         static int total = 0;
+        static int startr1L = 0;
+        static int startr1W = 0;
+        static int startr1U = 0;
+        static int startr1D = 0;
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
         static string[] weapons = File.ReadAllLines("Weapons.txt");
@@ -171,13 +176,13 @@ namespace RogueAttemptMaybe
                                 currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
                                 map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
                                 CheckIfAttack("Player");
-                                DrawMap1();
+                                DrawMap3();
                                 AwaitMovementKey();
                             }
                             else
                             {
                                 CheckIfAttack("Player");
-                                DrawMap1();
+                                DrawMap3();
                                 AwaitMovementKey();
                             }
                             break;
@@ -190,13 +195,13 @@ namespace RogueAttemptMaybe
                                 currentPlayerPosition[0] = currentPlayerPosition[0] - 1;
                                 map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
                                 CheckIfAttack("Player");
-                                DrawMap1();
+                                DrawMap3();
                                 AwaitMovementKey();
                             }
                             else
                             {
                                 CheckIfAttack("Player");
-                                DrawMap1();
+                                DrawMap3();
                                 AwaitMovementKey();
                             }
                             break;
@@ -209,13 +214,13 @@ namespace RogueAttemptMaybe
                                 currentPlayerPosition[1] = currentPlayerPosition[1] - 1;
                                 map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
                                 CheckIfAttack("Player");
-                                DrawMap1();
+                                DrawMap3();
                                 AwaitMovementKey();
                             }
                             else
                             {
                                 CheckIfAttack("Player");
-                                DrawMap1();
+                                DrawMap3();
                                 AwaitMovementKey();
                             }
                             break;
@@ -228,13 +233,13 @@ namespace RogueAttemptMaybe
                                 currentPlayerPosition[1] = currentPlayerPosition[1] + 1;
                                 map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
                                 CheckIfAttack("Player");
-                                DrawMap1();
+                                DrawMap3();
                                 AwaitMovementKey();
                             }
                             else
                             {
                                 CheckIfAttack("Player");
-                                DrawMap1();
+                                DrawMap3();
                                 AwaitMovementKey();
                             }
                             break;
@@ -244,13 +249,18 @@ namespace RogueAttemptMaybe
                             MakeMap3Nothing();
                             break;
                         }
+                    case ConsoleKey.M:
+                        {
+                            NewMap();
+                            break;
+                        }
                 }
             }
             static void AwaitMovementKey()
             {
                 //makes sure you actually use an arrow
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N)
+                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N || key == ConsoleKey.M)
                 {
                     Move(key);
                 }
@@ -719,19 +729,19 @@ namespace RogueAttemptMaybe
             }
             static void CreateMap3()
             {
+                startr1L = 0;
+                startr1W = 0;
+                startr1U = 0;
+                startr1D = 0;
                 Random rpos1 = new Random();
                 int pos1 = rpos1.Next(0, mapSizeL - 1);
                 Random rpos2 = new Random();
                 int pos2 = rpos2.Next(0, mapSizeW - 1);
-                int startr1L = 0;
-                int startr1W = 0;
-                int startr1U = 0;
-                int startr1D = 0;
                 int mapSizeFixer = 0;
                 Random rsize1 = new Random();
-                int size1 = rsize1.Next(3, 7);
                 Random rsize2 = new Random();
-                int size2 = rsize1.Next(3, 7);
+                int size1 = rsize1.Next(3,7);
+                int size2 = rsize1.Next(3,7);
                 Console.WriteLine("Sides" + size1);
                 Console.WriteLine("Ups" + size2);
                 startr1L = pos2 - size1;
@@ -831,8 +841,41 @@ namespace RogueAttemptMaybe
                         length = 0;
                         total = mapSizeL * mapSizeW;
                     }
+                    if (firstTimeMap == true)
+                    {
+                        PlayerPosition();
+                        //Takes a random spawn for 1 enemy
+                        firstTimeMap = false;
+                        Console.WriteLine("Player Pos: " + currentPlayerPosition[0] + " " + currentPlayerPosition[1]);
+                        Console.WriteLine("Enemy Pos: " + currentEnemyPosition[0] + " " + currentEnemyPosition[1]);
+                    }
+                    map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
                 }
                 DrawMap3();
+            }
+            static void PlayerPosition()
+            {
+                Random rpos3 = new Random();
+                int pos3 = rpos3.Next(startr1U, startr1D);
+                Random rpos4 = new Random();
+                int pos4 = rpos4.Next(startr1L, startr1W);
+                currentPlayerPosition[0] = pos3;
+                currentPlayerPosition[1] = pos4;
+                EnemyPosition();
+            }
+            static void EnemyPosition()
+            {
+                Random rpos5 = new Random();
+                int pos5 = rpos5.Next(startr1U, startr1D);
+                Random rpos6 = new Random();
+                int pos6 = rpos6.Next(startr1L, startr1W);
+                currentEnemyPosition[0] = pos5;
+                currentEnemyPosition[1] = pos6;
+                if (currentEnemyPosition[0] == currentPlayerPosition[0] && currentEnemyPosition[1] == currentPlayerPosition[1])
+                {
+                    EnemyPosition();
+                }
             }
             static void MakeMap3Nothing()
             {
@@ -842,6 +885,7 @@ namespace RogueAttemptMaybe
                     //Console.Clear();
                     //Makes it so 2 attacks cant happen at the same time
                     attackHappened = false;
+                    firstTimeMap = true;
                     //Draws the map
                     total = 0;
                     int length = 0;
