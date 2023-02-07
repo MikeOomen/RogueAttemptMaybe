@@ -52,10 +52,18 @@ namespace RogueAttemptMaybe
         static int innerMapSizeW = 0;
         static int biggestMapSize = 66;
         static int total = 0;
+        static int pos3 = 0;
+        static int pos4 = 0;
         static int startr1L = 0;
         static int startr1W = 0;
         static int startr1U = 0;
         static int startr1D = 0;
+        static int startr2L = 0;
+        static int startr2W = 0;
+        static int startr2U = 0;
+        static int startr2D = 0;
+        static bool saidStats = false;
+        static int amountOfFails = 0;
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
         static string[] weapons = File.ReadAllLines("Weapons.txt");
@@ -729,6 +737,8 @@ namespace RogueAttemptMaybe
             }
             static void CreateMap3()
             {
+                amountOfFails = 0;
+                saidStats = false;
                 startr1L = 0;
                 startr1W = 0;
                 startr1U = 0;
@@ -740,8 +750,8 @@ namespace RogueAttemptMaybe
                 int mapSizeFixer = 0;
                 Random rsize1 = new Random();
                 Random rsize2 = new Random();
-                int size1 = rsize1.Next(3,7);
-                int size2 = rsize1.Next(3,7);
+                int size1 = rsize1.Next(6,7);
+                int size2 = rsize1.Next(6,7);
                 Console.WriteLine("Sides" + size1);
                 Console.WriteLine("Ups" + size2);
                 startr1L = pos2 - size1;
@@ -790,6 +800,18 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("Room Coords: L" + pos1 + " and W" + pos2);
                 Console.WriteLine("L From U" + startr1U + " to D" + startr1D);
                 Console.WriteLine("W From L" + startr1L + " to W" + startr1W);
+                //Room 2
+                startr2L = 0;
+                startr2W = 0;
+                startr2U = 0;
+                startr2D = 0;
+                RoomPosition(pos1 , pos2);
+                mapSizeFixer = 0;
+                Console.WriteLine();
+                Console.WriteLine("After Math");
+                Console.WriteLine("Room Coords: L" + pos3 + " and W" + pos4);
+                Console.WriteLine("L From U" + startr2U + " to D" + startr2D);
+                Console.WriteLine("W From L" + startr2L + " to W" + startr2W);
                 total = 0;
                 int length = 0;
                 for (int width = 1; total < mapSizeL * mapSizeW; width++)
@@ -828,6 +850,39 @@ namespace RogueAttemptMaybe
                         //Left Corners
                         map1[length, width] = leftConers;
                     }
+                    //Room 2
+                    if (width < startr2W && width >= startr2L)
+                    {
+                        if (length < startr2D && length >= startr2U)
+                        {
+                            map1[length, width] = floorCharacter;
+                        }
+                    }
+                    if (width == startr2W && length < startr2D && length >= startr2U)
+                    {
+                        //Right wall
+                        map1[length, width] = outerSideR;
+                    }
+                    if (width == startr2L - 1 && length < startr2D && length >= startr2U)
+                    {
+                        //Left wall
+                        map1[length, width] = outerSideL;
+                    }
+                    if (length == startr2D && width < startr2W && width >= startr2L || length == startr2U - 1 && width < startr2W && width >= startr2L)
+                    {
+                        //Up and Down
+                        map1[length, width] = outerUp;
+                    }
+                    if (length == startr2U - 1 && width == startr2L - 1 || length == startr2D && width == startr2L - 1)
+                    {
+                        //Right corners
+                        map1[length, width] = rightConers;
+                    }
+                    if (length == startr2U - 1 && width == startr2W || length == startr2D && width == startr2W)
+                    {
+                        //Left Corners
+                        map1[length, width] = leftConers;
+                    }
                     //map1[pos1, pos2] = "md";
                     //The checking where we are area
                     if (width > innerMapSizeW)
@@ -853,6 +908,123 @@ namespace RogueAttemptMaybe
                     map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
                 }
                 DrawMap3();
+            }
+            static void RoomPosition(int pos1 , int pos2)
+            {
+
+                Random rpos3 = new Random();
+                pos3 = rpos3.Next(0, mapSizeL - 1);
+                Random rpos4 = new Random();
+                pos4 = rpos4.Next(0, mapSizeW - 1);
+                if (pos3 > pos1 - 14 && pos3 < pos1 + 14)
+                {
+                    Console.WriteLine("Fail3");
+                    amountOfFails++;
+                    if (amountOfFails >= 10)
+                    {
+                        MakeMap3Nothing();
+                    }
+                    RoomPosition(pos1 , pos2);
+                }
+                else
+                {
+                    if (pos4 > pos2 - 14 && pos4 < pos2 + 14)
+                    {
+                        Console.WriteLine("Fail4");
+                        amountOfFails++;
+                        if (amountOfFails >= 10)
+                        {
+                            MakeMap3Nothing();
+                        }
+                        RoomPosition(pos1, pos2);
+                    }
+                }
+                Random rsize3 = new Random();
+                Random rsize4 = new Random();
+                int size3 = rsize3.Next(3, 7);
+                int size4 = rsize4.Next(3, 7);
+                int mapSizeFixer = 0;
+                startr2L = pos4 - size3;
+                startr2W = pos4 + size3;
+                startr2U = pos3 - size4;
+                startr2D = pos3 + size4;
+                if (saidStats == false)
+                {
+                    Console.WriteLine("Sides" + size3);
+                    Console.WriteLine("Ups" + size4);
+                    Console.WriteLine();
+                    Console.WriteLine("Before Math");
+                    Console.WriteLine("Room Coords: L" + pos3 + " and W" + pos4);
+                    Console.WriteLine("L From U" + startr2U + " to D" + startr2D);
+                    Console.WriteLine("W From L" + startr2L + " to W" + startr2W);
+                    Console.WriteLine();
+                    saidStats = true;
+                }
+                if (startr2L <= 1)
+                {
+                    mapSizeFixer = -startr2L;
+                    startr2W = startr2W + mapSizeFixer + 2;
+                    startr2L = 2;
+                }
+                if (startr2U <= 0)
+                {
+                    mapSizeFixer = -startr2U;
+                    startr2D = startr2D + mapSizeFixer + 2;
+                    startr2U = 1;
+                }
+                //Sides
+                if (startr2W >= innerMapSizeW)
+                {
+                    mapSizeFixer = -startr2W;
+                    startr2L = startr2L + (mapSizeFixer + innerMapSizeW);
+                    startr2W = innerMapSizeW;
+                }
+                if (startr2D >= innerMapSizeL)
+                {
+                    mapSizeFixer = -startr2D;
+                    startr2U = startr2U + (mapSizeFixer + innerMapSizeL);
+                    startr2D = innerMapSizeL;
+                }
+                if (startr2D <= startr1D && startr2D >= startr1U + 2)
+                {
+                    Console.WriteLine("Fail");
+                    amountOfFails++;
+                    if (amountOfFails >= 10)
+                    {
+                        MakeMap3Nothing();
+                    }
+                    RoomPosition(pos1, pos2);
+                }
+                if (startr2L <= startr1L && startr2L <= startr1W + 2)
+                {
+                    Console.WriteLine("Fail2");
+                    amountOfFails++;
+                    if (amountOfFails >= 10)
+                    {
+                        MakeMap3Nothing();
+                    }
+                    RoomPosition(pos1, pos2);
+                }
+                if (startr2U <= startr1D && startr2U >= startr1U + 2)
+                {
+                    Console.WriteLine("Fail5");
+                    amountOfFails++;
+                    if (amountOfFails >= 10)
+                    {
+                        MakeMap3Nothing();
+                    }
+                    RoomPosition(pos1, pos2);
+                }
+                if (startr2W <= startr1L && startr2W >= startr1W + 2)
+                {
+                    Console.WriteLine("Fail6");
+                    amountOfFails++;
+                    if (amountOfFails >= 10)
+                    {
+                        MakeMap3Nothing();
+                    }
+                    RoomPosition(pos1, pos2);
+                }
             }
             static void PlayerPosition()
             {
@@ -946,7 +1118,7 @@ namespace RogueAttemptMaybe
             static void MapSize()
             {
                 Console.WriteLine("Warning: Max size is 64!");
-                Console.WriteLine("Warning: Min size is 14!");
+                Console.WriteLine("Warning: Min size is 32!");
                 Console.WriteLine("Map Length");
                 string answerL = "32";
                 try
@@ -976,7 +1148,7 @@ namespace RogueAttemptMaybe
                     Console.ReadLine();
                     MapSize();
                 }
-                else if (Int32.Parse(answerL) < 14)
+                else if (Int32.Parse(answerL) < 32)
                 {
                     Console.Clear();
                     Console.WriteLine("Error 3:");
@@ -1011,7 +1183,7 @@ namespace RogueAttemptMaybe
                     Console.ReadLine();
                     MapSize();
                 }
-                else if (Int32.Parse(answerW) < 14)
+                else if (Int32.Parse(answerW) < 32)
                 {
                     Console.Clear();
                     Console.WriteLine("Error 3:");
