@@ -31,6 +31,7 @@ namespace RogueAttemptMaybe
         //main menu
         static string name;
         static bool characterHasBeenMade = false;
+        static int mainMenuSelected = 1;
         //Characters
         static string floorCharacter = "  ";
         static string character = "@ ";
@@ -127,7 +128,8 @@ namespace RogueAttemptMaybe
                     armorSellMulti.Add(float.Parse(data[5]));
                 }
             }
-            GameStart();
+            mainMenuSelected = 1;
+            MainMenu();
             while (characterHasBeenMade == false)
             {
                 ConsoleKey select = Console.ReadKey().Key;
@@ -789,6 +791,162 @@ namespace RogueAttemptMaybe
                 MapSize();
                 DrawMap1();
                 AwaitMovementKey();
+            }
+
+            static void MainMenu()
+            {
+                //Console.BackgroundColor = ConsoleColor.(Color);
+                //Console.ForegroundColor = ConsoleColor.(Color);
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 1)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("       ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("Start");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("        ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("|");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 2)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("      ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("Options");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("       ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("| W.I.P");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 3)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("      ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("Credits");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("       ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("|");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 4)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("       ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Guide");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("        ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("| W.I.P");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 5)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("       ");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("Exit");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("         ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("|");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                //DONT GO PAST THIS MARLON
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                selectMenu();
+                //GameStart();
+            }
+            static void selectMenu()
+            {
+                ConsoleKey key = Console.ReadKey().Key;
+                if (key == ConsoleKey.DownArrow)
+                {
+                    mainMenuSelected += 1;
+                    if (mainMenuSelected == 6)
+                    {
+                        mainMenuSelected = 1;
+                    }
+                    MainMenu();
+                } else if (key == ConsoleKey.UpArrow)
+                {
+                    mainMenuSelected -= 1;
+                    if (mainMenuSelected == 0)
+                    {
+                        mainMenuSelected = 5;
+                    }
+                    MainMenu();
+                } else if( key == ConsoleKey.Enter)
+                {
+                    switch (mainMenuSelected)
+                    {
+                        case 1:
+                            GameStart();
+                            break;
+                        case 2:
+                            MainMenu();
+                            break; 
+                        case 3:
+                            Credits();
+                            break;
+                        case 4:
+                            MainMenu();
+                            break;
+                        case 5:
+                            Environment.Exit(0);
+                            break;
+                    }
+                }
+                else
+                {
+                    //If key isnt an arrow it restarts
+                    selectMenu();
+                }
+            }
+            static void Credits()
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Mike / Out door and Suvival");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Rudo / Blender Man");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("Marlon / Brain Damage Gaming / Gastrikshark");
+                Console.ForegroundColor= ConsoleColor.White;
+                ConsoleKey key = Console.ReadKey().Key;
+                if (key == ConsoleKey.Enter)
+                {
+                    MainMenu();
+                }
+                else
+                {
+                    Credits();
+                }
             }
         }
     }
