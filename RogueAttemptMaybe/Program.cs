@@ -1139,16 +1139,53 @@ namespace RogueAttemptMaybe
                 }
                 if (startr2R == startr1L && startr2D == startr1U || startr2R == startr1L && startr2U == startr1D)
                 {
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
                     Console.Beep(750, 500);
                     Console.WriteLine("Problem Right2 is Left1 V2");
                     Console.BackgroundColor = ConsoleColor.Black;
                 }
                 if (startr2L == startr1R && startr2D == startr1U || startr2L == startr1R && startr2U == startr1D)
                 {
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
                     Console.Beep(750, 500);
                     Console.WriteLine("Problem Left2 is Right1 V2");
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+                if (startr2R == startr1L && startr2D == startr1U || startr2R == startr1L && startr2U == startr1D)
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
+                    Console.Beep(750, 500);
+                    Console.WriteLine("Problem Right2 is Left1 V2");
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+                if (startr2L >= startr1R && startr2L <= startr1L)
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    Console.Beep(750, 500);
+                    Console.WriteLine("Problem V3 1");
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+                if (startr2R >= startr1L && startr2R <= startr1R)
+                {
+                    //Broke
+                    Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    Console.Beep(750, 500);
+                    Console.WriteLine("Problem V3 2");
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+                if (startr2U >= startr1D && startr2U <= startr1U)
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    Console.Beep(750, 500);
+                    Console.WriteLine("Problem V3 3");
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+                if (startr2D >= startr1U && startr2D <= startr1D)
+                {
+                    //Broke
+                    Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    Console.Beep(750, 500);
+                    Console.WriteLine("Problem V3 4");
                     Console.BackgroundColor = ConsoleColor.Black;
                 }
             }
