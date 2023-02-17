@@ -68,6 +68,10 @@ namespace RogueAttemptMaybe
         static int startr2D = 0;
         static bool saidStats = false;
         static int amountOfFails = 0;
+        static bool specificMap = false;
+        static string mapSeed;
+        static string newSeed;
+        static bool specificmapbool = false;
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
         static string[] weapons = File.ReadAllLines("Weapons.txt");
@@ -258,7 +262,14 @@ namespace RogueAttemptMaybe
                         }
                     case ConsoleKey.N:
                         {
+                            if (specificmapbool == false)
+                            {
                             MakeMap3Nothing();
+                            }
+                            else
+                            {
+                                useSpecificSeed(newSeed);
+                            }
                             break;
                         }
                     case ConsoleKey.M:
@@ -686,7 +697,7 @@ namespace RogueAttemptMaybe
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Console.Clear();
+                    //Console.Clear();
                     Console.WriteLine("Error 4:");
                     Console.WriteLine("Something is outside the range of the map!");
                     Console.WriteLine("Press enter to try again");
@@ -729,7 +740,7 @@ namespace RogueAttemptMaybe
                     }
                     catch (IndexOutOfRangeException)
                     {
-                        Console.Clear();
+                        //Console.Clear();
                         Console.WriteLine("Error 4:");
                         Console.WriteLine("Something is outside the range of the map!");
                         Console.WriteLine("Press enter to try again");
@@ -879,6 +890,7 @@ namespace RogueAttemptMaybe
                 Console.WriteLine();
                 total = 0;
                 int length = 0;
+                ForceSpecificMap(1);
                 for (int width = 1; total < mapSizeL * mapSizeW; width++)
                 {
                     //The function that **Draws** the first room
@@ -974,6 +986,8 @@ namespace RogueAttemptMaybe
                     map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
                     map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
                 }
+                //useSpecificSeed(mapSeed);
+                createSeed();
                 DrawMap3();
             }
             static void RoomPosition(int pos1, int pos2)
@@ -1069,7 +1083,7 @@ namespace RogueAttemptMaybe
                     startr2U = startr2U + (mapSizeFixer + innerMapSizeL);
                     startr2D = innerMapSizeL;
                 }
-                if (startr2D <= startr1D - 2 && startr2D >= startr1U + 3)
+                if (startr2D <= startr1D - 2 && startr2D >= startr1U + 3 && specificmapbool == false)
                 {
                     Console.WriteLine("Fail");
                     amountOfFails++;
@@ -1079,7 +1093,7 @@ namespace RogueAttemptMaybe
                     }
                     RoomPosition(pos1, pos2);
                 }
-                if (startr2L <= startr1L - 2 && startr2L <= startr1R + 3)
+                if (startr2L <= startr1L - 2 && startr2L <= startr1R + 3 && specificmapbool == false)
                 {
                     Console.WriteLine("Fail2");
                     amountOfFails++;
@@ -1089,7 +1103,7 @@ namespace RogueAttemptMaybe
                     }
                     RoomPosition(pos1, pos2);
                 }
-                if (startr2U <= startr1D - 2 && startr2U >= startr1U + 3)
+                if (startr2U <= startr1D - 2 && startr2U >= startr1U + 3 && specificmapbool == false)
                 {
                     Console.WriteLine("Fail5");
                     amountOfFails++;
@@ -1099,7 +1113,7 @@ namespace RogueAttemptMaybe
                     }
                     RoomPosition(pos1, pos2);
                 }
-                if (startr2R <= startr1L - 2 && startr2R >= startr1R + 3)
+                if (startr2R <= startr1L - 2 && startr2R >= startr1R + 3 && specificmapbool == false)
                 {
                     Console.WriteLine("Fail6");
                     amountOfFails++;
@@ -1109,7 +1123,8 @@ namespace RogueAttemptMaybe
                     }
                     RoomPosition(pos1, pos2);
                 }
-                if (startr2D == startr1U)
+                //V1
+/*                if (startr2D == startr1U)
                 {
                     Console.BackgroundColor = ConsoleColor.DarkBlue;
                     Console.Beep(750, 500);
@@ -1137,6 +1152,7 @@ namespace RogueAttemptMaybe
                     Console.WriteLine("Problem Left2 is Right1 V1");
                     Console.BackgroundColor = ConsoleColor.Black;
                 }
+                //V2
                 if (startr2R == startr1L && startr2D == startr1U || startr2R == startr1L && startr2U == startr1D)
                 {
                     Console.BackgroundColor = ConsoleColor.DarkRed;
@@ -1158,6 +1174,7 @@ namespace RogueAttemptMaybe
                     Console.WriteLine("Problem Right2 is Left1 V2");
                     Console.BackgroundColor = ConsoleColor.Black;
                 }
+                //V3
                 if (startr2L >= startr1R && startr2L <= startr1L)
                 {
                     Console.BackgroundColor = ConsoleColor.DarkGreen;
@@ -1180,14 +1197,31 @@ namespace RogueAttemptMaybe
                     Console.WriteLine("Problem V3 3");
                     Console.BackgroundColor = ConsoleColor.Black;
                 }
-                if (startr2D >= startr1U && startr2D <= startr1D)
+                if (startr2D <= startr1U && startr2D >= startr1D)
                 {
                     //Broke
                     Console.BackgroundColor = ConsoleColor.DarkGreen;
-                    Console.Beep(750, 500);
                     Console.WriteLine("Problem V3 4");
+                    Console.Beep(750, 1000);
                     Console.BackgroundColor = ConsoleColor.Black;
                 }
+                //V4
+                if (startr2R == startr1L && startr2D == startr1U || startr2R == startr1L && startr2U == startr1D || startr2R == startr1L + 1 && startr2D == startr1U || startr2R == startr1L + 1 && startr2U == startr1D || startr2R == startr1L + 2 && startr2D == startr1U || startr2R == startr1L + 2 && startr2U == startr1D)
+                {
+                    Console.BackgroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("Problem V4 1");
+                    Console.Beep(750, 500);
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+                if (startr2L == startr1R && startr2D == startr1U || startr2L == startr1R && startr2U == startr1D || startr2L == startr1R + 1 && startr2D == startr1U || startr2L == startr1R + 1 && startr2U == startr1D || startr2L == startr1R + 2 && startr2D == startr1U || startr2L == startr1R + 2 && startr2U == startr1D)
+                {
+                    Console.BackgroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("Problem V4 2");
+                    Console.Beep(750, 500);
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }*/
+//V5
+
             }
             static void PlayerPosition()
             {
@@ -1246,7 +1280,7 @@ namespace RogueAttemptMaybe
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Console.Clear();
+                    //Console.Clear();
                     Console.WriteLine("Error 4:");
                     Console.WriteLine("Something is outside the range of the map!");
                     Console.WriteLine("Press enter to try again");
@@ -1282,11 +1316,17 @@ namespace RogueAttemptMaybe
             {
                 Console.WriteLine("Warning: Max size is 64!");
                 Console.WriteLine("Warning: Min size is 32!");
+                Console.WriteLine("Recommended: 32x32");
                 Console.WriteLine("Map Length");
                 string answerL = "32";
                 try
                 {
                     answerL = Console.ReadLine();
+                    if (answerL == "seed")
+                    {
+                        specificmapbool = true;
+                        askSeed();
+                    }
                     int result = Int32.Parse(answerL);
                 }
                 catch (FormatException)
@@ -1374,6 +1414,274 @@ namespace RogueAttemptMaybe
                 MapSize();
                 DrawMap3();
                 AwaitMovementKey();
+            }
+            static void ForceSpecificMap(int place)
+            {
+                int[] room1Position = { 0,16 };
+                int[] room1UpSize = {1,14 };
+                int[] room1SideSize = { 10,22 };
+                //Room 2
+                int[] room2Position = { 19,29 };
+                int[] room2UpSize = { 14,24 };
+                int[] room2SideSize = { 18,30 };
+                if (specificMap == true)
+                {
+                    if (place == 1)
+                    {
+                        startr1L = room1SideSize[0];
+                        startr1R = room1SideSize[1];
+                        startr1U = room1UpSize[0];
+                        startr1D = room1UpSize[1];
+                        startr2L = room2SideSize[0];
+                        startr2R = room2SideSize[1];
+                        startr2U = room2UpSize[0];
+                        startr2D = room2UpSize[1];
+                    }
+                }
+            }
+            static void createSeed()
+            {
+                string r1L = startr1L.ToString();
+                if (startr1L < 10)
+                {
+                    r1L = ("0" + startr1L.ToString());
+                }
+                string r1R = startr1R.ToString();
+                if (startr1R < 10)
+                {
+                    r1R = ("0" + startr1R.ToString());
+                }
+                string r1U = startr1U.ToString();
+                if (startr1U < 10)
+                {
+                    r1U = ("0" + startr1U.ToString());
+                }
+                string r1D = startr1D.ToString();
+                if (startr1D < 10)
+                {
+                    r1D = ("0" + startr1D.ToString());
+                }
+                //Room2
+                string r2L = startr2L.ToString();
+                if (startr2L < 10)
+                {
+                    r2L = ("0" + startr2L.ToString());
+                }
+                string r2R = startr2R.ToString();
+                if (startr2R < 10)
+                {
+                    r2R = ("0" + startr2R.ToString());
+                }
+                string r2U = startr2U.ToString();
+                if (startr2U < 10)
+                {
+                    r2U = ("0" + startr2U.ToString());
+                }
+                string r2D = startr2D.ToString();
+                if (startr2D < 10)
+                {
+                    r2D = ("0" + startr2D.ToString());
+                }
+                //Player/Enemy
+                string pL = currentPlayerPosition[0].ToString();
+                if (currentPlayerPosition[0] < 10)
+                {
+                    pL = ("0" + currentPlayerPosition[0].ToString());
+                }
+                string pW = currentPlayerPosition[1].ToString();
+                if (currentPlayerPosition[1] < 10)
+                {
+                    pW = ("0" + currentPlayerPosition[1].ToString());
+                }
+                string eL = currentEnemyPosition[0].ToString();
+                if (currentEnemyPosition[0] < 10)
+                {
+                    eL = ("0" + currentEnemyPosition[0].ToString());
+                }
+                string eW = currentEnemyPosition[1].ToString();
+                if (currentEnemyPosition[1] < 10)
+                {
+                    eW = ("0" + currentEnemyPosition[1].ToString());
+                }
+                //MapSize
+                string msL = mapSizeL.ToString();
+                if (mapSizeL < 10)
+                {
+                    msL = ("0" + mapSizeL.ToString());
+                }
+                string msW = mapSizeW.ToString();
+                if (mapSizeW < 10)
+                {
+                    msW = ("0" + mapSizeW.ToString());
+                }
+                string r1Seed = ("" + r1L + r1R + r1U + r1D);
+                string r2Seed = ("" + r2L + r2R + r2U + r2D);
+                string playerEnemySeed = ("" + pL + pW + eL + eW);
+                string sizeSeed = ("" + msL + msW);
+                mapSeed = (r1Seed + r2Seed + playerEnemySeed + sizeSeed);
+                Console.WriteLine("This maps seed is: " + mapSeed);
+            }
+            static void askSeed()
+            {
+                Console.WriteLine("Put in the seed");
+                try
+                {
+                    newSeed = Console.ReadLine().ToString();
+                    useSpecificSeed(newSeed);
+                }
+                catch (FormatException)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 1:");
+                    Console.WriteLine("Cannot convert " + mapSeed + " to a number.... Huh?");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    askSeed();
+                }
+            }
+            static void useSpecificSeed(string seed)
+            {
+                specificmapbool = true;
+                //Clears the console so you dont see the previous stuff.
+                //Console.Clear();
+                //Makes it so 2 attacks cant happen at the same time
+                attackHappened = false;
+                firstTimeMap = true;
+                //Draws the map
+                mapSizeW = Int32.Parse(seed.Substring(24, 2));
+                mapSizeL = Int32.Parse(seed.Substring(26, 2));
+                innerMapSizeW = mapSizeW - 2;
+                innerMapSizeL = mapSizeL - 2;
+                Console.WriteLine(mapSizeL);
+                Console.WriteLine(mapSizeW);
+                total = 0;
+                int length = 0;
+                length = 0;
+                for (int width = 1; total < mapSizeL * mapSizeW; width++)
+                {
+                    //The function that Makes map empty
+                    total = width * length;
+                    map1[length, width] = "**";
+                    if (width > innerMapSizeW)
+                    {
+                        width = 0;
+                        length++;
+                        Console.WriteLine();
+                    }
+                    if (length > innerMapSizeL)
+                    {
+                        length = 0;
+                        total = mapSizeL * mapSizeW;
+                    }
+                }
+                useSpecificSeed2(seed);
+            }
+            static void useSpecificSeed2(string seed)
+            {
+                startr2L = Int32.Parse(seed.Substring(8, 2));
+                startr1L = Int32.Parse(seed.Substring(0, 2));
+                startr1R = Int32.Parse(seed.Substring(2, 2));
+                startr1U = Int32.Parse(seed.Substring(4, 2));
+                startr1D = Int32.Parse(seed.Substring(6, 2));
+                startr2L = Int32.Parse(seed.Substring(8, 2));
+                startr2R = Int32.Parse(seed.Substring(10, 2));
+                startr2U = Int32.Parse(seed.Substring(12, 2));
+                startr2D = Int32.Parse(seed.Substring(14, 2));
+                total = 0;
+                int length = 0;
+                for (int width = 1; total < mapSizeL * mapSizeW; width++)
+                {
+                    //The function that **Draws** the first room
+                    total = width * length;
+                    if (width < startr1R && width >= startr1L)
+                    {
+                        if (length < startr1D && length >= startr1U)
+                        {
+                            //map1[length, width] = width.ToString();
+                            //map1[length, width] = length.ToString();
+                            map1[length, width] = floorCharacter;
+                        }
+                    }
+                    if (width == startr1R && length < startr1D && length >= startr1U)
+                    {
+                        //Right wall
+                        map1[length, width] = outerSideR;
+                    }
+                    if (width == startr1L - 1 && length < startr1D && length >= startr1U)
+                    {
+                        //Left wall
+                        map1[length, width] = outerSideL;
+                    }
+                    if (length == startr1D && width < startr1R && width >= startr1L || length == startr1U - 1 && width < startr1R && width >= startr1L)
+                    {
+                        //Up and Down
+                        map1[length, width] = outerUp;
+                    }
+                    if (length == startr1U - 1 && width == startr1L - 1 || length == startr1D && width == startr1L - 1)
+                    {
+                        //Right corners
+                        map1[length, width] = rightConers;
+                    }
+                    if (length == startr1U - 1 && width == startr1R || length == startr1D && width == startr1R)
+                    {
+                        //Left Corners
+                        map1[length, width] = leftConers;
+                    }
+                    //Room 2
+                    if (width < startr2R && width >= startr2L)
+                    {
+                        if (length < startr2D && length >= startr2U)
+                        {
+                            map1[length, width] = floorCharacter;
+                        }
+                    }
+                    if (width == startr2R && length < startr2D && length >= startr2U)
+                    {
+                        //Right wall
+                        map1[length, width] = outerSideR;
+                    }
+                    if (width == startr2L - 1 && length < startr2D && length >= startr2U)
+                    {
+                        //Left wall
+                        map1[length, width] = outerSideL;
+                    }
+                    if (length == startr2D && width < startr2R && width >= startr2L || length == startr2U - 1 && width < startr2R && width >= startr2L)
+                    {
+                        //Up and Down
+                        map1[length, width] = outerUp;
+                    }
+                    if (length == startr2U - 1 && width == startr2L - 1 || length == startr2D && width == startr2L - 1)
+                    {
+                        //Right corners
+                        map1[length, width] = rightConers;
+                    }
+                    if (length == startr2U - 1 && width == startr2R || length == startr2D && width == startr2R)
+                    {
+                        //Left Corners
+                        map1[length, width] = leftConers;
+                    }
+                    //map1[pos1, pos2] = "md";
+                    //The checking where we are area
+                    if (width > innerMapSizeW)
+                    {
+                        width = 0;
+                        length++;
+                        Console.WriteLine();
+                    }
+                    if (length > innerMapSizeL)
+                    {
+                        length = 0;
+                        total = mapSizeL * mapSizeW;
+                    }
+                    currentPlayerPosition[0] = Int32.Parse(seed.Substring(16, 2));
+                    currentPlayerPosition[1] = Int32.Parse(seed.Substring(18, 2));
+                    currentEnemyPosition[0] = Int32.Parse(seed.Substring(20, 2));
+                    currentEnemyPosition[1] = Int32.Parse(seed.Substring(22, 2));
+                    map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
+                    map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
+                }
+                createSeed();
+                DrawMap3();
             }
         }
     }
