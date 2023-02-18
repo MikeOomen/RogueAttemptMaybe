@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Formats.Asn1;
+using System.Runtime.CompilerServices;
 
 namespace RogueAttemptMaybe
 {
@@ -68,10 +69,11 @@ namespace RogueAttemptMaybe
         static int startr2D = 0;
         static bool saidStats = false;
         static int amountOfFails = 0;
-        static bool specificMap = false;
-        static string mapSeed;
-        static string newSeed;
+        static string mapSeed = "0214142622300612160725053232";
+        static string newSeed = "0214142622300612160725053232";
         static bool specificmapbool = false;
+        static string[] randomWorkingMaps = { "0214142622300612160725053232", "0315011423292030061306103232" , "0719183018300110221322163232" };
+        static string[] randomBrokenMaps = {"1022011418301424121012173232" , "0214122411190112200919113232" , "1022152723290517151224123232" , "0214051711171830101205023232" };
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
         static string[] weapons = File.ReadAllLines("Weapons.txt");
@@ -114,6 +116,7 @@ namespace RogueAttemptMaybe
         static int[] rndpos = new int[4];
         static void Main(string[] args)
         {
+            MapSize();
             NewMap();
             for (int i = 0; i < starterWeapons.Length; i++)
             {
@@ -175,6 +178,7 @@ namespace RogueAttemptMaybe
             {
                 //Starts game
                 NewEnemy();
+                MapSize();
                 NewMap();
                 firstTimeMap = false;
                 AwaitMovementKey();
@@ -274,6 +278,7 @@ namespace RogueAttemptMaybe
                         }
                     case ConsoleKey.M:
                         {
+                            MapSize();
                             NewMap();
                             break;
                         }
@@ -705,6 +710,7 @@ namespace RogueAttemptMaybe
                     NewMap();
                 }
             }
+
             static void DrawMap3()
             {
                 {
@@ -890,7 +896,6 @@ namespace RogueAttemptMaybe
                 Console.WriteLine();
                 total = 0;
                 int length = 0;
-                ForceSpecificMap(1);
                 for (int width = 1; total < mapSizeL * mapSizeW; width++)
                 {
                     //The function that **Draws** the first room
@@ -986,7 +991,11 @@ namespace RogueAttemptMaybe
                     map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
                     map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
                 }
-                //useSpecificSeed(mapSeed);
+                bool reset = CheckRoomPosition(1);
+                if (reset == true)
+                {
+                    NewMap();
+                }
                 createSeed();
                 DrawMap3();
             }
@@ -1123,105 +1132,6 @@ namespace RogueAttemptMaybe
                     }
                     RoomPosition(pos1, pos2);
                 }
-                //V1
-/*                if (startr2D == startr1U)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem Down2 is Up1 V1");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2R == startr1L)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem Right2 is Left1 V1");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2U == startr1D)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem Up2 is Down1 V1");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2L == startr1R)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem Left2 is Right1 V1");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                //V2
-                if (startr2R == startr1L && startr2D == startr1U || startr2R == startr1L && startr2U == startr1D)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkRed;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem Right2 is Left1 V2");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2L == startr1R && startr2D == startr1U || startr2L == startr1R && startr2U == startr1D)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkRed;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem Left2 is Right1 V2");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2R == startr1L && startr2D == startr1U || startr2R == startr1L && startr2U == startr1D)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkRed;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem Right2 is Left1 V2");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                //V3
-                if (startr2L >= startr1R && startr2L <= startr1L)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkGreen;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem V3 1");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2R >= startr1L && startr2R <= startr1R)
-                {
-                    //Broke
-                    Console.BackgroundColor = ConsoleColor.DarkGreen;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem V3 2");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2U >= startr1D && startr2U <= startr1U)
-                {
-                    Console.BackgroundColor = ConsoleColor.DarkGreen;
-                    Console.Beep(750, 500);
-                    Console.WriteLine("Problem V3 3");
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2D <= startr1U && startr2D >= startr1D)
-                {
-                    //Broke
-                    Console.BackgroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine("Problem V3 4");
-                    Console.Beep(750, 1000);
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                //V4
-                if (startr2R == startr1L && startr2D == startr1U || startr2R == startr1L && startr2U == startr1D || startr2R == startr1L + 1 && startr2D == startr1U || startr2R == startr1L + 1 && startr2U == startr1D || startr2R == startr1L + 2 && startr2D == startr1U || startr2R == startr1L + 2 && startr2U == startr1D)
-                {
-                    Console.BackgroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine("Problem V4 1");
-                    Console.Beep(750, 500);
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }
-                if (startr2L == startr1R && startr2D == startr1U || startr2L == startr1R && startr2U == startr1D || startr2L == startr1R + 1 && startr2D == startr1U || startr2L == startr1R + 1 && startr2U == startr1D || startr2L == startr1R + 2 && startr2D == startr1U || startr2L == startr1R + 2 && startr2U == startr1D)
-                {
-                    Console.BackgroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine("Problem V4 2");
-                    Console.Beep(750, 500);
-                    Console.BackgroundColor = ConsoleColor.Black;
-                }*/
-//V5
-
             }
             static void PlayerPosition()
             {
@@ -1405,39 +1315,13 @@ namespace RogueAttemptMaybe
                 Console.WriteLine(mapSizeW + "OutW");
                 Console.WriteLine(mapSizeL + "OutL");
                 //DrawMap1();
-                MakeMap3Nothing();
-                AwaitMovementKey();
             }
             static void NewMap()
             {
                 firstTimeMap = true;
-                MapSize();
+                MakeMap3Nothing();
                 DrawMap3();
                 AwaitMovementKey();
-            }
-            static void ForceSpecificMap(int place)
-            {
-                int[] room1Position = { 0,16 };
-                int[] room1UpSize = {1,14 };
-                int[] room1SideSize = { 10,22 };
-                //Room 2
-                int[] room2Position = { 19,29 };
-                int[] room2UpSize = { 14,24 };
-                int[] room2SideSize = { 18,30 };
-                if (specificMap == true)
-                {
-                    if (place == 1)
-                    {
-                        startr1L = room1SideSize[0];
-                        startr1R = room1SideSize[1];
-                        startr1U = room1UpSize[0];
-                        startr1D = room1UpSize[1];
-                        startr2L = room2SideSize[0];
-                        startr2R = room2SideSize[1];
-                        startr2U = room2UpSize[0];
-                        startr2D = room2UpSize[1];
-                    }
-                }
             }
             static void createSeed()
             {
@@ -1526,14 +1410,43 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("Put in the seed");
                 try
                 {
-                    newSeed = Console.ReadLine().ToString();
-                    useSpecificSeed(newSeed);
+                    newSeed = Console.ReadLine();
+                    newSeed.ToString();
+                    if (newSeed == "r")
+                    {
+                        Random randomWidth = new Random();
+                        int i = randomWidth.Next(0, randomWorkingMaps.Length + 1);
+                        newSeed = randomWorkingMaps[i];
+                    } else if(newSeed == "rb")
+                    {
+                        Random randomWidth = new Random();
+                        int i = randomWidth.Next(0, randomBrokenMaps.Length + 1);
+                        newSeed = randomBrokenMaps[i];
+                    }
+                    try
+                    {
+                        Int32.Parse(newSeed.Substring(22, 2));
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Error!!!!");
+                        askSeed();
+                    }
+                    if (newSeed != "")
+                    {
+                        useSpecificSeed(newSeed);
+                    }
+                    else
+                    {
+                        Console.WriteLine("That breaks things my guy");
+                        askSeed();
+                    }
                 }
-                catch (FormatException)
+                catch (Exception)
                 {
                     Console.Clear();
                     Console.WriteLine("Error 1:");
-                    Console.WriteLine("Cannot convert " + mapSeed + " to a number.... Huh?");
+                    Console.WriteLine("Cannot convert that to a number.... Huh?");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
                     askSeed();
@@ -1589,6 +1502,50 @@ namespace RogueAttemptMaybe
                 startr2D = Int32.Parse(seed.Substring(14, 2));
                 total = 0;
                 int length = 0;
+                Console.WriteLine();
+                Console.WriteLine("==================================");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("Room 1");
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Upwards Sizes:");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Up " + startr1U);
+                Console.WriteLine("Down " + startr1D);
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Sides Sizes:");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Left " + startr1L);
+                Console.WriteLine("Right " + startr1R);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("==================================");
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("==================================");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("Room 2");
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Upwards Sizes:");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Up " + startr2U);
+                Console.WriteLine("Down " + startr2D);
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Sides Sizes:");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Left " + startr2L);
+                Console.WriteLine("Right " + startr2R);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("==================================");
+                Console.WriteLine();
+                bool reset = CheckRoomPosition(1);
+                if (reset == true)
+                {
+                    Console.WriteLine("Broken map! Sorry dude!");
+                    askSeed();
+                }
                 for (int width = 1; total < mapSizeL * mapSizeW; width++)
                 {
                     //The function that **Draws** the first room
@@ -1683,6 +1640,93 @@ namespace RogueAttemptMaybe
                 createSeed();
                 DrawMap3();
             }
+        }
+        static bool CheckRoomPosition(int function)
+        {
+            bool problem = false;
+            //V5
+            if (startr1D >= startr2U && startr1D <= startr2D)
+            {
+                if (startr1R >= startr2L && startr1R <= startr2R)
+                {
+                    problem = true;
+                }
+                if (startr1L >= startr2L && startr1L <= startr2R)
+                {
+                    problem = true;
+                }
+                //Room 2
+                if (startr2R >= startr1L && startr2R <= startr1R)
+                {
+                    problem = true;
+                }
+                if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
+                {
+                    problem = true;
+                }
+            }
+            if (startr1U >= startr2U && startr1U <= startr2D)
+            {
+                if (startr1R >= startr2L && startr1R <= startr2R)
+                {
+                    problem = true;
+                }
+                if (startr1L >= startr2L && startr1L <= startr2R)
+                {
+                    problem = true;
+                }
+                //Room 2
+                if (startr2R >= startr1L && startr2R <= startr1R)
+                {
+                    problem = true;
+                }
+                if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
+                {
+                    problem = true;
+                }
+            }
+            //R2
+            if (startr2D >= startr1U && startr2D <= startr1D)
+            {
+                if (startr1R >= startr2L && startr1R <= startr2R)
+                {
+                    problem = true;
+                }
+                if (startr1L >= startr2L && startr1L <= startr2R)
+                {
+                    problem = true;
+                }
+                //Room 2
+                if (startr2R >= startr1L && startr2R <= startr1R)
+                {
+                    problem = true;
+                }
+                if (startr2L >= startr1L && startr2L <= startr1R)
+                {
+                    problem = true;
+                }
+            }
+            if (startr2U - 1 >= startr1U && startr2U - 1<= startr1D)
+            {
+                if (startr1R >= startr2L && startr1R <= startr2R)
+                {
+                    problem = true;
+                }
+                if (startr1L >= startr2L && startr1L <= startr2R)
+                {
+                    problem = true;
+                }
+                //Room 2
+                if (startr2R >= startr1L && startr2R <= startr1R)
+                {
+                    problem = true;
+                }
+                if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
+                {
+                    problem = true;
+                }
+            }
+            return problem;
         }
     }
 }
