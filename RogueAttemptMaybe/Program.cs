@@ -1224,6 +1224,7 @@ namespace RogueAttemptMaybe
             }
             static void MapSize()
             {
+                specificmapbool = false;
                 Console.WriteLine("Warning: Max size is 64!");
                 Console.WriteLine("Warning: Min size is 32!");
                 Console.WriteLine("Recommended: 32x32");
@@ -1410,6 +1411,7 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("Put in the seed");
                 try
                 {
+                    newSeed = "";
                     newSeed = Console.ReadLine();
                     newSeed.ToString();
                     if (newSeed == "r")
