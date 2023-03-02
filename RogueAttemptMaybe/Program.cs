@@ -114,10 +114,15 @@ namespace RogueAttemptMaybe
         static int amountOfWalls = 32;
         static int wallMultiplier = 2;
         static int[] rndpos = new int[4];
+        static bool failedMap = false;
         static void Main(string[] args)
         {
             MapSize();
             NewMap();
+            if (failedMap)
+            {
+                MapSize();
+            }
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -713,6 +718,7 @@ namespace RogueAttemptMaybe
 
             static void DrawMap3()
             {
+
                 {
                     try
                     {
@@ -757,8 +763,11 @@ namespace RogueAttemptMaybe
             }
             static void CreateMap3()
             {
+                bool reset = false;
                 amountOfFails = 0;
                 saidStats = false;
+                bool path = false;
+                int[,] mapMid = new int[12,12];
                 startr1L = 0;
                 startr1R = 0;
                 startr1U = 0;
@@ -904,9 +913,9 @@ namespace RogueAttemptMaybe
                     {
                         if (length < startr1D && length >= startr1U)
                         {
+                            map1[length, width] = floorCharacter;
                             //map1[length, width] = width.ToString();
                             //map1[length, width] = length.ToString();
-                            map1[length, width] = floorCharacter;
                         }
                     }
                     if (width == startr1R && length < startr1D && length >= startr1U)
@@ -967,7 +976,6 @@ namespace RogueAttemptMaybe
                         //Left Corners
                         map1[length, width] = leftConers;
                     }
-                    //map1[pos1, pos2] = "md";
                     //The checking where we are area
                     if (width > innerMapSizeW)
                     {
@@ -990,147 +998,377 @@ namespace RogueAttemptMaybe
                     }
                     map1[currentPlayerPosition[0], currentPlayerPosition[1]] = character;
                     map1[currentEnemyPosition[0], currentEnemyPosition[1]] = enemy1;
-                }
-                bool reset = CheckRoomPosition(1);
-                if (reset == true)
-                {
-                    NewMap();
-                }
-                createSeed();
-                DrawMap3();
-            }
-            static void RoomPosition(int pos1, int pos2)
-            {
-                Random rpos3 = new Random();
-                pos3 = rpos3.Next(0, mapSizeL - 1);
-                Random rpos4 = new Random();
-                pos4 = rpos4.Next(0, mapSizeW - 1);
-                if (pos3 > pos1 - 10 && pos3 < pos1 + 10)
-                {
-                    Console.WriteLine("Fail3");
-                    amountOfFails++;
-                    if (amountOfFails >= 10)
+                    if (width == (startr1R + startr1L) / 2)
                     {
-                        MakeMap3Nothing();
+                        mapMid[0, 1] = startr1D;
+                        mapMid[0, 2] = width;
                     }
-                    RoomPosition(pos1, pos2);
+                    if (width == (startr1R + startr1L) / 2)
+                    {
+                        mapMid[1, 1] = startr1U - 1;
+                        mapMid[1, 2] = width;
+                    }
+                    if (length == (startr1U + startr1D) / 2)
+                    {
+                        mapMid[2, 1] = startr1R;
+                        mapMid[2, 2] = length;
+                    }
+                    if (length == (startr1U + startr1D) / 2)
+                    {
+                        mapMid[3, 1] = startr1L - 1;
+                        mapMid[3, 2] = length;
+                    }
+                    //Room2
+                    if (width == (startr2R + startr2L) / 2)
+                    {
+                        mapMid[4, 1] = startr2D;
+                        mapMid[4, 2] = width;
+                    }
+                    if (width == (startr2R + startr2L) / 2)
+                    {
+                        mapMid[5, 1] = startr2U - 1;
+                        mapMid[5, 2] = width;
+                    }
+                    if (length == (startr2U + startr2D) / 2)
+                    {
+                        mapMid[6, 1] = startr2R;
+                        mapMid[6, 2] = length;
+                    }
+                    if (length == (startr2U + startr2D) / 2)
+                    {
+                        mapMid[7, 1] = startr2L - 1;
+                        mapMid[7, 2] = length;
+                    }
+                    map1[mapMid[0, 1], mapMid[0, 2]] = "1D";
+                    map1[mapMid[1, 1], mapMid[1, 2]] = "1U";
+                    map1[mapMid[2, 2], mapMid[2, 1]] = "1R";
+                    map1[mapMid[3, 2], mapMid[3, 1]] = "1L";
+                    map1[mapMid[4, 1], mapMid[4, 2]] = "2D";
+                    map1[mapMid[5, 1], mapMid[5, 2]] = "2U";
+                    map1[mapMid[6, 2], mapMid[6, 1]] = "2R";
+                    map1[mapMid[7, 2], mapMid[7, 1]] = "2L";
+
+                    /*                    map1[mapMid[0, 1], mapMid[0, 2]] = "  ";
+                                        map1[mapMid[1, 1], mapMid[1, 2]] = "  ";
+                                        map1[mapMid[2, 2], mapMid[2, 1]] = "  ";
+                                        map1[mapMid[3, 2], mapMid[3, 1]] = "  ";
+                                        map1[mapMid[4, 1], mapMid[4, 2]] = "  ";
+                                        map1[mapMid[5, 1], mapMid[5, 2]] = "  ";
+                                        map1[mapMid[6, 2], mapMid[6, 1]] = "  ";
+                                        map1[mapMid[7, 2], mapMid[7, 1]] = "  ";*/
+                    bool sideR = false;
+                    bool sideU = false;
+                    if (startr2L >= startr1R)
+                    {
+                        //We use R1
+                        sideR = true;
+                    }
+                    else
+                    {
+                        //We use L1
+                    }
+                    if (startr2U >= startr1D)
+                    {
+                        //We use D1
+                        sideU = true;
+                    }
+                    else
+                    {
+                        //We use U1
+                    }
+                    if (path == false)
+                    {
+                        if (sideU == true)
+                        {
+                            if (sideR == true)
+                            {
+                                mapMid[8,1] = mapMid[7, 2];
+                                mapMid[8, 3] = mapMid[7, 1];
+                                mapMid[8,2] = mapMid[0,2];
+                                mapMid[8, 4] = mapMid[0,1];
+                                Console.WriteLine("L2 to D1");
+                                map1[mapMid[7, 2], mapMid[7, 1]] =floorCharacter; //L2
+                                map1[mapMid[0, 1], mapMid[0, 2]] =floorCharacter; //D1
+                                                                                  //From L2 to D1
+                                if (width >= mapMid[8, 2] && width <= mapMid[8, 3])
+                                {
+                                    //map1[mapMid[8, 1], width] = "P1";
+                                    map1[mapMid[8, 1], width] = floorCharacter;
+                                }
+                                if (width <= startr1D)
+                                {
+                                    Console.WriteLine(mapMid[6, 2]);
+                                    if (length >= mapMid[1, 1] + 1 && length <= (startr2D + startr2U) / 2)
+                                    {
+                                        //map1[length, mapMid[8, 2]] = "P2";
+                                        map1[length, mapMid[8, 2]] = floorCharacter;
+                                    }
+                                }
+                                map1[0, length] = "**";
+                            }
+                            else
+                            {
+                                reset = true;
+                            }
+                        }
+                        else
+                        {
+                            if (sideR == true)
+                            {
+                                mapMid[8, 1] = mapMid[2, 2];
+                                mapMid[8, 3] = mapMid[2, 1];
+                                mapMid[8, 2] = mapMid[4, 2];
+                                mapMid[8, 4] = mapMid[4, 1];
+                                Console.WriteLine("D2 to R1");
+                                //From R1 to 2D
+                                map1[mapMid[2, 2], mapMid[2, 1]] = floorCharacter; //R1
+                                map1[mapMid[4, 1], mapMid[4, 2]] = floorCharacter; //D2
+                                //map1[mapMid[2,2], mapMid[4,2]] = "md"; //D2
+                                if (width >= startr1R && width <= mapMid[4,2])
+                                {
+                                    //map1[mapMid[8, 1], width] = "P1";
+                                    map1[mapMid[8, 1], width] = floorCharacter;
+                                }
+                                if (width <= startr2D)
+                                {
+                                    Console.WriteLine(mapMid[6, 2]);
+                                    if (length >= startr2D && length <= (startr1D + startr1U) / 2)
+                                    {
+                                        //map1[length, mapMid[8, 2]] = "P2";
+                                        map1[length, mapMid[8, 2]] = floorCharacter;
+                                    }
+                                }
+                                map1[0, length] = "**";
+                            }
+                            else
+                            {
+                                mapMid[8, 1] = mapMid[7, 2];
+                                mapMid[8, 3] = mapMid[7, 1];
+                                mapMid[8, 2] = mapMid[0, 2];
+                                mapMid[8, 4] = mapMid[0, 1];
+                                Console.WriteLine("U1 to L2");
+                                //From U1 to L2
+                                map1[mapMid[1, 1], mapMid[1, 2]] = floorCharacter; //U1
+                                map1[mapMid[7, 2], mapMid[7, 1]] = floorCharacter; //L2
+                                map1[mapMid[7, 2], mapMid[0, 2]] = "md"; //D2
+                                if (width >= (startr1R + startr1L) / 2 && width <= startr2L - 1)
+                                {
+                                    map1[mapMid[8, 1], width] = "P1";
+                                    //map1[mapMid[8, 1], width] = floorCharacter;
+                                }
+                                if (width <= startr2D)
+                                {
+                                    Console.WriteLine(mapMid[6, 2]);
+                                    if (length >= (startr2U + startr2D) / 2 && length <= startr1U)
+                                    {
+                                        map1[length, mapMid[8, 2]] = "P2";
+                                        //map1[length, mapMid[8, 2]] = floorCharacter;
+                                    }
+                                }
+                                map1[0, length] = "**";
+                            }
+                        }
+                    }
+                    //map1[mapMid[8, 1], mapMid[8, 2]] = "MD";
+                    //map1[mapMid[8, 1], mapMid[8, 2]] = floorCharacter;
+                    //map1[mapMid[8, 1], width] = "TE";
+                }
+                if (reset == false)
+                {
+                    reset = CheckRoomPosition();
+                }
+                if (reset == false)
+                {
+                    createSeed();
+                    DrawMap3();
                 }
                 else
                 {
-                    if (pos4 > pos2 - 10 && pos4 < pos2 + 10)
+                    failedMap = true;
+                }
+            }
+            static void RoomPosition(int pos1, int pos2)
+            {
+                if (failedMap == false)
+                {
+                    bool problem = false;
+                    bool fail = false;
+                    Random rpos3 = new Random();
+                    pos3 = rpos3.Next(0, mapSizeL - 1);
+                    Random rpos4 = new Random();
+                    pos4 = rpos4.Next(0, mapSizeW - 1);
+                    if (pos3 > pos1 - 10 && pos3 < pos1 + 10)
                     {
-                        Console.WriteLine("Fail4");
+                        Console.WriteLine("Fail3");
                         amountOfFails++;
                         if (amountOfFails >= 10)
                         {
-                            MakeMap3Nothing();
+                            if (problem == false)
+                            {
+                                problem = true;
+                            }
                         }
+                        if (fail == false)
+                        {
+                            fail = true;
+                        }
+                    }
+                    else
+                    {
+                        if (pos4 > pos2 - 10 && pos4 < pos2 + 10)
+                        {
+                            Console.WriteLine("Fail4");
+                            amountOfFails++;
+                            if (amountOfFails >= 10)
+                            {
+                                if (problem == false)
+                                {
+                                    problem = true;
+                                }
+                            }
+                            if (fail == false)
+                            {
+                                fail = true;
+                            }
+                        }
+                    }
+                    Random rsize3 = new Random();
+                    Random rsize4 = new Random();
+                    int size3 = rsize3.Next(3, 7);
+                    int size4 = rsize4.Next(3, 7);
+                    int mapSizeFixer = 0;
+                    startr2L = pos4 - size3;
+                    startr2R = pos4 + size3;
+                    startr2U = pos3 - size4;
+                    startr2D = pos3 + size4;
+                    if (saidStats == false)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("==================================");
+                        Console.WriteLine("Before Math");
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine("Room 2");
+                        Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("Room Position: ");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Length " + pos3);
+                        Console.WriteLine("Width " + pos4);
+                        Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("Upwards Sizes:");
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("Up " + startr2U);
+                        Console.WriteLine("Down " + startr2D);
+                        Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("Sides Sizes:");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Left " + startr2L);
+                        Console.WriteLine("Right " + startr2R);
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("==================================");
+                        Console.WriteLine();
+                        saidStats = true;
+                    }
+                    if (startr2L <= 1)
+                    {
+                        mapSizeFixer = -startr2L;
+                        startr2R = startr2R + mapSizeFixer + 2;
+                        startr2L = 2;
+                    }
+                    if (startr2U <= 0)
+                    {
+                        mapSizeFixer = -startr2U;
+                        startr2D = startr2D + mapSizeFixer + 2;
+                        startr2U = 1;
+                    }
+                    //Sides
+                    if (startr2R >= innerMapSizeW)
+                    {
+                        mapSizeFixer = -startr2R;
+                        startr2L = startr2L + (mapSizeFixer + innerMapSizeW);
+                        startr2R = innerMapSizeW;
+                    }
+                    if (startr2D >= innerMapSizeL)
+                    {
+                        mapSizeFixer = -startr2D;
+                        startr2U = startr2U + (mapSizeFixer + innerMapSizeL);
+                        startr2D = innerMapSizeL;
+                    }
+                    if (startr2D <= startr1D - 2 && startr2D >= startr1U + 3 && specificmapbool == false)
+                    {
+                        Console.WriteLine("Fail");
+                        amountOfFails++;
+                        if (amountOfFails >= 10)
+                        {
+                            if (problem == false)
+                            {
+                                problem = true;
+                            }
+                        }
+                        if (fail == false)
+                        {
+                            fail = true;
+                        }
+                    }
+                    if (startr2L <= startr1L - 2 && startr2L <= startr1R + 3 && specificmapbool == false)
+                    {
+                        Console.WriteLine("Fail2");
+                        amountOfFails++;
+                        if (amountOfFails >= 10)
+                        {
+                            if (problem == false)
+                            {
+                                problem = true;
+                            }
+                        }
+                        if (fail == false)
+                        {
+                            fail = true;
+                        }
+                    }
+                    if (startr2U <= startr1D - 2 && startr2U >= startr1U + 3 && specificmapbool == false)
+                    {
+                        Console.WriteLine("Fail5");
+                        amountOfFails++;
+                        if (amountOfFails >= 10)
+                        {
+                            if (problem == false)
+                            {
+                                problem = true;
+                            }
+                        }
+                        if (fail == false)
+                        {
+                            fail = true;
+                        }
+                    }
+                    if (startr2R <= startr1L - 2 && startr2R >= startr1R + 3 && specificmapbool == false)
+                    {
+                        Console.WriteLine("Fail6");
+                        amountOfFails++;
+                        if (amountOfFails >= 10)
+                        {
+                            if (problem == false)
+                            {
+                                problem = true;
+                            }
+                        }
+                        if (fail == false)
+                        {
+                            fail = true;
+                        }
+                    }
+                    if (problem == true)
+                    {
+                        failedMap = true;
+                        MakeMap3Nothing();
+                    }
+                    if (fail == true)
+                    {
                         RoomPosition(pos1, pos2);
                     }
-                }
-                Random rsize3 = new Random();
-                Random rsize4 = new Random();
-                int size3 = rsize3.Next(3, 7);
-                int size4 = rsize4.Next(3, 7);
-                int mapSizeFixer = 0;
-                startr2L = pos4 - size3;
-                startr2R = pos4 + size3;
-                startr2U = pos3 - size4;
-                startr2D = pos3 + size4;
-                if (saidStats == false)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("==================================");
-                    Console.WriteLine("Before Math");
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine("Room 2");
-                    Console.WriteLine();
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("Room Position: ");
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Length " + pos3);
-                    Console.WriteLine("Width " + pos4);
-                    Console.WriteLine();
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("Upwards Sizes:");
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("Up " + startr2U);
-                    Console.WriteLine("Down " + startr2D);
-                    Console.WriteLine();
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("Sides Sizes:");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Left " + startr2L);
-                    Console.WriteLine("Right " + startr2R);
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("==================================");
-                    Console.WriteLine();
-                    saidStats = true;
-                }
-                if (startr2L <= 1)
-                {
-                    mapSizeFixer = -startr2L;
-                    startr2R = startr2R + mapSizeFixer + 2;
-                    startr2L = 2;
-                }
-                if (startr2U <= 0)
-                {
-                    mapSizeFixer = -startr2U;
-                    startr2D = startr2D + mapSizeFixer + 2;
-                    startr2U = 1;
-                }
-                //Sides
-                if (startr2R >= innerMapSizeW)
-                {
-                    mapSizeFixer = -startr2R;
-                    startr2L = startr2L + (mapSizeFixer + innerMapSizeW);
-                    startr2R = innerMapSizeW;
-                }
-                if (startr2D >= innerMapSizeL)
-                {
-                    mapSizeFixer = -startr2D;
-                    startr2U = startr2U + (mapSizeFixer + innerMapSizeL);
-                    startr2D = innerMapSizeL;
-                }
-                if (startr2D <= startr1D - 2 && startr2D >= startr1U + 3 && specificmapbool == false)
-                {
-                    Console.WriteLine("Fail");
-                    amountOfFails++;
-                    if (amountOfFails >= 10)
-                    {
-                        MakeMap3Nothing();
-                    }
-                    RoomPosition(pos1, pos2);
-                }
-                if (startr2L <= startr1L - 2 && startr2L <= startr1R + 3 && specificmapbool == false)
-                {
-                    Console.WriteLine("Fail2");
-                    amountOfFails++;
-                    if (amountOfFails >= 10)
-                    {
-                        MakeMap3Nothing();
-                    }
-                    RoomPosition(pos1, pos2);
-                }
-                if (startr2U <= startr1D - 2 && startr2U >= startr1U + 3 && specificmapbool == false)
-                {
-                    Console.WriteLine("Fail5");
-                    amountOfFails++;
-                    if (amountOfFails >= 10)
-                    {
-                        MakeMap3Nothing();
-                    }
-                    RoomPosition(pos1, pos2);
-                }
-                if (startr2R <= startr1L - 2 && startr2R >= startr1R + 3 && specificmapbool == false)
-                {
-                    Console.WriteLine("Fail6");
-                    amountOfFails++;
-                    if (amountOfFails >= 10)
-                    {
-                        MakeMap3Nothing();
-                    }
-                    RoomPosition(pos1, pos2);
                 }
             }
             static void PlayerPosition()
@@ -1160,6 +1398,7 @@ namespace RogueAttemptMaybe
             {
                 try
                 {
+                    failedMap = false;
                     //Clears the console so you dont see the previous stuff.
                     //Console.Clear();
                     //Makes it so 2 attacks cant happen at the same time
@@ -1320,6 +1559,7 @@ namespace RogueAttemptMaybe
             static void NewMap()
             {
                 firstTimeMap = true;
+                failedMap = false;
                 MakeMap3Nothing();
                 DrawMap3();
                 AwaitMovementKey();
@@ -1542,7 +1782,7 @@ namespace RogueAttemptMaybe
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("==================================");
                 Console.WriteLine();
-                bool reset = CheckRoomPosition(1);
+                bool reset = CheckRoomPosition();
                 if (reset == true)
                 {
                     Console.WriteLine("Broken map! Sorry dude!");
@@ -1643,7 +1883,7 @@ namespace RogueAttemptMaybe
                 DrawMap3();
             }
         }
-        static bool CheckRoomPosition(int function)
+        static bool CheckRoomPosition()
         {
             bool problem = false;
             //V5
