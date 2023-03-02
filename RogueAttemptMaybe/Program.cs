@@ -47,7 +47,9 @@ namespace RogueAttemptMaybe
         static string outerSideR = " |";
         static string rightConers = "|-";
         static string leftConers = "-|";
-        //Map sizes
+        //Map General
+        static int total = 0;
+        //Map sizes V4
         static int[] currentPlayerPosition = { 0, 0 };
         static int[] currentEnemyPosition = { 0, 0 };
         static int[] currentWallPosition = { 0, 0, 0, 0 };
@@ -56,7 +58,6 @@ namespace RogueAttemptMaybe
         static int innerMapSizeL = 0;
         static int innerMapSizeW = 0;
         static int biggestMapSize = 66;
-        static int total = 0;
         static int pos3 = 0;
         static int pos4 = 0;
         static int startr1L = 0;
@@ -72,8 +73,30 @@ namespace RogueAttemptMaybe
         static string mapSeed = "0214142622300612160725053232";
         static string newSeed = "0214142622300612160725053232";
         static bool specificmapbool = false;
-        static string[] randomWorkingMaps = { "0214142622300612160725053232", "0315011423292030061306103232" , "0719183018300110221322163232" };
-        static string[] randomBrokenMaps = {"1022011418301424121012173232" , "0214122411190112200919113232" , "1022152723290517151224123232" , "0214051711171830101205023232" };
+        static string[] randomWorkingMaps = { "0214142622300612160725053232", "0315011423292030061306103232", "0719183018300110221322163232" };
+        static string[] randomBrokenMaps = { "1022011418301424121012173232", "0214122411190112200919113232", "1022152723290517151224123232", "0214051711171830101205023232" };
+        //Map V4
+        static int[] recommendedMapSize_4 = { 32, 32, 2 };
+        static int mapSizeL_4 = 16;
+        static int mapSizeW_4 = 16;
+        static int innerMapSizeL_4 = 0;
+        static int innerMapSizeW_4 = 0;
+        static int biggestMapSize_4 = 64;
+        static int smallestMapSize_4 = 32;
+
+        static int amountOfRooms = 0;
+        static int maxRooms = 5;
+        static int minRooms = 1;
+
+        static int[,] roomSizes = new int[5, 6]
+        {
+            //PosL , PosW , SizeR , SizeL , SizeU , SizeD
+            { 0, 0, 0, 0, 0, 0}, //R0
+            { 0, 0, 0, 0, 0, 0}, //R1
+            { 0, 0, 0, 0, 0, 0}, //R2
+            { 0, 0, 0, 0, 0, 0}, //R3
+            { 0, 0, 0, 0, 0, 0}, //R4
+        };
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
         static string[] weapons = File.ReadAllLines("Weapons.txt");
@@ -117,8 +140,8 @@ namespace RogueAttemptMaybe
         static bool failedMap = false;
         static void Main(string[] args)
         {
-            MapSize();
-            NewMap();
+            MapSizeV4();
+            NewMapV4();
             if (failedMap)
             {
                 MapSize();
@@ -1882,93 +1905,316 @@ namespace RogueAttemptMaybe
                 createSeed();
                 DrawMap3();
             }
-        }
-        static bool CheckRoomPosition()
-        {
-            bool problem = false;
-            //V5
-            if (startr1D >= startr2U && startr1D <= startr2D)
+            static bool CheckRoomPosition()
             {
-                if (startr1R >= startr2L && startr1R <= startr2R)
+                bool problem = false;
+                //V5
+                if (startr1D >= startr2U && startr1D <= startr2D)
                 {
-                    problem = true;
+                    if (startr1R >= startr2L && startr1R <= startr2R)
+                    {
+                        problem = true;
+                    }
+                    if (startr1L >= startr2L && startr1L <= startr2R)
+                    {
+                        problem = true;
+                    }
+                    //Room 2
+                    if (startr2R >= startr1L && startr2R <= startr1R)
+                    {
+                        problem = true;
+                    }
+                    if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
+                    {
+                        problem = true;
+                    }
                 }
-                if (startr1L >= startr2L && startr1L <= startr2R)
+                if (startr1U >= startr2U && startr1U <= startr2D)
                 {
-                    problem = true;
+                    if (startr1R >= startr2L && startr1R <= startr2R)
+                    {
+                        problem = true;
+                    }
+                    if (startr1L >= startr2L && startr1L <= startr2R)
+                    {
+                        problem = true;
+                    }
+                    //Room 2
+                    if (startr2R >= startr1L && startr2R <= startr1R)
+                    {
+                        problem = true;
+                    }
+                    if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
+                    {
+                        problem = true;
+                    }
                 }
-                //Room 2
-                if (startr2R >= startr1L && startr2R <= startr1R)
+                //R2
+                if (startr2D >= startr1U && startr2D <= startr1D)
                 {
-                    problem = true;
+                    if (startr1R >= startr2L && startr1R <= startr2R)
+                    {
+                        problem = true;
+                    }
+                    if (startr1L >= startr2L && startr1L <= startr2R)
+                    {
+                        problem = true;
+                    }
+                    //Room 2
+                    if (startr2R >= startr1L && startr2R <= startr1R)
+                    {
+                        problem = true;
+                    }
+                    if (startr2L >= startr1L && startr2L <= startr1R)
+                    {
+                        problem = true;
+                    }
                 }
-                if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
+                if (startr2U - 1 >= startr1U && startr2U - 1 <= startr1D)
                 {
-                    problem = true;
+                    if (startr1R >= startr2L && startr1R <= startr2R)
+                    {
+                        problem = true;
+                    }
+                    if (startr1L >= startr2L && startr1L <= startr2R)
+                    {
+                        problem = true;
+                    }
+                    //Room 2
+                    if (startr2R >= startr1L && startr2R <= startr1R)
+                    {
+                        problem = true;
+                    }
+                    if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
+                    {
+                        problem = true;
+                    }
+                }
+                return problem;
+            }
+            static void MakeMap4Nothing()
+            {
+                try
+                {
+                    failedMap = false;
+                    //Clears the console so you dont see the previous stuff.
+                    //Console.Clear();
+                    //Makes it so 2 attacks cant happen at the same time
+                    attackHappened = false;
+                    firstTimeMap = true;
+                    //Draws the map
+                    total = 0;
+                    int length = 0;
+                    length = 0;
+                    for (int width = 1; total < mapSizeL_4 * mapSizeW_4; width++)
+                    {
+                        //The function that Makes map empty
+                        total = width * length;
+                        map1[length, width] = "**";
+                        if (width > innerMapSizeW_4)
+                        {
+                            width = 0;
+                            length++;
+                            Console.WriteLine();
+                        }
+                        if (length > innerMapSizeL_4)
+                        {
+                            length = 0;
+                            total = mapSizeL_4 * mapSizeW_4;
+                        }
+                    }
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    //Console.Clear();
+                    Console.WriteLine("Error 4:");
+                    Console.WriteLine("Something went outside the range of the map while the space was being made!");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    NewMapV4();
                 }
             }
-            if (startr1U >= startr2U && startr1U <= startr2D)
+            static void DrawMap4()
             {
-                if (startr1R >= startr2L && startr1R <= startr2R)
+                try
                 {
-                    problem = true;
+                    //So you dont see the previous "frame".
+                    //Console.Clear();
+                    //Makes it so 2 attacks cant happen at the same time
+                    attackHappened = false;
+                    total = 0;
+                    int length = 0;
+                    for (int width = 1; total < mapSizeL_4 * mapSizeW_4; width++)
+                    {
+                        total = width * length;
+                        if (width > innerMapSizeW_4)
+                        {
+                            width = 0;
+                            length++;
+                            Console.WriteLine();
+                        }
+                        if (length > innerMapSizeL_4)
+                        {
+                            length = 0;
+                            total = mapSizeL_4 * mapSizeW_4;
+                        }
+                        Console.Write(map1[length, width]);
+                    }
+                    Console.WriteLine();
                 }
-                if (startr1L >= startr2L && startr1L <= startr2R)
+                catch (IndexOutOfRangeException)
                 {
-                    problem = true;
-                }
-                //Room 2
-                if (startr2R >= startr1L && startr2R <= startr1R)
-                {
-                    problem = true;
-                }
-                if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
-                {
-                    problem = true;
+                    //Console.Clear();
+                    Console.WriteLine("Error 4:");
+                    Console.WriteLine("Something went outside of the map while drawing the map to the screen!");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    NewMapV4();
                 }
             }
-            //R2
-            if (startr2D >= startr1U && startr2D <= startr1D)
+            static void CreateRandomMapV4()
             {
-                if (startr1R >= startr2L && startr1R <= startr2R)
-                {
-                    problem = true;
-                }
-                if (startr1L >= startr2L && startr1L <= startr2R)
-                {
-                    problem = true;
-                }
-                //Room 2
-                if (startr2R >= startr1L && startr2R <= startr1R)
-                {
-                    problem = true;
-                }
-                if (startr2L >= startr1L && startr2L <= startr1R)
-                {
-                    problem = true;
-                }
+                //Rooms
+                //Room checks
+                //Paths
+                //Player and enemies
             }
-            if (startr2U - 1 >= startr1U && startr2U - 1<= startr1D)
+            static void NewMapV4()
             {
-                if (startr1R >= startr2L && startr1R <= startr2R)
-                {
-                    problem = true;
-                }
-                if (startr1L >= startr2L && startr1L <= startr2R)
-                {
-                    problem = true;
-                }
-                //Room 2
-                if (startr2R >= startr1L && startr2R <= startr1R)
-                {
-                    problem = true;
-                }
-                if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
-                {
-                    problem = true;
-                }
+                MakeMap4Nothing();
+                CreateRandomMapV4();
+                DrawMap4();
+                Console.WriteLine("Map generated");
             }
-            return problem;
+            static void MapSizeV4()
+            {
+                specificmapbool = false;
+                Console.WriteLine("Map Generation V4.0");
+                Console.WriteLine("Warning: Max size is " + biggestMapSize_4 + "!");
+                Console.WriteLine("Warning: Min size is " + smallestMapSize_4 + "!");
+                Console.WriteLine("Recommended: " + recommendedMapSize_4[0] + "x" + recommendedMapSize_4[1] + " with " + recommendedMapSize_4[2] + " rooms.");
+                Console.WriteLine("Map Length");
+                string answerL = "32";
+                try
+                {
+                    answerL = Console.ReadLine();
+                    if (answerL == "seed")
+                    {
+                        specificmapbool = true;
+                        askSeed();
+                    }
+                    int result = Int32.Parse(answerL);
+                }
+                catch (FormatException)
+                {
+                    if (answerL == "")
+                    {
+                        answerL = "nothing";
+                    }
+                    Console.Clear();
+                    Console.WriteLine("Error 1:");
+                    Console.WriteLine("Cannot convert " + answerL + " to a number.");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                if (Int32.Parse(answerL) > biggestMapSize_4 - 2)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 2:");
+                    Console.WriteLine("Answer too big");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                else if (Int32.Parse(answerL) < smallestMapSize_4)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 3:");
+                    Console.WriteLine("Answer too small");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                mapSizeL_4 = Int32.Parse(answerL);
+                Console.WriteLine("Map Width");
+                string answerW = "32";
+                try
+                {
+                    answerW = Console.ReadLine();
+                    int result = Int32.Parse(answerW);
+                }
+                catch (FormatException)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 1:");
+                    Console.WriteLine("Cannot convert " + answerW + " to a number.");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                if (Int32.Parse(answerW) > biggestMapSize_4 - 2)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 2:");
+                    Console.WriteLine("Answer too big");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                else if (Int32.Parse(answerW) < smallestMapSize_4)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 3:");
+                    Console.WriteLine("Answer too small");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                mapSizeW_4 = Int32.Parse(answerW);
+                Console.WriteLine("Amount of Rooms");
+                string answerR = "2";
+                try
+                {
+                    answerR = Console.ReadLine();
+                    int result = Int32.Parse(answerR);
+                }
+                catch (FormatException)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 1:");
+                    Console.WriteLine("Cannot convert " + answerR + " to a number.");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                if (Int32.Parse(answerR) > maxRooms)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 2:");
+                    Console.WriteLine("Answer too big , " + maxRooms + " is the maximum");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                else if (Int32.Parse(answerR) < minRooms)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 3:");
+                    Console.WriteLine("Answer too small , " + minRooms + " is the minimum");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
+                amountOfRooms = Int32.Parse(answerR);
+                innerMapSizeW_4 = mapSizeW_4 - 2;
+                innerMapSizeL_4 = mapSizeL_4 - 2;
+                Console.WriteLine(innerMapSizeW_4 + " Inner W");
+                Console.WriteLine(innerMapSizeL_4 + " Inner L");
+                Console.WriteLine(mapSizeW_4 + " Outer W");
+                Console.WriteLine(mapSizeL_4 + " Outer L");
+                Console.WriteLine(amountOfRooms + " Rooms");
+            }
         }
     }
 }
