@@ -133,6 +133,7 @@ namespace RogueAttemptMaybe
         {
             MapSizeV4();
             NewMapV4(true);
+            AwaitMovementKey();
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -817,13 +818,19 @@ namespace RogueAttemptMaybe
                         length = 0;
                         total = mapLength * mapWidth;
                     }
-                    if (width >= currentPlayerPosition[0] - 16 && width <= currentPlayerPosition[0] + 16 || width == 0)
+                    if (width >= currentPlayerPosition[0] - 17 && width <= currentPlayerPosition[0] + 17 || width == 0)
                     {
-                        if (length >= currentPlayerPosition[1] - 16 && length <= currentPlayerPosition[1] + 16)
+                        if (length >= currentPlayerPosition[1] - 17 && length <= currentPlayerPosition[1] + 17)
                         {
-                            Console.Write(map[length, width]);
+                            if (width == currentPlayerPosition[0] - 17 || width == currentPlayerPosition[0] + 17 || length == currentPlayerPosition[1] - 17 || length == currentPlayerPosition[1] + 17)
+                            {
+                                Console.Write("==");
+                            }
+                            else
+                            {
+                                Console.Write(map[length, width]);
+                            }
                         }
-                        //Console.Write(map[length, width]);
                     }
                 }
                 Console.WriteLine();
@@ -840,9 +847,13 @@ namespace RogueAttemptMaybe
         }
         static void CreateRandomMapV4(bool random)
         {
-            currentPlayerPosition[0] = 20;
-            currentPlayerPosition[1] = 20;
-            map[20,20] = playerCharacter;
+            currentPlayerPosition[0] = 32;
+            currentPlayerPosition[1] = 32;
+            map[32,32] = playerCharacter;
+            map[62,62] = "Hi";
+            map[2,2] = "Te";
+            map[33,33] = "md";
+            map[25,25] = "st";
             //Rooms
             //Room checks
             //Paths
