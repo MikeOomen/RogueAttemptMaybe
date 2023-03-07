@@ -211,7 +211,7 @@ namespace RogueAttemptMaybe
                                 currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
                                 CheckIfAttack("Player");
-                                DrawFullMap4();
+                                DrawMap4();
                                 AwaitMovementKey();
                             }
                             else
@@ -799,7 +799,7 @@ namespace RogueAttemptMaybe
             try
             {
                 //So you dont see the previous "frame".
-                //Console.Clear();
+                Console.Clear();
                 //Makes it so 2 attacks cant happen at the same time
                 attackHappened = false;
                 total = 0;
@@ -811,18 +811,21 @@ namespace RogueAttemptMaybe
                     {
                         width = 0;
                         length++;
-                        Console.WriteLine();
+                        if (length >= currentPlayerPosition[0] - 17 && length <= currentPlayerPosition[0] + 17)
+                        {
+                            Console.WriteLine();
+                        }
                     }
                     if (length > innerMapLength)
                     {
                         length = 0;
                         total = mapLength * mapWidth;
                     }
-                    if (width >= currentPlayerPosition[0] - 17 && width <= currentPlayerPosition[0] + 17 || width == 0)
+                    if (width >= currentPlayerPosition[1] - 17 && width <= currentPlayerPosition[1] + 17 || width == 0)
                     {
-                        if (length >= currentPlayerPosition[1] - 17 && length <= currentPlayerPosition[1] + 17)
+                        if (length >= currentPlayerPosition[0] - 17 && length <= currentPlayerPosition[0] + 17)
                         {
-                            if (width == currentPlayerPosition[0] - 17 || width == currentPlayerPosition[0] + 17 || length == currentPlayerPosition[1] - 17 || length == currentPlayerPosition[1] + 17)
+                            if (width == currentPlayerPosition[1] - 17 || width == currentPlayerPosition[1] + 17 || length == currentPlayerPosition[0] - 17 || length == currentPlayerPosition[0] + 17)
                             {
                                 Console.Write("==");
                             }
