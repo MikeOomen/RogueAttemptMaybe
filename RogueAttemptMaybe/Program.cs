@@ -90,8 +90,8 @@ namespace RogueAttemptMaybe
         static int amountOfRooms = 0;
         static int maxRooms = 10;
         static int minRooms = 1;
-        static int minRoomSize = 3;
-        static int maxRoomSize = 7;
+        static int minRoomSize = 2;
+        static int maxRoomSize = 10;
 
         static int[] roomsPosLengths = new int[maxRooms];
         static int[] roomsPosWidths = new int[maxRooms];
@@ -290,7 +290,7 @@ namespace RogueAttemptMaybe
                         {
                             if (specificmapbool == false)
                             {
-                                //MakeMap3Nothing();
+                                NewMapV4(true);
                             }
                             else
                             {
@@ -300,7 +300,7 @@ namespace RogueAttemptMaybe
                         }
                     case ConsoleKey.M:
                         {
-                            //MapSize();
+                            MapSizeV4();
                             NewMapV4(true);
                             break;
                         }
@@ -735,10 +735,10 @@ namespace RogueAttemptMaybe
                     {
                         //The function that Makes map empty
                         //total = width * length;
-                        map[length, width] = "**";
+                        //map[length, width] = "**";
                         //map[length, width] = width.ToString();
                         //map[length, width] = length.ToString();
-                        //map[length, width] = floorCharacter;
+                        map[length, width] = floorCharacter;
                         if (width > mapWidth)
                         {
                             width = -1;
@@ -775,6 +775,61 @@ namespace RogueAttemptMaybe
                 int roomRight = posRoomWidth + roomRightSize;
                 int roomDown = posRoomLength - roomDownSize;
                 int roomUp = posRoomLength + roomUpSize;
+                Console.WriteLine(roomLeft + " Left");
+                Console.WriteLine(roomRight + " Right");
+                Console.WriteLine(roomUp + " Up");
+                Console.WriteLine(roomDown + " Down");
+                //Sides of the map
+                if (roomLeft < 0)
+                {
+                    roomRight = roomRight + -roomLeft;
+                    roomLeft = 0;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Problem!!");
+                    Console.Beep(600, 1000);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                if (roomDown < 0)
+                {
+                    roomUp = roomUp + -roomDown;
+                    roomDown = 0;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Problem!!");
+                    Console.Beep(600, 1000);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                if (roomRight > mapWidth)
+                {
+                    //Doesnt work?
+                    roomLeft = roomLeft + -(roomRight - mapWidth);
+                    if (roomLeft < 0)
+                    {
+                        Console.WriteLine("Big problem...");
+                        Console.ReadLine();
+                        roomRight = roomRight + roomLeft;
+                    }
+                    roomRight = mapWidth;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Problem!!");
+                    Console.Beep(600, 1000);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                if (roomUp > mapLength)
+                {
+                    //Doesnt work?
+                    roomDown = roomDown + -(roomUp - mapLength);
+                    if (roomDown < 0)
+                    {
+                        Console.WriteLine("Big problem...");
+                        Console.ReadLine();
+                        roomUp = roomUp + roomDown;
+                    }
+                    roomUp = mapLength;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Problem!!");
+                    Console.Beep(600, 1000);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
                 bool problem = false;
                 problem = RoomPositionProblemFinder(roomLeft, roomRight, roomUp, roomDown);
                 if (problem)
@@ -864,22 +919,6 @@ namespace RogueAttemptMaybe
                 Console.WriteLine(up + " Up");
                 Console.WriteLine(down + " Down");
                 bool problem = false;
-                if (left < 0)
-                {
-                    problem = true;
-                }
-                if (down < 0)
-                {
-                    problem = true;
-                }
-                if (right > mapWidth)
-                {
-                    problem = true;
-                }
-                if (up > mapLength)
-                {
-                    problem = true;
-                }
                 for (int i = 0; i < checkedRooms; i++)
                 {
 
@@ -941,7 +980,7 @@ namespace RogueAttemptMaybe
                     attackHappened = false;
                     total = 0;
                     int length = 0;
-                    for (int width = 1; total < mapLength * mapWidth; width++)
+                    for (int width = 0; total < mapLength * mapWidth; width++)
                     {
                         total = width * length;
                         if (width > innerMapWidth)
@@ -958,9 +997,9 @@ namespace RogueAttemptMaybe
                             length = 0;
                             total = mapLength * mapWidth;
                         }
-                        if (width >= currentPlayerPosition[1] - 17 && width <= currentPlayerPosition[1] + 17 || width == 0)
+                        if (width >= currentPlayerPosition[1] - 16 && width <= currentPlayerPosition[1] + 16)
                         {
-                            if (length >= currentPlayerPosition[0] - 17 && length <= currentPlayerPosition[0] + 17)
+                            if (length >= currentPlayerPosition[0] - 16 && length <= currentPlayerPosition[0] + 16)
                             {
                                 Console.Write(map[length, width]);
                                 /*if (width == currentPlayerPosition[1] - 17 || width == currentPlayerPosition[1] + 17 || length == currentPlayerPosition[0] - 17 || length == currentPlayerPosition[0] + 17)
@@ -1020,9 +1059,8 @@ namespace RogueAttemptMaybe
             }
             static void DrawMap4()
             {
-                DrawFullMap4();
-                //DrawMapDistance();
-                Console.Write(map[5,0]);
+                //DrawFullMap4();
+                DrawMapDistance();
             }
             static void MapSizeV4()
             {
