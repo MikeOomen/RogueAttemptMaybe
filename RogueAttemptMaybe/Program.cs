@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Formats.Asn1;
 using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace RogueAttemptMaybe
@@ -10,8 +12,8 @@ namespace RogueAttemptMaybe
     //enemies attack your last position.
     //The map. In general.
 
-    //Console.Beep(600 , 1000); , Long quiet beep
-    //Console.Beep(750 , 500); , Short louder beep
+    //Console.Beep(600 , 1000); //, Long quiet beep
+    //Console.Beep(750 , 500); //, Short louder beep
     //To-Do list:
     //Map R
     //GUI *
@@ -45,20 +47,19 @@ namespace RogueAttemptMaybe
         static int mainMenuSelected = 1;
 
         //Characters
-        static string floorCharacter = "  ";
-        static string playerCharacter = "@ ";
-        static string enemy1 = "E ";
-        static string innerWall = "{}";
-        static string outerUp = "--";
-        static string outerSideL = "| ";
-        static string outerSideR = " |";
-        static string rightConers = "-|";
-        static string leftConers = "|-";
+        const string floorCharacter = "  ";
+        const string playerCharacter = "@ ";
+        const string enemy1 = "E ";
+        const string outerUp = "--";
+        const string outerSideL = "| ";
+        const string outerSideR = " |";
+        const string rightConers = "-|";
+        const string leftConers = "|-";
 
         //Map Balancing
         static int[] recommendedMapSize = {48,48,6};
-        static int biggestMapSize = 128 + 2; //First number is actual size
-        static int smallestMapSize = 32;
+        const int biggestMapSize = 128 + 2; //First number is actual size
+        const int smallestMapSize = 32;
 
         //Map General
         static int total = 0;
@@ -936,6 +937,7 @@ namespace RogueAttemptMaybe
                     for (int width = 0; total < mapLength * mapWidth; width++)
                     {
                         total = width * length;
+                        MapColors(length, width);
                         if (width > mapWidth)
                         {
                             width = 0;
@@ -960,6 +962,8 @@ namespace RogueAttemptMaybe
                     Console.ReadLine();
                     NewMapV4(true);
                 }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
             }
             static void DrawMapDistance()
             {
@@ -972,6 +976,7 @@ namespace RogueAttemptMaybe
                     for (int width = 0; total < mapLength * mapWidth; width++)
                     {
                         total = width * length;
+                        MapColors(length, width);
                         if (width > innerMapWidth)
                         {
                             width = 0;
@@ -1012,6 +1017,73 @@ namespace RogueAttemptMaybe
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
                     NewMapV4(true);
+                }
+            }
+            static void MapColors(int length , int width)
+            {
+                string a = "@ ";
+                switch (map[length , width])
+                {
+                    case "**":
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    case playerCharacter:
+                        {
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    case floorCharacter:
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    case outerUp:
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    case outerSideL:
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    case outerSideR:
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    case rightConers:
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    case leftConers:
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    case enemy1:
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
+                    default:
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }
                 }
             }
             static void CreateRandomMapV4(bool random)
@@ -1293,7 +1365,7 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("|");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("======================");
-                //DONT GO PAST THIS MARLON
+
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
                 selectMenu();
@@ -1327,13 +1399,14 @@ namespace RogueAttemptMaybe
                             GameStart();
                             break;
                         case 2:
-                            MainMenu();
+                            Options();
                             break;
                         case 3:
                             Credits();
                             break;
                         case 4:
-                            MainMenu();
+                            mainMenuSelected = 1;
+                            Guide();
                             break;
                         case 5:
                             Environment.Exit(0);
@@ -1365,6 +1438,168 @@ namespace RogueAttemptMaybe
                 {
                     Credits();
                 }
+            }
+            static void Options()
+            {
+                Console.Clear();
+                Console.WriteLine("What about Work In Progress do you not understand");
+                Console.ReadLine();
+                MainMenu();
+            }
+            static void Guide()
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 1)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("       ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("Player");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("       ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("| W.I.P");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 2)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("       ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("Enemy");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("        ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("| W.I.P");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 3)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("       ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("Weapons");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("      ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("| W.I.P");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 4)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("        ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Map");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("         ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("| W.I.P");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+                Console.WriteLine("======================");
+                Console.Write("|");
+                if (mainMenuSelected == 5)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("       ");
+                if (mainMenuSelected == 5)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                Console.Write("Back");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("         ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("|");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("======================");
+
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                selectGuide();
+            }
+            static void selectGuide()
+            {
+                ConsoleKey key = Console.ReadKey().Key;
+                if (key == ConsoleKey.DownArrow)
+                {
+                    mainMenuSelected += 1;
+                    if (mainMenuSelected == 6)
+                    {
+                        mainMenuSelected = 1;
+                    }
+                    Guide();
+                }
+                else if (key == ConsoleKey.UpArrow)
+                {
+                    mainMenuSelected -= 1;
+                    if (mainMenuSelected == 0)
+                    {
+                        mainMenuSelected = 5;
+                    }
+                    Guide();
+                }
+                else if (key == ConsoleKey.Enter)
+                {
+                    switch (mainMenuSelected)
+                    {
+                        case 1:
+                            Options();
+                            break;
+                        case 2:
+                            Options();
+                            break;
+                        case 3:
+                            Options();
+                            break;
+                        case 4:
+                            Tester();
+                            break;
+                        case 5:
+                            mainMenuSelected = 1;
+                            MainMenu();
+                            break;
+                    }
+                }
+                else
+                {
+                    //If key isnt an arrow it restarts
+                    selectMenu();
+                }
+            }
+            static void Tester()
+            {
+                Console.Clear();
+                Console.WriteLine(" | | ");
+                System.Threading.Thread.Sleep(1000);
+                Console.Clear();
+                Console.WriteLine(" - - ");
+                System.Threading.Thread.Sleep(1000);
+                Console.Clear();
+                Console.WriteLine(" | | ");
+                System.Threading.Thread.Sleep(1000);
+                Guide();
             }
         }
     }
