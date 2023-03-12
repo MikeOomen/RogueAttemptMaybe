@@ -857,7 +857,7 @@ namespace RogueAttemptMaybe
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Problem!!");
-                    Console.Beep(600, 1000);
+                    //Console.Beep(600, 1000);
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 return problem;
@@ -1367,6 +1367,5 @@ namespace RogueAttemptMaybe
                 }
             }
         }
-
     }
 }
