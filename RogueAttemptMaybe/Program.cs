@@ -36,9 +36,13 @@ namespace RogueAttemptMaybe
     // Enemy types Mi
         internal class Program
         {
-        //main menu
+
+        static bool hasInfo = false;
+
+        //Main Menu
         static string name;
         static bool characterHasBeenMade = false;
+
         //Characters
         static string floorCharacter = "  ";
         static string playerCharacter = "@ ";
@@ -49,44 +53,26 @@ namespace RogueAttemptMaybe
         static string outerSideR = " |";
         static string rightConers = "-|";
         static string leftConers = "|-";
+
         //Map Balancing
-        static int[] recommendedMapSize = { 32, 32, 2 };
-        static int biggestMapSize = 128 + 2; //First number is actual size!!
+        static int[] recommendedMapSize = {48,48,6};
+        static int biggestMapSize = 128 + 2; //First number is actual size
         static int smallestMapSize = 32;
+
         //Map General
         static int total = 0;
         static int[] currentPlayerPosition = { 0, 0 };
         static int[] currentEnemyPosition = { 0, 0 };
         static bool specificmapbool = false;
-        //Map sizes V3
-        /*static int[] currentWallPosition = { 0, 0, 0, 0 };
-        static int mapSizeL = 16;
-        static int mapSizeW = 16;
-        static int innerMapSizeL = 0;
-        static int innerMapSizeW = 0;
-        static int biggestMapSize = 66;
-        static int pos3 = 0;
-        static int pos4 = 0;
-        static int startr1L = 0;
-        static int startr1R = 0;
-        static int startr1U = 0;
-        static int startr1D = 0;
-        static int startr2L = 0;
-        static int startr2R = 0;
-        static int startr2U = 0;
-        static int startr2D = 0;
-        static bool saidStats = false;
-        static int amountOfFails = 0;
-        static string mapSeed = "0214142622300612160725053232";
-        static string newSeed = "0214142622300612160725053232";
-        static string[] randomWorkingMaps = { "0214142622300612160725053232", "0315011423292030061306103232", "0719183018300110221322163232" };
-        static string[] randomBrokenMaps = { "1022011418301424121012173232", "0214122411190112200919113232", "1022152723290517151224123232", "0214051711171830101205023232" };*/
+
         //Map V4
+        static string version = "V4.2";
         static int mapLength = 16;
         static int mapWidth = 16;
         static int innerMapLength = 0;
         static int innerMapWidth = 0;
 
+        static int spaceBetweenRooms = 1;
         static int amountOfRooms = 0;
         static int maxRooms = 10;
         static int minRooms = 1;
@@ -100,6 +86,7 @@ namespace RogueAttemptMaybe
         static int[] roomsUp = new int[maxRooms];
         static int[] roomsDown = new int[maxRooms];
         static int checkedRooms = 0;
+
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
         static string[] weapons = File.ReadAllLines("Weapons.txt");
@@ -133,14 +120,15 @@ namespace RogueAttemptMaybe
         static int enemyWeapon;
         static int enemyNumber = 0;
         static Random rndEnemyWeapon = new Random();
+
         //Input map here
         static string[,] map = new string[biggestMapSize, biggestMapSize];
         static void Main(string[] args)
         {
             //FullScreenWarning();
-            MapSizeV4();
+            /*MapSizeV4();
             NewMapV4(true);
-            AwaitMovementKey();
+            AwaitMovementKey();*/
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -201,8 +189,8 @@ namespace RogueAttemptMaybe
             {
                 //Starts game
                 NewEnemy();
-        /*                MapSize();
-                NewMap();*/
+                MapSizeV4();
+                NewMapV4(true);
                 AwaitMovementKey();
             }
             static void Move(ConsoleKey key)
@@ -542,10 +530,10 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("-----------------------------------------------------------");
                 for (int i = 0; i < starterWeaponName.Count; i++)
                 {
-                    Console.Write(starterWeaponName[i] + " ");
-                    Console.Write("Dmg:" + starterWeaponDmg[i] + " ");
-                    Console.Write("CC:" + starterWeaponCritChance[i] + " ");
-                    Console.WriteLine("CMulti:" + starterWeaponCritMulti[i]);
+                    Console.Write($"{starterWeaponName[i]} ");
+                    Console.Write($"Dmg:{starterWeaponDmg[i]} ");
+                    Console.Write($"CC:{starterWeaponCritChance[i]} ");
+                    Console.WriteLine($"CMulti:{starterWeaponCritMulti[i]}");
                     Console.WriteLine("-----------------------------------------------------------");
                 }
                 Console.WriteLine("Current weapon: None");
@@ -562,10 +550,10 @@ namespace RogueAttemptMaybe
                     Console.WriteLine("-----------------------------------------------------------");
                     for (int i = 0; i < starterWeaponName.Count; i++)
                     {
-                        Console.Write(starterWeaponName[i] + " ");
-                        Console.Write("Dmg:" + starterWeaponDmg[i] + " ");
-                        Console.Write("CC:" + starterWeaponCritChance[i] + " ");
-                        Console.WriteLine("CMulti:" + starterWeaponCritMulti[i]);
+                        Console.Write($"{starterWeaponName[i]} ");
+                        Console.Write($"Dmg:{starterWeaponDmg[i]} ");
+                        Console.Write($"CC:{starterWeaponCritChance[i]} ");
+                        Console.WriteLine($"CMulti:{starterWeaponCritMulti[i]}");
                         Console.WriteLine("-----------------------------------------------------------");
                     }
                     WeaponSelect(select);
@@ -580,12 +568,12 @@ namespace RogueAttemptMaybe
                             if (selectedWeapon < starterWeapons.Length - 1)
                             {
                                 selectedWeapon = selectedWeapon + 1;
-                                Console.WriteLine("Current weapon:" + starterWeaponName[selectedWeapon]);
+                                Console.WriteLine($"Current weapon:{starterWeaponName[selectedWeapon]}");
                             }
                             else
                             {
                                 selectedWeapon = 0;
-                                Console.WriteLine("Current weapon:" + starterWeaponName[selectedWeapon]);
+                                Console.WriteLine($"Current weapon:{starterWeaponName[selectedWeapon]}");
                             }
                             break;
                         }
@@ -594,12 +582,12 @@ namespace RogueAttemptMaybe
                             if (selectedWeapon > 0)
                             {
                                 selectedWeapon = selectedWeapon - 1;
-                                Console.WriteLine("Current weapon:" + starterWeaponName[selectedWeapon]);
+                                Console.WriteLine($"Current weapon:{starterWeaponName[selectedWeapon]}");
                             }
                             else
                             {
                                 selectedWeapon = starterWeapons.Length - 1;
-                                Console.WriteLine("Current weapon:" + starterWeaponName[selectedWeapon]);
+                                Console.WriteLine($"Current weapon:{starterWeaponName[selectedWeapon]}");
                             }
                             break;
                         }
@@ -735,14 +723,13 @@ namespace RogueAttemptMaybe
                     {
                         //The function that Makes map empty
                         //total = width * length;
-                        //map[length, width] = "**";
+                        map[length, width] = "**";
                         //map[length, width] = width.ToString();
                         //map[length, width] = length.ToString();
-                        map[length, width] = floorCharacter;
+                        //map[length, width] = floorCharacter;
                         if (width > mapWidth)
                         {
                             width = -1;
-                            Console.WriteLine();
                             length++;
                         }
                         if (length > mapLength)
@@ -775,28 +762,16 @@ namespace RogueAttemptMaybe
                 int roomRight = posRoomWidth + roomRightSize;
                 int roomDown = posRoomLength - roomDownSize;
                 int roomUp = posRoomLength + roomUpSize;
-                Console.WriteLine(roomLeft + " Left");
-                Console.WriteLine(roomRight + " Right");
-                Console.WriteLine(roomUp + " Up");
-                Console.WriteLine(roomDown + " Down");
                 //Sides of the map
                 if (roomLeft < 0)
                 {
                     roomRight = roomRight + -roomLeft;
                     roomLeft = 0;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Problem!!");
-                    Console.Beep(600, 1000);
-                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 if (roomDown < 0)
                 {
                     roomUp = roomUp + -roomDown;
                     roomDown = 0;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Problem!!");
-                    Console.Beep(600, 1000);
-                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 if (roomRight > mapWidth)
                 {
@@ -804,15 +779,13 @@ namespace RogueAttemptMaybe
                     roomLeft = roomLeft + -(roomRight - mapWidth);
                     if (roomLeft < 0)
                     {
-                        Console.WriteLine("Big problem...");
+                        Console.WriteLine("Error 7:");
+                        Console.WriteLine("A room is hitting both walls of the map!");
+                        Console.WriteLine("Press enter to try again");
                         Console.ReadLine();
                         roomRight = roomRight + roomLeft;
                     }
                     roomRight = mapWidth;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Problem!!");
-                    Console.Beep(600, 1000);
-                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 if (roomUp > mapLength)
                 {
@@ -820,18 +793,16 @@ namespace RogueAttemptMaybe
                     roomDown = roomDown + -(roomUp - mapLength);
                     if (roomDown < 0)
                     {
-                        Console.WriteLine("Big problem...");
+                        Console.WriteLine("Error 7:");
+                        Console.WriteLine("A room is hitting both walls of the map!");
+                        Console.WriteLine("Press enter to try again");
                         Console.ReadLine();
                         roomUp = roomUp + roomDown;
                     }
                     roomUp = mapLength;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Problem!!");
-                    Console.Beep(600, 1000);
-                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 bool problem = false;
-                problem = RoomPositionProblemFinder(roomLeft, roomRight, roomUp, roomDown);
+                problem = RoomPositionProblemFinder(roomLeft, roomRight, roomUp, roomDown , posRoomLength , posRoomWidth);
                 if (problem)
                 {
                     roomsLeft[i] = 0;
@@ -842,12 +813,51 @@ namespace RogueAttemptMaybe
                 }
                 else
                 {
+                    if (hasInfo)
+                    {
+                        Console.WriteLine($"Room {i} Finished Info:");
+                        Console.WriteLine($"{roomLeft} Left");
+                        Console.WriteLine($"{roomRight} Right");
+                        Console.WriteLine($"{roomUp} Up");
+                        Console.WriteLine($"{roomDown} Down");
+                        Console.WriteLine();
+                    }
                     checkedRooms++;
+                    roomsPosLengths[i] = posRoomLength;
+                    roomsPosWidths[i] = posRoomWidth;
                     roomsLeft[i] = roomLeft;
                     roomsRight[i] = roomRight;
                     roomsDown[i] = roomDown;
                     roomsUp[i] = roomUp;
                 }
+            }
+            static bool RoomPositionProblemFinder(int left, int right, int up, int down , int midLength , int midWidth)
+            {
+                bool problem = false;
+                for (int i = 0; i < checkedRooms; i++)
+                {
+                    for (int L = left; L <= right; L++)
+                    {
+                        if (L >= roomsLeft[i] - spaceBetweenRooms && L <= roomsRight[i] + spaceBetweenRooms)
+                        {
+                            for (int D = down; D <= up; D++)
+                            {
+                                if (D >= roomsDown[i] - spaceBetweenRooms && D <= roomsUp[i] + spaceBetweenRooms)
+                                {
+                                    problem = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (problem)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Problem!!");
+                    Console.Beep(600, 1000);
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                return problem;
             }
             static void GenerateRoomPositions()
             {
@@ -903,41 +913,19 @@ namespace RogueAttemptMaybe
                         map[roomUp, roomLeft] = leftConers;
                         map[roomDown, roomRight] = rightConers;
                         map[roomUp, roomRight] = rightConers;
+                        map[roomsPosLengths[i], roomsPosWidths[i]] = "R" + i;
                         if (width > mapWidth)
                         {
                             width = -1;
                             length++;
-                            Console.WriteLine();
                         }
                     }
                 }
-            }
-            static bool RoomPositionProblemFinder(int left, int right, int up, int down)
-            {
-                Console.WriteLine(left + " Left");
-                Console.WriteLine(right + " Right");
-                Console.WriteLine(up + " Up");
-                Console.WriteLine(down + " Down");
-                bool problem = false;
-                for (int i = 0; i < checkedRooms; i++)
-                {
-
-                }
-                if (problem)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Problem!!");
-                    Console.Beep(600, 1000);
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                return problem;
             }
             static void DrawFullMap4()
             {
                 try
                 {
-                    //So you dont see the previous "frame".
-                    //Console.Clear();
                     //Makes it so 2 attacks cant happen at the same time
                     attackHappened = false;
                     total = 0;
@@ -974,8 +962,6 @@ namespace RogueAttemptMaybe
             {
                 try
                 {
-                    //So you dont see the previous "frame".
-                    Console.Clear();
                     //Makes it so 2 attacks cant happen at the same time
                     attackHappened = false;
                     total = 0;
@@ -1047,29 +1033,33 @@ namespace RogueAttemptMaybe
             }
             static void NewMapV4(bool random)
             {
+                checkedRooms = 0;
                 MakeMap4Nothing();
                 if (random)
                 {
                     CreateRandomMapV4(true);
                 }
                 GenerateRoomPositions();
+                Console.Clear();
                 DrawMap4();
                 Console.WriteLine("Map generated");
                 AwaitMovementKey();
             }
             static void DrawMap4()
             {
-                //DrawFullMap4();
-                DrawMapDistance();
+                Console.Clear();
+                DrawFullMap4();
+                //DrawMapDistance();
             }
             static void MapSizeV4()
             {
+                Console.Clear();
                 specificmapbool = false;
-                Console.WriteLine("Map Generation V4.0");
+                Console.WriteLine($"Map Generation {version}");
                 int biggestMap = biggestMapSize - 2;
-                Console.WriteLine("Warning: Max size is " + biggestMap + "!");
-                Console.WriteLine("Warning: Min size is " + smallestMapSize + "!");
-                Console.WriteLine("Recommended: " + recommendedMapSize[0] + "x" + recommendedMapSize[1] + " with " + recommendedMapSize[2] + " rooms.");
+                Console.WriteLine($"Warning: Max size is {biggestMap}!");
+                Console.WriteLine($"Warning: Min size is {smallestMapSize}!");
+                Console.WriteLine($"Recommended: {recommendedMapSize[0]}x{recommendedMapSize[1]} with {recommendedMapSize[2]} rooms.");
                 Console.WriteLine("Map Length");
                 string answerL = "32";
                 try
@@ -1090,7 +1080,7 @@ namespace RogueAttemptMaybe
                     }
                     Console.Clear();
                     Console.WriteLine("Error 1:");
-                    Console.WriteLine("Cannot convert " + answerL + " to a number.");
+                    Console.WriteLine($"Cannot convert {answerL} to a number.");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
                     MapSizeV4();
@@ -1125,7 +1115,7 @@ namespace RogueAttemptMaybe
                 {
                     Console.Clear();
                     Console.WriteLine("Error 1:");
-                    Console.WriteLine("Cannot convert " + answerW + " to a number.");
+                    Console.WriteLine($"Cannot convert {answerW} to a number.");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
                     MapSizeV4();
@@ -1160,7 +1150,7 @@ namespace RogueAttemptMaybe
                 {
                     Console.Clear();
                     Console.WriteLine("Error 1:");
-                    Console.WriteLine("Cannot convert " + answerR + " to a number.");
+                    Console.WriteLine($"Cannot convert {answerR} to a number.");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
                     MapSizeV4();
@@ -1169,7 +1159,7 @@ namespace RogueAttemptMaybe
                 {
                     Console.Clear();
                     Console.WriteLine("Error 2:");
-                    Console.WriteLine("Answer too big , " + maxRooms + " is the maximum");
+                    Console.WriteLine($"Answer too big , {maxRooms} is the maximum.");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
                     MapSizeV4();
@@ -1178,19 +1168,28 @@ namespace RogueAttemptMaybe
                 {
                     Console.Clear();
                     Console.WriteLine("Error 3:");
-                    Console.WriteLine("Answer too small , " + minRooms + " is the minimum");
+                    Console.WriteLine($"Answer too small , {minRooms} is the minimum");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
                     MapSizeV4();
                 }
                 amountOfRooms = Int32.Parse(answerR);
+                if (mapLength * mapWidth < (((maxRoomSize + 3) * (maxRoomSize + 3)) * amountOfRooms) * 2)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Error 6:");
+                    Console.WriteLine("Not enough map space to fit so many rooms!");
+                    Console.WriteLine("Press enter to try again");
+                    Console.ReadLine();
+                    MapSizeV4();
+                }
                 innerMapWidth = mapWidth - 2;
                 innerMapLength = mapLength - 2;
-                Console.WriteLine(innerMapWidth + " Inner W");
-                Console.WriteLine(innerMapLength + " Inner L");
-                Console.WriteLine(mapWidth + " Outer W");
-                Console.WriteLine(mapLength + " Outer L");
-                Console.WriteLine(amountOfRooms + " Rooms");
+                Console.WriteLine($"{innerMapWidth} Inner W");
+                Console.WriteLine($"{innerMapLength} Inner L");
+                Console.WriteLine($"{mapWidth} Outer W");
+                Console.WriteLine($"{mapLength} Outer L");
+                Console.WriteLine($"{amountOfRooms} Rooms");
             }
             static void FullScreenWarning()
             {
@@ -1199,6 +1198,8 @@ namespace RogueAttemptMaybe
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("This game requires Fullscreen to play normally.");
                 Console.WriteLine("Not having the game fullscreen can make everything look weird.");
+                Console.WriteLine();
+                Console.WriteLine("Scrolling up might break things.");
                 Console.WriteLine();
                 Console.WriteLine("This game is W.I.P and anything may be subject to change");
                 Console.WriteLine();
