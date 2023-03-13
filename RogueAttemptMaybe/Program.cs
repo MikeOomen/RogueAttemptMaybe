@@ -55,7 +55,7 @@ namespace RogueAttemptMaybe
         const string outerSideR = " |";
         const string rightConers = "-|";
         const string leftConers = "|-";
-        const string inBetweenRooms = "##";
+        const string inBetweenRooms = "  ";
 
         //Map Balancing
         static int[] recommendedMapSize = {48,48,6};
@@ -90,7 +90,7 @@ namespace RogueAttemptMaybe
         static int[] roomsDown = new int[maxRooms];
         static int checkedRooms = 0;
 
-        static int seeingDistance = 18; //Breaks above 18
+        static int seeingDistance = 16; //Breaks above 18
 
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
@@ -298,13 +298,19 @@ namespace RogueAttemptMaybe
                             NewMapV4(true);
                             break;
                         }
+                    case ConsoleKey.F:
+                        {
+                            DrawFullMap4();
+                            AwaitMovementKey();
+                            break;
+                        }
                 }
             }
             static void AwaitMovementKey()
             {
                 //makes sure you actually use an arrow
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N || key == ConsoleKey.M)
+                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N || key == ConsoleKey.M || key == ConsoleKey.F)
                 {
                     Move(key);
                 }
@@ -628,92 +634,6 @@ namespace RogueAttemptMaybe
                 }
                 enemyNumber = enemyNumber + 1;
             }
-            /*            static bool CheckRoomPosition()
-                {
-                    bool problem = false;
-                    //V5
-                    if (startr1D >= startr2U && startr1D <= startr2D)
-                    {
-                        if (startr1R >= startr2L && startr1R <= startr2R)
-                        {
-                            problem = true;
-                        }
-                        if (startr1L >= startr2L && startr1L <= startr2R)
-                        {
-                            problem = true;
-                        }
-                        //Room 2
-                        if (startr2R >= startr1L && startr2R <= startr1R)
-                        {
-                            problem = true;
-                        }
-                        if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
-                        {
-                            problem = true;
-                        }
-                    }
-                    if (startr1U >= startr2U && startr1U <= startr2D)
-                    {
-                        if (startr1R >= startr2L && startr1R <= startr2R)
-                        {
-                            problem = true;
-                        }
-                        if (startr1L >= startr2L && startr1L <= startr2R)
-                        {
-                            problem = true;
-                        }
-                        //Room 2
-                        if (startr2R >= startr1L && startr2R <= startr1R)
-                        {
-                            problem = true;
-                        }
-                        if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
-                        {
-                            problem = true;
-                        }
-                    }
-                    //R2
-                    if (startr2D >= startr1U && startr2D <= startr1D)
-                    {
-                        if (startr1R >= startr2L && startr1R <= startr2R)
-                        {
-                            problem = true;
-                        }
-                        if (startr1L >= startr2L && startr1L <= startr2R)
-                        {
-                            problem = true;
-                        }
-                        //Room 2
-                        if (startr2R >= startr1L && startr2R <= startr1R)
-                        {
-                            problem = true;
-                        }
-                        if (startr2L >= startr1L && startr2L <= startr1R)
-                        {
-                            problem = true;
-                        }
-                    }
-                    if (startr2U - 1 >= startr1U && startr2U - 1 <= startr1D)
-                    {
-                        if (startr1R >= startr2L && startr1R <= startr2R)
-                        {
-                            problem = true;
-                        }
-                        if (startr1L >= startr2L && startr1L <= startr2R)
-                        {
-                            problem = true;
-                        }
-                        //Room 2
-                        if (startr2R >= startr1L && startr2R <= startr1R)
-                        {
-                            problem = true;
-                        }
-                        if (startr2L - 1 >= startr1L && startr2L - 1 <= startr1R)
-                        {
-                            problem = true;
-                        }
-                    }
-                    return problem;*/
             static void MakeMap4Nothing()
             {
                 try
@@ -972,7 +892,6 @@ namespace RogueAttemptMaybe
             {
                 try
                 {
-                    //Makes it so 2 attacks cant happen at the same time
                     attackHappened = false;
                     total = 0;
                     int length = 0;
@@ -980,16 +899,16 @@ namespace RogueAttemptMaybe
                     {
                         total = width * length;
                         MapColors(length, width);
-                        if (width > innerMapWidth)
+                        if (width > mapWidth)
                         {
                             width = 0;
-                            length++;
-                            if (length >= currentPlayerPosition[0] - 17 && length <= currentPlayerPosition[0] + 17)
+                            if (length >= currentPlayerPosition[0] - seeingDistance && length <= currentPlayerPosition[0] + seeingDistance)
                             {
                                 Console.WriteLine();
                             }
+                            length++;
                         }
-                        if (length > innerMapLength)
+                        if (length > mapLength)
                         {
                             length = 0;
                             total = mapLength * mapWidth;
@@ -1002,7 +921,7 @@ namespace RogueAttemptMaybe
                             }
                         }
                     }
-                    Console.WriteLine();
+                    Console.WriteLine(currentPlayerPosition[0]);
                 }
                 catch (IndexOutOfRangeException)
                 {
@@ -1013,6 +932,8 @@ namespace RogueAttemptMaybe
                     Console.ReadLine();
                     NewMapV4(true);
                 }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
             }
             static void MapColors(int length , int width)
             {
@@ -1031,12 +952,12 @@ namespace RogueAttemptMaybe
                             Console.BackgroundColor = ConsoleColor.Black;
                             break;
                         }
-                    case floorCharacter:
+/*                    case floorCharacter:
                         {
                             Console.ForegroundColor = ConsoleColor.White;
                             Console.BackgroundColor = ConsoleColor.Black;
                             break;
-                        }
+                        }*/
                     case outerUp:
                         {
                             Console.ForegroundColor = ConsoleColor.White;
@@ -1123,6 +1044,7 @@ namespace RogueAttemptMaybe
             }
             static void MapSizeV4()
             {
+                bool problem = false;
                 Console.Clear();
                 specificmapbool = false;
                 Console.WriteLine($"Map Generation {version}");
@@ -1153,33 +1075,39 @@ namespace RogueAttemptMaybe
                     Console.WriteLine($"Cannot convert {answerL} to a number.");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
-                    MapSizeV4();
+                    problem = true;
                 }
-                if (Int32.Parse(answerL) > biggestMapSize - 2)
+                if (problem == false)
                 {
-                    Console.Clear();
-                    Console.WriteLine("Error 2:");
-                    Console.WriteLine("Answer too big");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    MapSizeV4();
+                    if (Int32.Parse(answerL) > biggestMapSize - 2)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Error 2:");
+                        Console.WriteLine("Answer too big");
+                        Console.WriteLine("Press enter to try again");
+                        Console.ReadLine();
+                        problem = true;
+                    }
+                    else if (Int32.Parse(answerL) < smallestMapSize)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Error 3:");
+                        Console.WriteLine("Answer too small");
+                        Console.WriteLine("Press enter to try again");
+                        Console.ReadLine();
+                        problem = true;
+                    }
+                    mapLength = Int32.Parse(answerL);
                 }
-                else if (Int32.Parse(answerL) < smallestMapSize)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 3:");
-                    Console.WriteLine("Answer too small");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    MapSizeV4();
-                }
-                mapLength = Int32.Parse(answerL);
                 Console.WriteLine("Map Width");
                 string answerW = "32";
                 try
                 {
-                    answerW = Console.ReadLine();
-                    int result = Int32.Parse(answerW);
+                    if (problem == false)
+                    {
+                        answerW = Console.ReadLine();
+                        int result = Int32.Parse(answerW);
+                    }
                 }
                 catch (FormatException)
                 {
@@ -1188,33 +1116,39 @@ namespace RogueAttemptMaybe
                     Console.WriteLine($"Cannot convert {answerW} to a number.");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
-                    MapSizeV4();
+                    problem = true;
                 }
-                if (Int32.Parse(answerW) > biggestMapSize - 2)
+                if (problem == false)
                 {
-                    Console.Clear();
-                    Console.WriteLine("Error 2:");
-                    Console.WriteLine("Answer too big");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    MapSizeV4();
+                    if (Int32.Parse(answerW) > biggestMapSize - 2)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Error 2:");
+                        Console.WriteLine("Answer too big");
+                        Console.WriteLine("Press enter to try again");
+                        Console.ReadLine();
+                        problem = true;
+                    }
+                    else if (Int32.Parse(answerW) < smallestMapSize)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Error 3:");
+                        Console.WriteLine("Answer too small");
+                        Console.WriteLine("Press enter to try again");
+                        Console.ReadLine();
+                        problem = true;
+                    }
+                    mapWidth = Int32.Parse(answerW);
                 }
-                else if (Int32.Parse(answerW) < smallestMapSize)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 3:");
-                    Console.WriteLine("Answer too small");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    MapSizeV4();
-                }
-                mapWidth = Int32.Parse(answerW);
                 Console.WriteLine("Amount of Rooms");
                 string answerR = "2";
                 try
                 {
-                    answerR = Console.ReadLine();
-                    int result = Int32.Parse(answerR);
+                    if (problem == false)
+                    {
+                        answerR = Console.ReadLine();
+                        int result = Int32.Parse(answerR);
+                    }
                 }
                 catch (FormatException)
                 {
@@ -1223,27 +1157,33 @@ namespace RogueAttemptMaybe
                     Console.WriteLine($"Cannot convert {answerR} to a number.");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
-                    MapSizeV4();
+                    problem = true;
                 }
-                if (Int32.Parse(answerR) > maxRooms)
+                if (problem == false)
                 {
-                    Console.Clear();
-                    Console.WriteLine("Error 2:");
-                    Console.WriteLine($"Answer too big , {maxRooms} is the maximum.");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    MapSizeV4();
+                    if (Int32.Parse(answerR) > maxRooms)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Error 2:");
+                        Console.WriteLine($"Answer too big , {maxRooms} is the maximum.");
+                        Console.WriteLine("Press enter to try again");
+                        Console.ReadLine();
+                        problem = true;
+                    }
+                    else if (Int32.Parse(answerR) < minRooms)
+                    {
+                        if (problem == false)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Error 3:");
+                            Console.WriteLine($"Answer too small , {minRooms} is the minimum");
+                            Console.WriteLine("Press enter to try again");
+                            Console.ReadLine();
+                            problem = true;
+                        }
+                    }
+                    amountOfRooms = Int32.Parse(answerR);
                 }
-                else if (Int32.Parse(answerR) < minRooms)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 3:");
-                    Console.WriteLine($"Answer too small , {minRooms} is the minimum");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    MapSizeV4();
-                }
-                amountOfRooms = Int32.Parse(answerR);
                 if (mapLength * mapWidth < (((maxRoomSize + 3) * (maxRoomSize + 3)) * amountOfRooms) * 2)
                 {
                     Console.Clear();
@@ -1251,7 +1191,7 @@ namespace RogueAttemptMaybe
                     Console.WriteLine("Not enough map space to fit so many rooms!");
                     Console.WriteLine("Press enter to try again");
                     Console.ReadLine();
-                    MapSizeV4();
+                    problem = true;
                 }
                 innerMapWidth = mapWidth - 2;
                 innerMapLength = mapLength - 2;
@@ -1260,6 +1200,13 @@ namespace RogueAttemptMaybe
                 Console.WriteLine($"{mapWidth} Outer W");
                 Console.WriteLine($"{mapLength} Outer L");
                 Console.WriteLine($"{amountOfRooms} Rooms");
+                if (problem == true)
+                {
+                    mapLength = 0;
+                    mapWidth = 0;
+                    amountOfRooms = 0;
+                    MapSizeV4();
+                }
             }
             static void FullScreenWarning()
             {
