@@ -55,6 +55,7 @@ namespace RogueAttemptMaybe
         const string outerSideR = " |";
         const string rightConers = "-|";
         const string leftConers = "|-";
+        const string inBetweenRooms = "##";
 
         //Map Balancing
         static int[] recommendedMapSize = {48,48,6};
@@ -88,6 +89,8 @@ namespace RogueAttemptMaybe
         static int[] roomsUp = new int[maxRooms];
         static int[] roomsDown = new int[maxRooms];
         static int checkedRooms = 0;
+
+        static int seeingDistance = 18; //Breaks above 18
 
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
@@ -727,7 +730,7 @@ namespace RogueAttemptMaybe
                     {
                         //The function that Makes map empty
                         //total = width * length;
-                        map[length, width] = "**";
+                        map[length, width] = inBetweenRooms;
                         //map[length, width] = width.ToString();
                         //map[length, width] = length.ToString();
                         //map[length, width] = floorCharacter;
@@ -991,19 +994,11 @@ namespace RogueAttemptMaybe
                             length = 0;
                             total = mapLength * mapWidth;
                         }
-                        if (width >= currentPlayerPosition[1] - 16 && width <= currentPlayerPosition[1] + 16)
+                        if (width >= currentPlayerPosition[1] - seeingDistance && width <= currentPlayerPosition[1] + seeingDistance)
                         {
-                            if (length >= currentPlayerPosition[0] - 16 && length <= currentPlayerPosition[0] + 16)
+                            if (length >= currentPlayerPosition[0] - seeingDistance && length <= currentPlayerPosition[0] + seeingDistance)
                             {
                                 Console.Write(map[length, width]);
-                                /*if (width == currentPlayerPosition[1] - 17 || width == currentPlayerPosition[1] + 17 || length == currentPlayerPosition[0] - 17 || length == currentPlayerPosition[0] + 17)
-                                    {
-                                        Console.Write("==");
-                                    }
-                                    else
-                                    {
-                                        Console.Write(map[length, width]);
-                                    }*/
                             }
                         }
                     }
@@ -1024,7 +1019,7 @@ namespace RogueAttemptMaybe
                 string a = "@ ";
                 switch (map[length , width])
                 {
-                    case "**":
+                    case inBetweenRooms:
                         {
                             Console.ForegroundColor = ConsoleColor.DarkGray;
                             Console.BackgroundColor = ConsoleColor.Black;
@@ -1123,8 +1118,8 @@ namespace RogueAttemptMaybe
             static void DrawMap4()
             {
                 Console.Clear();
-                DrawFullMap4();
-                //DrawMapDistance();
+                //DrawFullMap4();
+                DrawMapDistance();
             }
             static void MapSizeV4()
             {
@@ -1534,7 +1529,6 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("|");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("======================");
-
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
                 selectGuide();
