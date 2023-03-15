@@ -5,9 +5,11 @@ using System.Formats.Asn1;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 
 namespace RogueAttemptMaybe
-    {
+{
     //Current bugs:
     //enemies attack your last position.
     //The map. In general.
@@ -36,10 +38,13 @@ namespace RogueAttemptMaybe
     //HP *      Ma
     //Attack * R/Mi
     // Enemy types Mi
-        internal class Program
-        {
+    internal class Program
+    {
 
         static bool hasInfo = false;
+        static bool beeps = true;
+        static string currentMusic = "boss";
+        static bool musicPlaying = false;
 
         //Main Menu
         static string name;
@@ -58,7 +63,7 @@ namespace RogueAttemptMaybe
         const string inBetweenRooms = "  ";
 
         //Map Balancing
-        static int[] recommendedMapSize = {48,48,6};
+        static int[] recommendedMapSize = { 48, 48, 6 };
         const int biggestMapSize = 128 + 2; //First number is actual size
         const int smallestMapSize = 32;
 
@@ -130,7 +135,15 @@ namespace RogueAttemptMaybe
         static string[,] map = new string[biggestMapSize, biggestMapSize];
         static void Main(string[] args)
         {
+            Console.Title = "C# Rogue Game";
+            Thread music1 = new Thread(new ThreadStart(musicTrack1));
+            Thread music2 = new Thread(new ThreadStart(musicTrack2));
+            Thread music3 = new Thread(new ThreadStart(musicTrack3));
+            music1.Start();
+            music2.Start();
+            music3.Start();
             FullScreenWarning();
+            musicPlaying = false;
             /*MapSizeV4();
             NewMapV4(true);
             AwaitMovementKey();*/
@@ -284,6 +297,7 @@ namespace RogueAttemptMaybe
                         {
                             if (specificmapbool == false)
                             {
+                                beeps = false;
                                 NewMapV4(true);
                             }
                             else
@@ -309,6 +323,7 @@ namespace RogueAttemptMaybe
             static void AwaitMovementKey()
             {
                 //makes sure you actually use an arrow
+                currentMusic = "looting";
                 ConsoleKey key = Console.ReadKey().Key;
                 if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N || key == ConsoleKey.M || key == ConsoleKey.F)
                 {
@@ -532,6 +547,7 @@ namespace RogueAttemptMaybe
             static void GameStart()
             {
                 Console.Clear();
+                currentMusic = "fighting";
                 Console.WriteLine("Welcome to character creation");
                 Console.WriteLine("Insert your name and press enter to continue the character creation");
                 Console.WriteLine("-----------------------------------------------------------");
@@ -729,7 +745,7 @@ namespace RogueAttemptMaybe
                     roomUp = mapLength;
                 }
                 bool problem = false;
-                problem = RoomPositionProblemFinder(roomLeft, roomRight, roomUp, roomDown , posRoomLength , posRoomWidth);
+                problem = RoomPositionProblemFinder(roomLeft, roomRight, roomUp, roomDown, posRoomLength, posRoomWidth);
                 if (problem)
                 {
                     roomsLeft[i] = 0;
@@ -758,7 +774,7 @@ namespace RogueAttemptMaybe
                     roomsUp[i] = roomUp;
                 }
             }
-            static bool RoomPositionProblemFinder(int left, int right, int up, int down , int midLength , int midWidth)
+            static bool RoomPositionProblemFinder(int left, int right, int up, int down, int midLength, int midWidth)
             {
                 bool problem = false;
                 for (int i = 0; i < checkedRooms; i++)
@@ -935,10 +951,9 @@ namespace RogueAttemptMaybe
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.BackgroundColor = ConsoleColor.Black;
             }
-            static void MapColors(int length , int width)
+            static void MapColors(int length, int width)
             {
-                string a = "@ ";
-                switch (map[length , width])
+                switch (map[length, width])
                 {
                     case inBetweenRooms:
                         {
@@ -952,12 +967,12 @@ namespace RogueAttemptMaybe
                             Console.BackgroundColor = ConsoleColor.Black;
                             break;
                         }
-/*                    case floorCharacter:
-                        {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
-                            break;
-                        }*/
+                    /*                    case floorCharacter:
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.White;
+                                                Console.BackgroundColor = ConsoleColor.Black;
+                                                break;
+                                            }*/
                     case outerUp:
                         {
                             Console.ForegroundColor = ConsoleColor.White;
@@ -1044,6 +1059,7 @@ namespace RogueAttemptMaybe
             }
             static void MapSizeV4()
             {
+                currentMusic = "loading";
                 bool problem = false;
                 Console.Clear();
                 specificmapbool = false;
@@ -1341,6 +1357,7 @@ namespace RogueAttemptMaybe
                             GameStart();
                             break;
                         case 2:
+                            currentMusic = "test";
                             Options();
                             break;
                         case 3:
@@ -1515,6 +1532,7 @@ namespace RogueAttemptMaybe
                             Options();
                             break;
                         case 4:
+                            currentMusic = "main";
                             Tester();
                             break;
                         case 5:
@@ -1541,6 +1559,382 @@ namespace RogueAttemptMaybe
                 Console.WriteLine(" | | ");
                 System.Threading.Thread.Sleep(1000);
                 Guide();
+            }
+            static void musicTrack1()
+            {
+                while (beeps == true)
+                {
+                    //Console.Title = "C# Rogue Game";
+                    switch (currentMusic)
+                    {
+                        case "main":
+                            {
+                                if (musicPlaying == false)
+                                {
+                                    musicPlaying = true;
+                                    //Console.WriteLine($"Current music playing: {currentMusic}");
+                                    musicPlaying = false;
+                                }
+                                break;
+                            }
+                        case "test":
+                            {
+                                if (musicPlaying == false)
+                                {
+                                    musicPlaying = true;
+                                    //Console.WriteLine($"Current music playing: {currentMusic}");
+                                    Console.Beep(200, 900);
+                                    Console.Beep(100, 200);
+                                    Console.Beep(200, 300);
+                                    Console.Beep(100, 300);
+                                    musicPlaying = false;
+                                }
+                                break;
+
+                            }
+                    }
+
+                }
+            }
+            static void musicTrack2()
+            {
+                while (beeps == true)
+                {
+                    switch (currentMusic)
+                    {
+                        case "main":
+                            {
+                                while (musicPlaying == true)
+                                {
+                                    Console.Beep(220, 500); // intro
+                                    Console.Beep(196, 250);
+                                    Console.Beep(165, 250);
+                                    Console.Beep(131, 500);
+
+                                    Console.Beep(220, 250); // verse 1
+                                    Console.Beep(196, 250);
+                                    Console.Beep(165, 250);
+                                    Console.Beep(131, 500);
+
+                                    Console.Beep(220, 250); // verse 2
+                                    Console.Beep(196, 250);
+                                    Console.Beep(165, 250);
+                                    Console.Beep(131, 500);
+
+                                    Console.Beep(220, 250); // verse 3
+                                    Console.Beep(196, 250);
+                                    Console.Beep(165, 250);
+                                    Console.Beep(131, 500);
+
+                                    Console.Beep(220, 500); // chorus
+                                    Console.Beep(165, 250);
+                                    Console.Beep(131, 250);
+
+                                    Console.Beep(220, 250); // bridge
+                                    Console.Beep(196, 250);
+                                    Console.Beep(165, 250);
+                                    Console.Beep(131, 500);
+
+                                    Console.Beep(220, 250); // chorus
+                                    Console.Beep(165, 250);
+                                    Console.Beep(131, 250);
+
+                                    Console.Beep(220, 500); // outro
+                                    Console.Beep(165, 250);
+                                    Console.Beep(131, 250);
+                                    Console.WriteLine("Completed a run");
+                                }
+                                break;
+                            }
+                        case "loading":
+                            {
+                                //Loading Music?
+                                Console.Beep(262, 250); // C
+                                Console.Beep(294, 250); // D
+                                Console.Beep(330, 250); // E
+                                Console.Beep(262, 250); // C
+                                Console.Beep(262, 250); // C
+                                Console.Beep(294, 250); // D
+                                Console.Beep(330, 250); // E
+                                Console.Beep(262, 250); // C
+                                Console.Beep(294, 250); // D
+                                Console.Beep(262, 250); // C
+                                Console.Beep(262, 250); // C
+                                Console.Beep(294, 250); // D
+                                Console.Beep(294, 250); // D
+                                Console.Beep(262, 250); // C
+                                Console.WriteLine("Completed a run");
+                                break;
+                            }
+                        case "looting":
+                            {
+                                Console.Beep(400, 200); // intro
+                                Console.Beep(500, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(700, 200);
+
+                                Console.Beep(400, 200); // verse 1
+                                Console.Beep(400, 200);
+                                Console.Beep(450, 200);
+                                Console.Beep(400, 200);
+                                Console.Beep(500, 200);
+                                Console.Beep(450, 200);
+                                Console.Beep(400, 200);
+                                Console.Beep(550, 200);
+                                Console.Beep(500, 200);
+                                Console.Beep(400, 200);
+                                Console.Beep(600, 200);
+
+                                Console.Beep(400, 200); // chorus
+                                Console.Beep(500, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(700, 200);
+                                Console.Beep(800, 200);
+                                Console.Beep(700, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(500, 200);
+
+                                Console.Beep(400, 200); // verse 2
+                                Console.Beep(400, 200);
+                                Console.Beep(450, 200);
+                                Console.Beep(400, 200);
+                                Console.Beep(500, 200);
+                                Console.Beep(450, 200);
+                                Console.Beep(400, 200);
+                                Console.Beep(550, 200);
+                                Console.Beep(500, 200);
+                                Console.Beep(400, 200);
+                                Console.Beep(600, 200);
+
+                                Console.Beep(400, 200); // chorus
+                                Console.Beep(500, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(700, 200);
+                                Console.Beep(800, 200);
+                                Console.Beep(700, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(500, 200);
+
+                                Console.Beep(400, 200); // bridge
+                                Console.Beep(500, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(700, 200);
+                                Console.Beep(800, 200);
+                                Console.Beep(700, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(500, 200);
+
+                                Console.Beep(400, 200); // chorus
+                                Console.Beep(500, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(700, 200);
+                                Console.Beep(800, 200);
+                                Console.Beep(700, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(500, 200);
+
+                                Console.Beep(400, 200); // outro
+                                Console.Beep(500, 200);
+                                Console.Beep(600, 200);
+                                Console.Beep(700, 200);
+                                Console.WriteLine("Completed a run");
+                                break;
+                            }
+                        case "fighting":
+                            {
+                                //Fighting
+                                Console.Beep(200, 100); // intro
+                                Console.Beep(200, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(350, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(400, 100);
+
+                                Console.Beep(200, 100); // verse 1
+                                Console.Beep(200, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(350, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(400, 100);
+
+                                Console.Beep(500, 100); // chorus
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+
+                                Console.Beep(200, 100); // verse 2
+                                Console.Beep(200, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(350, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(400, 100);
+
+                                Console.Beep(500, 100); // chorus
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+
+                                Console.Beep(200, 100); // bridge
+                                Console.Beep(200, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(350, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(200, 100);
+                                Console.Beep(400, 100);
+
+                                Console.Beep(500, 100); // chorus
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+
+                                Console.Beep(200, 100); // outro
+                                Console.Beep(200, 100);
+                                Console.Beep(250, 100);
+                                Console.Beep(300, 100);
+                                Console.Beep(350, 100);
+                                Console.Beep(400, 100);
+                                Console.Beep(450, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(550, 100);
+                                Console.Beep(600, 100);
+                                Console.Beep(650, 100);
+                                Console.Beep(700, 100);
+                                Console.Beep(750, 100);
+                                Console.Beep(800, 100);
+                                Console.Beep(850, 100);
+                                Console.Beep(900, 100);
+                                Console.WriteLine("Completed a run");
+                                break;
+                            }
+                        case "boss":
+                            {
+                                Console.Beep(80, 500);  // intro
+                                Console.Beep(100, 250);
+                                Console.Beep(120, 250);
+
+                                Console.Beep(160, 500);  // verse 1
+                                Console.Beep(180, 500);
+                                Console.Beep(200, 500);
+                                Console.Beep(240, 250);
+                                Console.Beep(200, 250);
+                                Console.Beep(180, 250);
+
+                                Console.Beep(160, 500);  // verse 2
+                                Console.Beep(180, 500);
+                                Console.Beep(200, 500);
+                                Console.Beep(240, 250);
+                                Console.Beep(200, 250);
+                                Console.Beep(180, 250);
+
+                                Console.Beep(160, 500);  // verse 3
+                                Console.Beep(180, 500);
+                                Console.Beep(200, 500);
+                                Console.Beep(240, 250);
+                                Console.Beep(200, 250);
+                                Console.Beep(180, 250);
+
+                                Console.Beep(240, 500);  // chorus
+                                Console.Beep(320, 250);
+                                Console.Beep(240, 250);
+                                Console.Beep(320, 250);
+                                Console.Beep(240, 500);
+
+                                Console.Beep(240, 500);  // bridge
+                                Console.Beep(320, 250);
+                                Console.Beep(240, 250);
+                                Console.Beep(320, 250);
+                                Console.Beep(240, 500);
+
+                                Console.Beep(240, 500);  // chorus
+                                Console.Beep(320, 250);
+                                Console.Beep(240, 250);
+                                Console.Beep(320, 250);
+                                Console.Beep(240, 500);
+
+                                Console.Beep(80, 500);  // outro
+                                Console.Beep(100, 250);
+                                Console.Beep(120, 250);
+                                Console.WriteLine("Completed a run");
+                                break;
+                            }
+                        case "test":
+                            {
+                                if (musicPlaying == false)
+                                {
+                                    musicPlaying = true;
+                                    Console.Beep(200, 900);
+                                    Console.Beep(100, 200);
+                                    Console.Beep(200, 300);
+                                    Console.Beep(100, 300);
+                                    musicPlaying = false;
+                                }
+                                break;
+                            }
+                    }
+                }
+            }
+            static void musicTrack3()
+            {
+                while (beeps == true)
+                {
+                    switch (currentMusic)
+                    {
+                        case "main":
+                            {
+                                while (musicPlaying == true)
+                                {
+                                    /*Console.Beep(400, 500);
+                                    Console.Beep(400, 500);*/
+                                    System.Threading.Thread.Sleep(1000);
+                                }
+                                break;
+                            }
+                        case "test":
+                            {
+                                if (musicPlaying == false)
+                                {
+                                    musicPlaying = true;
+                                    Console.Beep(200, 900);
+                                    Console.Beep(100, 200);
+                                    Console.Beep(200, 300);
+                                    Console.Beep(100, 300);
+                                    musicPlaying = false;
+                                }
+                                break;
+                            }
+                    }
+                }
             }
         }
     }
