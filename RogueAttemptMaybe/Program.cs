@@ -46,6 +46,8 @@ namespace RogueAttemptMaybe
         static string currentMusic = "boss";
         static bool musicPlaying = false;
 
+        static bool playerCanAMoveEverywhere = true;
+
         //Main Menu
         static string name;
         static bool characterHasBeenMade = false;
@@ -60,7 +62,7 @@ namespace RogueAttemptMaybe
         const string outerSideR = " |";
         const string rightConers = "-|";
         const string leftConers = "|-";
-        const string inBetweenRooms = "  ";
+        const string inBetweenRooms = "**";
 
         //Map Balancing
         static int[] recommendedMapSize = { 48, 48, 6 };
@@ -230,6 +232,12 @@ namespace RogueAttemptMaybe
                             }
                             else
                             {
+                                if (playerCanAMoveEverywhere)
+                                {
+                                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                                    currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
+                                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
+                                }
                                 CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
@@ -249,6 +257,12 @@ namespace RogueAttemptMaybe
                             }
                             else
                             {
+                                if (playerCanAMoveEverywhere)
+                                {
+                                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                                    currentPlayerPosition[0] = currentPlayerPosition[0] - 1;
+                                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
+                                }
                                 CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
@@ -268,6 +282,12 @@ namespace RogueAttemptMaybe
                             }
                             else
                             {
+                                if (playerCanAMoveEverywhere)
+                                {
+                                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                                    currentPlayerPosition[1] = currentPlayerPosition[1] - 1;
+                                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
+                                }
                                 CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
@@ -287,6 +307,12 @@ namespace RogueAttemptMaybe
                             }
                             else
                             {
+                                if (playerCanAMoveEverywhere)
+                                {
+                                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
+                                    currentPlayerPosition[1] = currentPlayerPosition[1] + 1;
+                                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
+                                }
                                 CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
@@ -865,6 +891,22 @@ namespace RogueAttemptMaybe
                     }
                 }
             }
+            static void DecidePlayerPosition()
+            {
+                Random rnd = new Random();
+                int room = rnd.Next(0, amountOfRooms);
+                if (roomsPosLengths[room] != 0 && roomsPosWidths[room] != 0)
+                {
+                    currentPlayerPosition[0] = roomsPosLengths[room];
+                    currentPlayerPosition[1] = roomsPosWidths[room];
+                    map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    DecidePlayerPosition();
+                }
+            }
             static void DrawFullMap4()
             {
                 try
@@ -1019,9 +1061,9 @@ namespace RogueAttemptMaybe
             }
             static void CreateRandomMapV4(bool random)
             {
-                currentPlayerPosition[0] = 32;
+/*                currentPlayerPosition[0] = 32;
                 currentPlayerPosition[1] = 32;
-                map[32, 32] = playerCharacter;
+                map[32, 32] = playerCharacter;*/
                 /*map[62, 62] = "Hi";
                 map[2, 2] = "Te";
                 map[33, 33] = "md";
@@ -1032,6 +1074,7 @@ namespace RogueAttemptMaybe
                 {
                     DecideRandomRooms(i);
                 }
+                DecidePlayerPosition();
                 //Rooms
                 //Room checks
                 //Paths
@@ -1642,7 +1685,6 @@ namespace RogueAttemptMaybe
                                     Console.Beep(220, 500); // outro
                                     Console.Beep(165, 250);
                                     Console.Beep(131, 250);
-                                    Console.WriteLine("Completed a run");
                                 }
                                 break;
                             }
@@ -1663,7 +1705,6 @@ namespace RogueAttemptMaybe
                                 Console.Beep(294, 250); // D
                                 Console.Beep(294, 250); // D
                                 Console.Beep(262, 250); // C
-                                Console.WriteLine("Completed a run");
                                 break;
                             }
                         case "looting":
@@ -1737,7 +1778,6 @@ namespace RogueAttemptMaybe
                                 Console.Beep(500, 200);
                                 Console.Beep(600, 200);
                                 Console.Beep(700, 200);
-                                Console.WriteLine("Completed a run");
                                 break;
                             }
                         case "fighting":
@@ -1834,7 +1874,6 @@ namespace RogueAttemptMaybe
                                 Console.Beep(800, 100);
                                 Console.Beep(850, 100);
                                 Console.Beep(900, 100);
-                                Console.WriteLine("Completed a run");
                                 break;
                             }
                         case "boss":
@@ -1885,7 +1924,6 @@ namespace RogueAttemptMaybe
                                 Console.Beep(80, 500);  // outro
                                 Console.Beep(100, 250);
                                 Console.Beep(120, 250);
-                                Console.WriteLine("Completed a run");
                                 break;
                             }
                         case "test":
