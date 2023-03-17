@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Formats.Asn1;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
@@ -40,7 +41,6 @@ namespace RogueAttemptMaybe
     // Enemy types Mi
     internal class Program
     {
-
         static bool hasInfo = false;
         static bool beeps = true;
         static string currentMusic = "boss";
@@ -82,7 +82,7 @@ namespace RogueAttemptMaybe
         static int innerMapLength = 0;
         static int innerMapWidth = 0;
 
-        static int spaceBetweenRooms = 1;
+        static int spaceBetweenRooms = 3;
         static int amountOfRooms = 0;
         static int maxRooms = 10;
         static int minRooms = 1;
@@ -146,9 +146,9 @@ namespace RogueAttemptMaybe
             music3.Start();
             FullScreenWarning();
             musicPlaying = false;
-            /*MapSizeV4();
+            MapSizeV4();
             NewMapV4(true);
-            AwaitMovementKey();*/
+            AwaitMovementKey();
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -226,7 +226,7 @@ namespace RogueAttemptMaybe
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
                                 currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
-                                CheckIfAttack("Player");
+                                //CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
                             }
@@ -238,7 +238,7 @@ namespace RogueAttemptMaybe
                                     currentPlayerPosition[0] = currentPlayerPosition[0] + 1;
                                     map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
                                 }
-                                CheckIfAttack("Player");
+                                //CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
                             }
@@ -251,7 +251,7 @@ namespace RogueAttemptMaybe
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
                                 currentPlayerPosition[0] = currentPlayerPosition[0] - 1;
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
-                                CheckIfAttack("Player");
+                                //CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
                             }
@@ -263,7 +263,7 @@ namespace RogueAttemptMaybe
                                     currentPlayerPosition[0] = currentPlayerPosition[0] - 1;
                                     map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
                                 }
-                                CheckIfAttack("Player");
+                                //CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
                             }
@@ -276,7 +276,7 @@ namespace RogueAttemptMaybe
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
                                 currentPlayerPosition[1] = currentPlayerPosition[1] - 1;
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
-                                CheckIfAttack("Player");
+                                //CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
                             }
@@ -288,7 +288,7 @@ namespace RogueAttemptMaybe
                                     currentPlayerPosition[1] = currentPlayerPosition[1] - 1;
                                     map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
                                 }
-                                CheckIfAttack("Player");
+                                //CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
                             }
@@ -301,7 +301,7 @@ namespace RogueAttemptMaybe
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = floorCharacter;
                                 currentPlayerPosition[1] = currentPlayerPosition[1] + 1;
                                 map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
-                                CheckIfAttack("Player");
+                                //CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
                             }
@@ -313,7 +313,7 @@ namespace RogueAttemptMaybe
                                     currentPlayerPosition[1] = currentPlayerPosition[1] + 1;
                                     map[currentPlayerPosition[0], currentPlayerPosition[1]] = playerCharacter;
                                 }
-                                CheckIfAttack("Player");
+                                //CheckIfAttack("Player");
                                 DrawMap4();
                                 AwaitMovementKey();
                             }
@@ -877,6 +877,11 @@ namespace RogueAttemptMaybe
                                 map[length, width] = outerUp;
                             }
                         }
+                        //Sides
+                        if (length == (roomsUp[i] + roomsDown[i]) / 2)
+                        {
+                            //map[length, width] = "EE";
+                        }
                         //Corners
                         map[roomDown, roomLeft] = leftConers;
                         map[roomUp, roomLeft] = leftConers;
@@ -907,6 +912,114 @@ namespace RogueAttemptMaybe
                     DecidePlayerPosition();
                 }
             }
+            static void MiddleRoomSides()
+            {
+                for (int i = 0; i < amountOfRooms; i++)
+                {
+                    total = 0;
+                    int length = 0;
+                    for (int width = 0; total < mapLength * mapWidth; width++)
+                    {
+                        total = width * length;
+                        if (width == roomsLeft[i] && length == (roomsUp[i] + roomsDown[i]) / 2)
+                        {
+                            map[length, width] = "L" + i;
+                        }
+                        if (width == roomsRight[i] && length == (roomsUp[i] + roomsDown[i]) / 2)
+                        {
+                            map[length, width] = "R" + i;
+                        }
+
+                        if (length == roomsUp[i] && width == (roomsRight[i] + roomsLeft[i]) / 2)
+                        {
+                            map[length, width] = "U" + i;
+                        }
+                        if (length == roomsDown[i] && width == (roomsRight[i] + roomsLeft[i]) / 2)
+                        {
+                            map[length, width] = "D" + i;
+                        }
+
+                        if (width > mapWidth)
+                        {
+                            width = -1;
+                            length++;
+                        }
+                    }
+                }
+            }
+            static void RoomPaths()
+            {
+                Console.WriteLine("hi");
+                int checkedRoomDifferences = 0;
+                int lowest = 1000;
+                int lowestI = 0;
+                int lowestJ = 0;
+                for (int i = 0; i < amountOfRooms; i++)
+                {
+                    for (int j = 0; j < amountOfRooms; j++)
+                    {
+                        if (j > checkedRoomDifferences)
+                        {
+                            if (i != j)
+                            {
+                                int differenceL = roomsLeft[j] - roomsLeft[i];
+                                int differenceR = roomsRight[j] - roomsRight[i];
+                                int differenceLR = roomsLeft[j] - roomsRight[i];
+                                int differenceRL = roomsRight[j] - roomsLeft[i];
+                                if (differenceL < 0)
+                                {
+                                    differenceL = -differenceL;
+                                }
+                                if (differenceR < 0)
+                                {
+                                    differenceR = -differenceR;
+                                }
+                                if (differenceLR < 0)
+                                {
+                                    differenceLR = -differenceLR;
+                                }
+                                if (differenceRL < 0)
+                                {
+                                    differenceRL = -differenceRL;
+                                }
+                                Console.WriteLine(differenceL + "L between " + i + " and " + j);
+                                Console.WriteLine(differenceR + "R between " + i + " and " + j); 
+                                Console.WriteLine(differenceLR + "LR between " + i + " and " + j);
+                                Console.WriteLine(differenceRL + "RL between " + i + " and " + j);
+                                Console.WriteLine();
+
+                                int differenceU = roomsUp[j] - roomsUp[i];
+                                int differenceD = roomsDown[j] - roomsDown[i];
+                                int differenceUD = roomsUp[j] - roomsDown[i];
+                                int differenceDU = roomsDown[j] - roomsUp[i];
+                                /*int differenceL = roomsPosLengths[j] - roomsPosLengths[i];
+                                int differenceW = roomsPosWidths[j] - roomsPosWidths[i];
+                                if (differenceL < 0)
+                                {
+                                    differenceL = -differenceL;
+                                }
+                                if (differenceW < 0)
+                                {
+                                    differenceW = -differenceW;
+                                }
+                                int totalDifference = differenceL + differenceW;
+                                if (totalDifference < lowest)
+                                {
+                                    lowest = totalDifference;
+                                    lowestI = i;
+                                    lowestJ = j;
+                                    Console.WriteLine("Lowest!");
+                                }
+                                Console.WriteLine(differenceL + "L between " + i + " and " + j);
+                                Console.WriteLine(differenceW + "W between " + i + " and " + j);
+                                Console.WriteLine(totalDifference + " Total difference");
+                                Console.WriteLine();*/
+                            }
+                        }
+                        checkedRoomDifferences = i;
+                    }
+                }
+            }
             static void DrawFullMap4()
             {
                 try
@@ -923,6 +1036,7 @@ namespace RogueAttemptMaybe
                         {
                             width = 0;
                             Console.WriteLine();
+                            MapColors(length + 1, width);
                             length++;
                         }
                         if (length > mapLength)
@@ -960,6 +1074,7 @@ namespace RogueAttemptMaybe
                         if (width > mapWidth)
                         {
                             width = 0;
+                            MapColors(length +1, width);
                             if (length >= currentPlayerPosition[0] - seeingDistance && length <= currentPlayerPosition[0] + seeingDistance)
                             {
                                 Console.WriteLine();
@@ -979,7 +1094,7 @@ namespace RogueAttemptMaybe
                             }
                         }
                     }
-                    Console.WriteLine(currentPlayerPosition[0]);
+                    Console.WriteLine();
                 }
                 catch (IndexOutOfRangeException)
                 {
@@ -1009,12 +1124,12 @@ namespace RogueAttemptMaybe
                             Console.BackgroundColor = ConsoleColor.Black;
                             break;
                         }
-                    /*                    case floorCharacter:
-                                            {
-                                                Console.ForegroundColor = ConsoleColor.White;
-                                                Console.BackgroundColor = ConsoleColor.Black;
-                                                break;
-                                            }*/
+                    /*case floorCharacter:
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            break;
+                        }*/
                     case outerUp:
                         {
                             Console.ForegroundColor = ConsoleColor.White;
@@ -1061,9 +1176,6 @@ namespace RogueAttemptMaybe
             }
             static void CreateRandomMapV4(bool random)
             {
-/*                currentPlayerPosition[0] = 32;
-                currentPlayerPosition[1] = 32;
-                map[32, 32] = playerCharacter;*/
                 /*map[62, 62] = "Hi";
                 map[2, 2] = "Te";
                 map[33, 33] = "md";
@@ -1089,14 +1201,15 @@ namespace RogueAttemptMaybe
                     CreateRandomMapV4(true);
                 }
                 GenerateRoomPositions();
-                Console.Clear();
+                //MiddleRoomSides();
+                RoomPaths();
                 DrawMap4();
                 Console.WriteLine("Map generated");
                 AwaitMovementKey();
             }
             static void DrawMap4()
             {
-                Console.Clear();
+                //Console.Clear();
                 //DrawFullMap4();
                 DrawMapDistance();
             }
@@ -1866,14 +1979,14 @@ namespace RogueAttemptMaybe
                                 Console.Beep(400, 100);
                                 Console.Beep(450, 100);
                                 Console.Beep(500, 100);
+                                Console.Beep(500, 100);
+                                Console.Beep(550, 100);
                                 Console.Beep(550, 100);
                                 Console.Beep(600, 100);
+                                Console.Beep(600, 100);
+                                Console.Beep(650, 100);
                                 Console.Beep(650, 100);
                                 Console.Beep(700, 100);
-                                Console.Beep(750, 100);
-                                Console.Beep(800, 100);
-                                Console.Beep(850, 100);
-                                Console.Beep(900, 100);
                                 break;
                             }
                         case "boss":
