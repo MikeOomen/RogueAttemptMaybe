@@ -949,7 +949,7 @@ namespace RogueAttemptMaybe
             }
             static void RoomPaths()
             {
-                Console.WriteLine("hi");
+                bool[] hasPath = new bool[amountOfRooms];
                 int checkedRoomDifferences = 0;
                 int lowest = 1000;
                 int lowestI = 0;
@@ -962,10 +962,12 @@ namespace RogueAttemptMaybe
                         {
                             if (i != j)
                             {
+                                int smallestS = 1000;
                                 int differenceL = roomsLeft[j] - roomsLeft[i];
                                 int differenceR = roomsRight[j] - roomsRight[i];
                                 int differenceLR = roomsLeft[j] - roomsRight[i];
                                 int differenceRL = roomsRight[j] - roomsLeft[i];
+
                                 if (differenceL < 0)
                                 {
                                     differenceL = -differenceL;
@@ -982,16 +984,71 @@ namespace RogueAttemptMaybe
                                 {
                                     differenceRL = -differenceRL;
                                 }
+
+                                smallestS = differenceL;
+                                if (smallestS > differenceR)
+                                {
+                                    Console.WriteLine("Lowest R");
+                                    smallestS = differenceR;
+                                }
+                                if (smallestS > differenceLR)
+                                {
+                                    Console.WriteLine("Lowest LR");
+                                    smallestS = differenceLR;
+                                }
+                                if (smallestS > differenceRL)
+                                {
+                                    Console.WriteLine("Lowest RL");
+                                    smallestS = differenceRL;
+                                }
                                 Console.WriteLine(differenceL + "L between " + i + " and " + j);
                                 Console.WriteLine(differenceR + "R between " + i + " and " + j); 
                                 Console.WriteLine(differenceLR + "LR between " + i + " and " + j);
                                 Console.WriteLine(differenceRL + "RL between " + i + " and " + j);
-                                Console.WriteLine();
 
                                 int differenceU = roomsUp[j] - roomsUp[i];
                                 int differenceD = roomsDown[j] - roomsDown[i];
                                 int differenceUD = roomsUp[j] - roomsDown[i];
                                 int differenceDU = roomsDown[j] - roomsUp[i];
+                                if (differenceU < 0)
+                                {
+                                    differenceU = -differenceU;
+                                }
+                                if (differenceD < 0)
+                                {
+                                    differenceD = -differenceD;
+                                }
+                                if (differenceUD < 0)
+                                {
+                                    differenceUD = -differenceUD;
+                                }
+                                if (differenceDU < 0)
+                                {
+                                    differenceDU = -differenceDU;
+                                }
+
+                                int smallestU = 1000;
+                                smallestU = differenceU;
+                                if (smallestU > differenceD)
+                                {
+                                    Console.WriteLine("Lowest D");
+                                    smallestU = differenceD;
+                                }
+                                if (smallestU > differenceUD)
+                                {
+                                    Console.WriteLine("Lowest UD");
+                                    smallestU = differenceUD;
+                                }
+                                if (smallestU > differenceDU)
+                                {
+                                    Console.WriteLine("Lowest DU");
+                                    smallestU = differenceDU;
+                                }
+                                Console.WriteLine(differenceU + "U between " + i + " and " + j);
+                                Console.WriteLine(differenceD + "D between " + i + " and " + j);
+                                Console.WriteLine(differenceUD + "UD between " + i + " and " + j);
+                                Console.WriteLine(differenceDU + "DU between " + i + " and " + j);
+                                Console.WriteLine();
                                 /*int differenceL = roomsPosLengths[j] - roomsPosLengths[i];
                                 int differenceW = roomsPosWidths[j] - roomsPosWidths[i];
                                 if (differenceL < 0)
