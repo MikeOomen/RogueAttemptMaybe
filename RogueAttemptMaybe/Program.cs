@@ -1270,6 +1270,10 @@ namespace RogueAttemptMaybe
                 //DrawFullMap4();
                 DrawMapDistance();
             }
+            static void MapLoadingBar(int length)
+            {
+
+            }
             static void MapSizeV4()
             {
                 currentMusic = "loading";
