@@ -41,6 +41,7 @@ namespace RogueAttemptMaybe
     // Enemy types Mi
     internal class Program
     {
+        static bool[] loaded = { false, false, false, false, false };
         static bool hasInfo = false;
         static bool beeps = true;
         static string currentMusic = "boss";
@@ -76,6 +77,7 @@ namespace RogueAttemptMaybe
         static bool specificmapbool = false;
 
         //Map V4
+
         static string version = "V4.2";
         static int mapLength = 16;
         static int mapWidth = 16;
@@ -688,6 +690,7 @@ namespace RogueAttemptMaybe
                     total = 0;
                     int length = 0;
                     length = 0;
+                    MapLoadingBar(0, "Clearing map");
                     for (int width = 0; total < mapLength * mapWidth; width++)
                     {
                         //The function that Makes map empty
@@ -720,6 +723,7 @@ namespace RogueAttemptMaybe
             }
             static void DecideRandomRooms(int i)
             {
+                MapLoadingBar(1, "Adding Rooms");
                 Random random = new Random();
                 int posRoomLength = random.Next(0, mapLength);
                 int posRoomWidth = random.Next(0, mapWidth);
@@ -784,12 +788,12 @@ namespace RogueAttemptMaybe
                 {
                     if (hasInfo)
                     {
-                        Console.WriteLine($"Room {i} Finished Info:");
+                        /*Console.WriteLine($"Room {i} Finished Info:");
                         Console.WriteLine($"{roomLeft} Left");
                         Console.WriteLine($"{roomRight} Right");
                         Console.WriteLine($"{roomUp} Up");
                         Console.WriteLine($"{roomDown} Down");
-                        Console.WriteLine();
+                        Console.WriteLine();*/
                     }
                     checkedRooms++;
                     roomsPosLengths[i] = posRoomLength;
@@ -822,7 +826,7 @@ namespace RogueAttemptMaybe
                 if (problem)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Problem!!");
+                    /*Console.WriteLine("Problem!!");*/
                     //Console.Beep(600, 1000);
                     Console.ForegroundColor = ConsoleColor.White;
                 }
@@ -830,6 +834,7 @@ namespace RogueAttemptMaybe
             }
             static void GenerateRoomPositions()
             {
+                MapLoadingBar(3, "Adding Rooms");
                 for (int i = 0; i < amountOfRooms; i++)
                 {
                     int roomLeft = roomsLeft[i];
@@ -900,6 +905,7 @@ namespace RogueAttemptMaybe
             {
                 Random rnd = new Random();
                 int room = rnd.Next(0, amountOfRooms);
+                MapLoadingBar(2, "Spawning Player");
                 if (roomsPosLengths[room] != 0 && roomsPosWidths[room] != 0)
                 {
                     currentPlayerPosition[0] = roomsPosLengths[room];
@@ -949,11 +955,13 @@ namespace RogueAttemptMaybe
             }
             static void RoomPaths()
             {
+                MapLoadingBar(4, "Adding paths");
                 bool[] hasPath = new bool[amountOfRooms];
                 int checkedRoomDifferences = 0;
                 int lowest = 1000;
                 int lowestI = 0;
                 int lowestJ = 0;
+                int[,] score = new int[amountOfRooms,amountOfRooms];
                 for (int i = 0; i < amountOfRooms; i++)
                 {
                     for (int j = 0; j < amountOfRooms; j++)
@@ -988,23 +996,16 @@ namespace RogueAttemptMaybe
                                 smallestS = differenceL;
                                 if (smallestS > differenceR)
                                 {
-                                    Console.WriteLine("Lowest R");
                                     smallestS = differenceR;
                                 }
                                 if (smallestS > differenceLR)
                                 {
-                                    Console.WriteLine("Lowest LR");
                                     smallestS = differenceLR;
                                 }
                                 if (smallestS > differenceRL)
                                 {
-                                    Console.WriteLine("Lowest RL");
                                     smallestS = differenceRL;
                                 }
-                                Console.WriteLine(differenceL + "L between " + i + " and " + j);
-                                Console.WriteLine(differenceR + "R between " + i + " and " + j); 
-                                Console.WriteLine(differenceLR + "LR between " + i + " and " + j);
-                                Console.WriteLine(differenceRL + "RL between " + i + " and " + j);
 
                                 int differenceU = roomsUp[j] - roomsUp[i];
                                 int differenceD = roomsDown[j] - roomsDown[i];
@@ -1031,51 +1032,29 @@ namespace RogueAttemptMaybe
                                 smallestU = differenceU;
                                 if (smallestU > differenceD)
                                 {
-                                    Console.WriteLine("Lowest D");
                                     smallestU = differenceD;
                                 }
                                 if (smallestU > differenceUD)
                                 {
-                                    Console.WriteLine("Lowest UD");
                                     smallestU = differenceUD;
                                 }
                                 if (smallestU > differenceDU)
                                 {
-                                    Console.WriteLine("Lowest DU");
                                     smallestU = differenceDU;
                                 }
-                                Console.WriteLine(differenceU + "U between " + i + " and " + j);
-                                Console.WriteLine(differenceD + "D between " + i + " and " + j);
-                                Console.WriteLine(differenceUD + "UD between " + i + " and " + j);
-                                Console.WriteLine(differenceDU + "DU between " + i + " and " + j);
-                                Console.WriteLine();
-                                /*int differenceL = roomsPosLengths[j] - roomsPosLengths[i];
-                                int differenceW = roomsPosWidths[j] - roomsPosWidths[i];
-                                if (differenceL < 0)
+
+                                score[i,j] = smallestU + smallestS;
+                                if (smallestU < smallestS - 10 || smallestS < smallestU - 10)
                                 {
-                                    differenceL = -differenceL;
+                                    score[i,j] = score[i,j] / 2;
                                 }
-                                if (differenceW < 0)
-                                {
-                                    differenceW = -differenceW;
-                                }
-                                int totalDifference = differenceL + differenceW;
-                                if (totalDifference < lowest)
-                                {
-                                    lowest = totalDifference;
-                                    lowestI = i;
-                                    lowestJ = j;
-                                    Console.WriteLine("Lowest!");
-                                }
-                                Console.WriteLine(differenceL + "L between " + i + " and " + j);
-                                Console.WriteLine(differenceW + "W between " + i + " and " + j);
-                                Console.WriteLine(totalDifference + " Total difference");
-                                Console.WriteLine();*/
+                                Console.WriteLine(score[i,j] + "<Score " + i  + "<i "+ j + "<j ");
                             }
                         }
                         checkedRoomDifferences = i;
                     }
                 }
+
             }
             static void DrawFullMap4()
             {
@@ -1252,6 +1231,7 @@ namespace RogueAttemptMaybe
             static void NewMapV4(bool random)
             {
                 checkedRooms = 0;
+                MapLoadingBar(0, "Starting....");
                 MakeMap4Nothing();
                 if (random)
                 {
@@ -1260,6 +1240,7 @@ namespace RogueAttemptMaybe
                 GenerateRoomPositions();
                 //MiddleRoomSides();
                 RoomPaths();
+                MapLoadingBar(5, "Done!");
                 DrawMap4();
                 Console.WriteLine("Map generated");
                 AwaitMovementKey();
@@ -1267,12 +1248,84 @@ namespace RogueAttemptMaybe
             static void DrawMap4()
             {
                 //Console.Clear();
-                //DrawFullMap4();
-                DrawMapDistance();
+                DrawFullMap4();
+                //DrawMapDistance();
             }
-            static void MapLoadingBar(int length)
+            static void MapLoadingBar(int length, string message)
             {
-
+                //Console.Clear();    
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine($"    Map is currently loading");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine($"          {message}");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine();
+                Console.WriteLine("    ------------------------");
+                Console.Write("    ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Write("|");
+                if (length >= 1)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("    ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Write("|");
+                if (length >= 2)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("   ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Write("|");
+                if (length >= 3)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("    ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Write("|");
+                if (length >= 4)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("   ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.Write("|");
+                if (length >= 5)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                Console.Write("    ");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine("|");
+                Console.WriteLine("    ------------------------");
+                if (length > 0)
+                {
+                    if (loaded[length - 1] == false)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                }
+                switch (length)
+                {
+                    case 1:
+                        loaded[0] = true;
+                        break;
+                    case 2:
+                        loaded[1] = true;
+                        break;
+                    case 3:
+                        loaded[2] = true;
+                        break;
+                    case 4:
+                        loaded[3] = true;
+                        break;
+                    case 5:
+                        loaded[4] = true;
+                        break;
+                }
             }
             static void MapSizeV4()
             {
