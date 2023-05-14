@@ -47,7 +47,7 @@ namespace RogueAttemptMaybe
         static string currentMusic = "boss";
         static bool musicPlaying = false;
 
-        static bool playerCanAMoveEverywhere = true;
+        static bool playerCanAMoveEverywhere = false;
 
         //Main Menu
         static string name;
@@ -78,7 +78,7 @@ namespace RogueAttemptMaybe
 
         //Map V4
 
-        static string version = "V4.2";
+        static string version = "V4.3";
         static int mapLength = 16;
         static int mapWidth = 16;
         static int innerMapLength = 0;
@@ -97,6 +97,8 @@ namespace RogueAttemptMaybe
         static int[] roomsRight = new int[maxRooms];
         static int[] roomsUp = new int[maxRooms];
         static int[] roomsDown = new int[maxRooms];
+
+        static int[] bestPerRoom = new int[1000];
         static int checkedRooms = 0;
 
         static int seeingDistance = 16; //Breaks above 18
@@ -914,7 +916,7 @@ namespace RogueAttemptMaybe
                 }
                 else
                 {
-                    System.Threading.Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(300);
                     DecidePlayerPosition();
                 }
             }
@@ -956,12 +958,17 @@ namespace RogueAttemptMaybe
             static void RoomPaths()
             {
                 MapLoadingBar(4, "Adding paths");
+                ThinkOfPaths();
+                GeneratePath();
+            }
+            static void ThinkOfPaths()
+            {
                 bool[] hasPath = new bool[amountOfRooms];
                 int checkedRoomDifferences = 0;
                 int lowest = 1000;
                 int lowestI = 0;
                 int lowestJ = 0;
-                int[,] score = new int[amountOfRooms,amountOfRooms];
+                int[,] score = new int[amountOfRooms, amountOfRooms];
                 for (int i = 0; i < amountOfRooms; i++)
                 {
                     for (int j = 0; j < amountOfRooms; j++)
@@ -1043,18 +1050,152 @@ namespace RogueAttemptMaybe
                                     smallestU = differenceDU;
                                 }
 
-                                score[i,j] = smallestU + smallestS;
-                                if (smallestU < smallestS - 10 || smallestS < smallestU - 10)
+                                score[i, j] = smallestU + smallestS;
+                                if (smallestU > smallestS + 10 || smallestS > smallestU + 10)
                                 {
-                                    score[i,j] = score[i,j] / 2;
+                                    score[i, j] = score[i, j] * 2;
                                 }
-                                Console.WriteLine(score[i,j] + "<Score " + i  + "<i "+ j + "<j ");
                             }
                         }
                         checkedRoomDifferences = i;
                     }
                 }
+                for (int i = 0; i < amountOfRooms; i++)
+                {
+                    for (int j = 0; j < amountOfRooms; j++)
+                    {
+                        if (score[i, j] == 0)
+                        {
+                            score[i, j] = 1000;
+                        }
+                    }
+                }
+                for (int i = 0; i < amountOfRooms - 1; i++)
+                {
+                    int bestForRoom = 100;
+                    int bestScore = 100;
+                    for (int j = 0; j < amountOfRooms; j++)
+                    {
+                        if (i != j || j < i)
+                        {
+                            if (score[i, j] < bestScore)
+                            {
+                                bestForRoom = j;
+                                bestScore = score[i, j];
+                            }
+                        }
+                    }
+                    bestPerRoom[i] = bestForRoom;
+                }
+            }
+            static void GeneratePath()
+            {
+                for (int i = 0; i < amountOfRooms;i++)
+                {
+                    int maxL = 100;
+                    for (int j = roomsPosLengths[i]; j > roomsPosLengths[bestPerRoom[i]]; j--)
+                    {
+                        try
+                        {
+                            map[j, roomsPosWidths[i]] = floorCharacter;
+                            if (map[j, roomsPosWidths[i]+1] == inBetweenRooms)
+                            {
+                                map[j, roomsPosWidths[i]+1] = "|*";
+                            }
+                            if (map[j, roomsPosWidths[i]-1] == inBetweenRooms)
+                            {
+                                map[j, roomsPosWidths[i]-1] = "*|";
+                            }
+                            maxL = j;
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                           
+                        }
+                    }
+                    for (int j = roomsPosLengths[i]; j < roomsPosLengths[bestPerRoom[i]]; j++)
+                    {
+                        try
+                        {
+                            map[j, roomsPosWidths[i]] = floorCharacter;
+                            if (map[j, roomsPosWidths[i] + 1] == inBetweenRooms)
+                            {
+                                map[j, roomsPosWidths[i] + 1] = "|*";
+                            }
+                            if (map[j, roomsPosWidths[i] - 1] == inBetweenRooms)
+                            {
+                                map[j, roomsPosWidths[i] - 1] = "*|";
+                            }
+                            maxL = j;
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            
+                        }
+                    }
+                    for (int j = roomsPosWidths[i]; j > roomsPosWidths[bestPerRoom[i]]; j--)
+                    {
+                        try
+                        {
+                            map[maxL, j] = floorCharacter;
+                            if (map[maxL+1, j] == inBetweenRooms)
+                            {
+                                map[maxL + 1, j] = outerUp;
+                            }
+                            if (map[maxL - 1, j] == inBetweenRooms)
+                            {
+                                map[maxL - 1, j] = outerUp;
+                            }
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            
+                        }
+                    }
+                    for (int j = roomsPosWidths[i]; j < roomsPosWidths[bestPerRoom[i]]; j++)
+                    {
+                        try
+                        {
 
+                            map[maxL,j] = floorCharacter;
+                            if (map[maxL + 1, j] == inBetweenRooms)
+                            {
+                                map[maxL + 1, j] = outerUp;
+                            }
+                            if (map[maxL - 1, j] == inBetweenRooms)
+                            {
+                                map[maxL - 1, j] = outerUp;
+                            }
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            
+                        }
+
+                    }
+                    try
+                    {
+                        if (map[maxL + 1, roomsPosWidths[i] + 1] == inBetweenRooms)
+                        {
+                            map[maxL + 1, roomsPosWidths[i] + 1] = "|*";
+                        }
+                        if (map[maxL - 1, roomsPosWidths[i] + 1] == inBetweenRooms)
+                        {
+                            map[maxL - 1, roomsPosWidths[i] + 1] = "|*";
+                        }
+                        if (map[maxL + 1, roomsPosWidths[i] - 1] == inBetweenRooms)
+                        {
+                            map[maxL + 1, roomsPosWidths[i] - 1] = "*|";
+                        }
+                        if (map[maxL - 1, roomsPosWidths[i] - 1] == inBetweenRooms)
+                        {
+                            map[maxL - 1, roomsPosWidths[i] - 1] = "*|";
+                        }
+                    } catch (IndexOutOfRangeException)
+                    {
+                        
+                    }
+                }
             }
             static void DrawFullMap4()
             {
@@ -1242,18 +1383,17 @@ namespace RogueAttemptMaybe
                 RoomPaths();
                 MapLoadingBar(5, "Done!");
                 DrawMap4();
-                Console.WriteLine("Map generated");
                 AwaitMovementKey();
             }
             static void DrawMap4()
             {
-                //Console.Clear();
-                DrawFullMap4();
-                //DrawMapDistance();
+                Console.Clear();
+                //DrawFullMap4();
+                DrawMapDistance();
             }
             static void MapLoadingBar(int length, string message)
             {
-                //Console.Clear();    
+                Console.Clear();    
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine($"    Map is currently loading");
