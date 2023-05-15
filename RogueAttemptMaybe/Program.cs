@@ -93,6 +93,8 @@ namespace RogueAttemptMaybe
 
         static int[] roomsPosLengths = new int[maxRooms];
         static int[] roomsPosWidths = new int[maxRooms];
+        static int[] roomMidL = new int[maxRooms];
+        static int[] roomMidW = new int[maxRooms];
         static int[] roomsLeft = new int[maxRooms];
         static int[] roomsRight = new int[maxRooms];
         static int[] roomsUp = new int[maxRooms];
@@ -1093,6 +1095,13 @@ namespace RogueAttemptMaybe
                 for (int i = 0; i < amountOfRooms;i++)
                 {
                     int maxL = 100;
+                    for (int j = 0;j < amountOfRooms; j++)
+                    {
+                        Console.WriteLine(roomsPosLengths[j] + " Room " + j);
+                    }
+                    Console.WriteLine(roomsPosLengths[i]);
+                    Console.WriteLine(roomsPosLengths[bestPerRoom[i]] + "Best room");
+                    Console.WriteLine(i + " Room");
                     for (int j = roomsPosLengths[i]; j > roomsPosLengths[bestPerRoom[i]]; j--)
                     {
                         try
@@ -1351,6 +1360,21 @@ namespace RogueAttemptMaybe
                         }
                 }
             }
+            static void fixMiddle()
+            {
+                for (int i = 0; i < amountOfRooms; i++)
+                {
+                    roomMidL[i] = roomsLeft[i] + ((roomsRight[i] - roomsLeft[i])/2);
+                    roomMidW[i] = roomsDown[i] + ((roomsUp[i] - roomsDown[i])/2);
+                    map[roomMidL[i], roomMidW[i]] = "B" + i;
+                    Console.WriteLine(i + " Room");
+                    Console.WriteLine($"{roomsLeft[i]} +(({roomsRight[i]} - {roomsLeft[i]})/2)");
+                    Console.WriteLine($"{roomsLeft[i]} +(({roomsRight[i] - roomsLeft[i]})/2)");
+                    Console.WriteLine($"{roomsLeft[i]} +({(roomsRight[i] - roomsLeft[i])/2})");
+                    Console.WriteLine($"{roomsLeft[i]} +{ ((roomsRight[i] - roomsLeft[i])/2)} ");
+                    Console.WriteLine(roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2));
+                }
+            }
             static void CreateRandomMapV4(bool random)
             {
                 /*map[62, 62] = "Hi";
@@ -1382,18 +1406,23 @@ namespace RogueAttemptMaybe
                 //MiddleRoomSides();
                 RoomPaths();
                 MapLoadingBar(5, "Done!");
+                fixMiddle();
+                for (int i = 0; i < amountOfRooms; i++)
+                {
+                    map[roomsPosLengths[i], roomsPosWidths[i]] = "A" + i;
+                }
                 DrawMap4();
                 AwaitMovementKey();
             }
             static void DrawMap4()
             {
-                Console.Clear();
+                //Console.Clear();
                 //DrawFullMap4();
                 DrawMapDistance();
             }
             static void MapLoadingBar(int length, string message)
             {
-                Console.Clear();    
+                //Console.Clear();    
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine($"    Map is currently loading");
@@ -1445,7 +1474,8 @@ namespace RogueAttemptMaybe
                 {
                     if (loaded[length - 1] == false)
                     {
-                        Thread.Sleep(1000);
+                        Console.Read();
+                        /*Thread.Sleep(5000);*/
                     }
                 }
                 switch (length)
