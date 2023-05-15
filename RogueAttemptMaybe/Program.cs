@@ -1422,7 +1422,7 @@ namespace RogueAttemptMaybe
             }
             static void MapLoadingBar(int length, string message)
             {
-                //Console.Clear();    
+                Console.Clear();    
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine($"    Map is currently loading");
@@ -1474,8 +1474,8 @@ namespace RogueAttemptMaybe
                 {
                     if (loaded[length - 1] == false)
                     {
-                        Console.Read();
-                        /*Thread.Sleep(5000);*/
+                        //Console.Read();
+                        Thread.Sleep(1000);
                     }
                 }
                 switch (length)
