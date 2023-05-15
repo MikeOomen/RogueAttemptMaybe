@@ -152,9 +152,9 @@ namespace RogueAttemptMaybe
             music3.Start();
             FullScreenWarning();
             musicPlaying = false;
-            MapSizeV4();
+            /*MapSizeV4();
             NewMapV4(true);
-            AwaitMovementKey();
+            AwaitMovementKey();*/
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -896,7 +896,6 @@ namespace RogueAttemptMaybe
                         map[roomUp, roomLeft] = leftConers;
                         map[roomDown, roomRight] = rightConers;
                         map[roomUp, roomRight] = rightConers;
-                        map[roomsPosLengths[i], roomsPosWidths[i]] = "R" + i;
                         if (width > mapWidth)
                         {
                             width = -1;
@@ -1389,9 +1388,6 @@ namespace RogueAttemptMaybe
                     DecideRandomRooms(i);
                 }
                 DecidePlayerPosition();
-                //Rooms
-                //Room checks
-                //Paths
                 //Player and enemies
             }
             static void NewMapV4(bool random)
@@ -1417,7 +1413,7 @@ namespace RogueAttemptMaybe
             }
             static void DrawMap4()
             {
-                //Console.Clear();
+                Console.Clear();
                 //DrawFullMap4();
                 DrawMapDistance();
             }
