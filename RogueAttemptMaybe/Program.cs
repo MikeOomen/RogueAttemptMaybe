@@ -107,22 +107,11 @@ namespace RogueAttemptMaybe
 
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
+        static int amountOfStarter;
         static string[] weapons = File.ReadAllLines("Weapons.txt");
         static string[] armors = File.ReadAllLines("Armors.txt");
-        static List<float> starterWeaponDmg = new List<float>();
-        static List<float> starterWeaponCritChance = new List<float>();
-        static List<float> starterWeaponCritMulti = new List<float>();
-        static List<string> starterWeaponName = new List<string>();
-        static List<float> weaponDmg = new List<float>();
-        static List<float> weaponCritChance = new List<float>();
-        static List<float> weaponCritMulti = new List<float>();
-        static List<string> weaponName = new List<string>();
-        static List<float> armorDmgR = new List<float>();
-        static List<float> armorAgiStat = new List<float>();
-        static List<string> armorDisc = new List<string>();
-        static List<string> armorName = new List<string>();
-        static List<float> armorMoneyMulti = new List<float>();
-        static List<float> armorSellMulti = new List<float>();
+        static List<Weapons> weapon = new List<Weapons>();
+        static List<Armors> armor = new List<Armors>();
         static int selectedWeapon;
         static string currentWeapon = "Error";
         static float currentDmg;
@@ -155,40 +144,36 @@ namespace RogueAttemptMaybe
             /*MapSizeV4();
             NewMapV4(true);
             AwaitMovementKey();*/
+            amountOfStarter = starterWeapons.Length;
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
-                starterWeaponName.Add(data[0]);
-                starterWeaponDmg.Add(float.Parse(data[1]));
-                starterWeaponCritChance.Add(float.Parse(data[2]));
-                starterWeaponCritMulti.Add(float.Parse(data[3]));
+                weapon.Add(new Weapons(data[0], float.Parse(data[1]), float.Parse(data[2]), float.Parse(data[3])));
             }
             for (int i = 0; i < weapons.Length; i++)
             {
                 string[] data = weapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
-                weaponName.Add(data[0]);
-                weaponDmg.Add(float.Parse(data[1]));
-                weaponCritChance.Add(float.Parse(data[2]));
-                weaponCritMulti.Add(float.Parse(data[3]));
+                weapon.Add(new Weapons(data[0], float.Parse(data[1]), float.Parse(data[2]), float.Parse(data[3])));
             }
             for (int i = 0; i < armors.Length; i++)
             {
                 string[] data = armors[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
-                armorName.Add(data[0]);
-                armorDmgR.Add(float.Parse(data[1]));
-                armorAgiStat.Add(float.Parse(data[2]));
+                string disc = " ";
+                float moneyMulti = 1;
+                float sellMulti = 1;
                 if (3 < data.Length)
                 {
-                    armorDisc.Add(data[3]);
+                    disc = data[3];
                 }
                 if (4 < data.Length)
                 {
-                    armorMoneyMulti.Add(float.Parse(data[4]));
+                    moneyMulti = float.Parse(data[4]);
                 }
                 if (5 < data.Length)
                 {
-                    armorSellMulti.Add(float.Parse(data[5]));
+                    sellMulti = float.Parse(data[5]);
                 }
+                armor.Add(new Armors(data[0], float.Parse(data[1]), float.Parse(data[2]), disc, moneyMulti, sellMulti));
             }
             mainMenuSelected = 1;
             MainMenu();
@@ -198,10 +183,10 @@ namespace RogueAttemptMaybe
                 IsSelecting();
                 if (select == ConsoleKey.Enter)
                 {
-                    currentWeapon = weaponName[selectedWeapon];
-                    currentDmg = weaponDmg[selectedWeapon];
-                    currentCrit = weaponCritChance[selectedWeapon];
-                    currentCritMulti = weaponCritMulti[selectedWeapon];
+                    currentWeapon = weapon[selectedWeapon].weaponName;
+                    currentDmg = weapon[selectedWeapon].weaponDmg;
+                    currentCrit = weapon[selectedWeapon].weaponCrit;
+                    currentCritMulti = weapon[selectedWeapon].weaponCritMulti;
                     characterHasBeenMade = true;
                     if (currentWeapon == "Error")
                     {
@@ -589,12 +574,12 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("name:" + name);
                 Console.WriteLine("Select a weapon and press enter to continue");
                 Console.WriteLine("-----------------------------------------------------------");
-                for (int i = 0; i < starterWeaponName.Count; i++)
+                for (int i = 0; i < amountOfStarter; i++)
                 {
-                    Console.Write($"{starterWeaponName[i]} ");
-                    Console.Write($"Dmg:{starterWeaponDmg[i]} ");
-                    Console.Write($"CC:{starterWeaponCritChance[i]} ");
-                    Console.WriteLine($"CMulti:{starterWeaponCritMulti[i]}");
+                    Console.Write($"{weapon[i].weaponName} ");
+                    Console.Write($"Dmg:{weapon[i].weaponDmg} ");
+                    Console.Write($"CC:{weapon[i].weaponCrit} ");
+                    Console.WriteLine($"CMulti:{weapon[i].weaponCritMulti}");
                     Console.WriteLine("-----------------------------------------------------------");
                 }
                 Console.WriteLine("Current weapon: None");
@@ -606,15 +591,15 @@ namespace RogueAttemptMaybe
                 {
                     Console.Clear();
                     Console.WriteLine("Welcome to character creation.");
-                    Console.WriteLine(name);
+                    Console.WriteLine("name:" + name);
                     Console.WriteLine("Select a weapon and press enter to continue");
                     Console.WriteLine("-----------------------------------------------------------");
-                    for (int i = 0; i < starterWeaponName.Count; i++)
+                    for (int i = 0; i < amountOfStarter; i++)
                     {
-                        Console.Write($"{starterWeaponName[i]} ");
-                        Console.Write($"Dmg:{starterWeaponDmg[i]} ");
-                        Console.Write($"CC:{starterWeaponCritChance[i]} ");
-                        Console.WriteLine($"CMulti:{starterWeaponCritMulti[i]}");
+                        Console.Write($"{weapon[i].weaponName} ");
+                        Console.Write($"Dmg:{weapon[i].weaponDmg} ");
+                        Console.Write($"CC:{weapon[i].weaponCrit} ");
+                        Console.WriteLine($"CMulti:{weapon[i].weaponCritMulti}");
                         Console.WriteLine("-----------------------------------------------------------");
                     }
                     WeaponSelect(select);
@@ -629,12 +614,12 @@ namespace RogueAttemptMaybe
                             if (selectedWeapon < starterWeapons.Length - 1)
                             {
                                 selectedWeapon = selectedWeapon + 1;
-                                Console.WriteLine($"Current weapon:{starterWeaponName[selectedWeapon]}");
+                                Console.WriteLine($"Current weapon:{weapon[selectedWeapon].weaponName}");
                             }
                             else
                             {
                                 selectedWeapon = 0;
-                                Console.WriteLine($"Current weapon:{starterWeaponName[selectedWeapon]}");
+                                Console.WriteLine($"Current weapon:{weapon[selectedWeapon].weaponName}");
                             }
                             break;
                         }
@@ -643,12 +628,12 @@ namespace RogueAttemptMaybe
                             if (selectedWeapon > 0)
                             {
                                 selectedWeapon = selectedWeapon - 1;
-                                Console.WriteLine($"Current weapon:{starterWeaponName[selectedWeapon]}");
+                                Console.WriteLine($"Current weapon:{weapon[selectedWeapon].weaponName}");
                             }
                             else
                             {
                                 selectedWeapon = starterWeapons.Length - 1;
-                                Console.WriteLine($"Current weapon:{starterWeaponName[selectedWeapon]}");
+                                Console.WriteLine($"Current weapon:{weapon[selectedWeapon].weaponName}");
                             }
                             break;
                         }
@@ -658,27 +643,29 @@ namespace RogueAttemptMaybe
             {
                 if (enemyNumber == 0)
                 {
-                    enemyWeapon = rndEnemyWeapon.Next(0, starterWeapons.Length);
-                    currentEnemyDmg = starterWeaponDmg[enemyWeapon];
-                    currentEnemyCrit = starterWeaponCritChance[enemyWeapon];
-                    currentEnemyMulti = starterWeaponCritMulti[enemyWeapon];
+                    enemyWeapon = rndEnemyWeapon.Next(0, weapon.Count);
+                    currentEnemyDmg = weapon[enemyWeapon].weaponDmg;
+                    currentEnemyCrit = weapon[enemyWeapon].weaponCrit;
+                    currentEnemyMulti = weapon[enemyWeapon].weaponCritMulti;
                 }
                 else
                 {
-                    enemyWeapon = rndEnemyWeapon.Next(0, weapons.Length);
-                    currentEnemyDmg = weaponDmg[enemyWeapon];
-                    currentEnemyCrit = weaponCritChance[enemyWeapon];
-                    currentEnemyMulti = weaponCritMulti[enemyWeapon];
+                    enemyWeapon = rndEnemyWeapon.Next(0, weapon.Count);
+                    currentEnemyDmg = weapon[enemyWeapon].weaponDmg;
+                    currentEnemyCrit = weapon[enemyWeapon].weaponCrit;
+                    currentEnemyMulti = weapon[enemyWeapon].weaponCritMulti;
                 }
-                if (enemyWeapon == 2 && enemyNumber != 0)
+                if (weapon[enemyWeapon].weaponName == "Fork" && enemyNumber != 0)
                 {
-                    currentEnemyCrit = currentEnemyCrit - 25;
-                    currentEnemyMulti = currentEnemyMulti - 10;
+                    currentEnemyDmg = 5;
+                    currentEnemyCrit = 10;
+                    currentEnemyMulti = 2;
                 }
-                if (enemyWeapon == 0 && enemyNumber != 0)
+                if (weapon[enemyWeapon].weaponName == "A wooden stick" && enemyNumber != 0)
                 {
-                    currentEnemyCrit = currentEnemyCrit - 20;
-                    currentEnemyDmg = currentEnemyDmg - 15;
+                    currentEnemyDmg = 2;
+                    currentEnemyCrit = 20;
+                    currentEnemyMulti = 2;
                 }
                 enemyNumber = enemyNumber + 1;
             }
