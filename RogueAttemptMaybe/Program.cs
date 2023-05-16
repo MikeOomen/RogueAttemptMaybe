@@ -896,7 +896,6 @@ namespace RogueAttemptMaybe
                         map[roomUp, roomLeft] = leftConers;
                         map[roomDown, roomRight] = rightConers;
                         map[roomUp, roomRight] = rightConers;
-                        map[roomsPosLengths[i], roomsPosWidths[i]] = "R" + i;
                         if (width > mapWidth)
                         {
                             width = -1;
@@ -1092,10 +1091,10 @@ namespace RogueAttemptMaybe
             }
             static void GeneratePath()
             {
-                for (int i = 0; i < amountOfRooms;i++)
+                for (int i = 0; i < amountOfRooms; i++)
                 {
                     int maxL = 100;
-                    for (int j = 0;j < amountOfRooms; j++)
+                    for (int j = 0; j < amountOfRooms; j++)
                     {
                         Console.WriteLine(roomsPosLengths[j] + " Room " + j);
                     }
@@ -1107,19 +1106,19 @@ namespace RogueAttemptMaybe
                         try
                         {
                             map[j, roomsPosWidths[i]] = floorCharacter;
-                            if (map[j, roomsPosWidths[i]+1] == inBetweenRooms)
+                            if (map[j, roomsPosWidths[i] + 1] == inBetweenRooms)
                             {
-                                map[j, roomsPosWidths[i]+1] = "|*";
+                                map[j, roomsPosWidths[i] + 1] = "|*";
                             }
-                            if (map[j, roomsPosWidths[i]-1] == inBetweenRooms)
+                            if (map[j, roomsPosWidths[i] - 1] == inBetweenRooms)
                             {
-                                map[j, roomsPosWidths[i]-1] = "*|";
+                                map[j, roomsPosWidths[i] - 1] = "*|";
                             }
                             maxL = j;
                         }
                         catch (IndexOutOfRangeException)
                         {
-                           
+
                         }
                     }
                     for (int j = roomsPosLengths[i]; j < roomsPosLengths[bestPerRoom[i]]; j++)
@@ -1139,7 +1138,7 @@ namespace RogueAttemptMaybe
                         }
                         catch (IndexOutOfRangeException)
                         {
-                            
+
                         }
                     }
                     for (int j = roomsPosWidths[i]; j > roomsPosWidths[bestPerRoom[i]]; j--)
@@ -1147,26 +1146,6 @@ namespace RogueAttemptMaybe
                         try
                         {
                             map[maxL, j] = floorCharacter;
-                            if (map[maxL+1, j] == inBetweenRooms)
-                            {
-                                map[maxL + 1, j] = outerUp;
-                            }
-                            if (map[maxL - 1, j] == inBetweenRooms)
-                            {
-                                map[maxL - 1, j] = outerUp;
-                            }
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            
-                        }
-                    }
-                    for (int j = roomsPosWidths[i]; j < roomsPosWidths[bestPerRoom[i]]; j++)
-                    {
-                        try
-                        {
-
-                            map[maxL,j] = floorCharacter;
                             if (map[maxL + 1, j] == inBetweenRooms)
                             {
                                 map[maxL + 1, j] = outerUp;
@@ -1178,7 +1157,27 @@ namespace RogueAttemptMaybe
                         }
                         catch (IndexOutOfRangeException)
                         {
-                            
+
+                        }
+                    }
+                    for (int j = roomsPosWidths[i]; j < roomsPosWidths[bestPerRoom[i]]; j++)
+                    {
+                        try
+                        {
+
+                            map[maxL, j] = floorCharacter;
+                            if (map[maxL + 1, j] == inBetweenRooms)
+                            {
+                                map[maxL + 1, j] = outerUp;
+                            }
+                            if (map[maxL - 1, j] == inBetweenRooms)
+                            {
+                                map[maxL - 1, j] = outerUp;
+                            }
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+
                         }
 
                     }
@@ -1200,9 +1199,10 @@ namespace RogueAttemptMaybe
                         {
                             map[maxL - 1, roomsPosWidths[i] - 1] = "*|";
                         }
-                    } catch (IndexOutOfRangeException)
+                    }
+                    catch (IndexOutOfRangeException)
                     {
-                        
+
                     }
                 }
             }
@@ -1260,7 +1260,7 @@ namespace RogueAttemptMaybe
                         if (width > mapWidth)
                         {
                             width = 0;
-                            MapColors(length +1, width);
+                            MapColors(length + 1, width);
                             if (length >= currentPlayerPosition[0] - seeingDistance && length <= currentPlayerPosition[0] + seeingDistance)
                             {
                                 Console.WriteLine();
@@ -1364,15 +1364,10 @@ namespace RogueAttemptMaybe
             {
                 for (int i = 0; i < amountOfRooms; i++)
                 {
-                    roomMidL[i] = roomsLeft[i] + ((roomsRight[i] - roomsLeft[i])/2);
-                    roomMidW[i] = roomsDown[i] + ((roomsUp[i] - roomsDown[i])/2);
-                    map[roomMidL[i], roomMidW[i]] = "B" + i;
-                    Console.WriteLine(i + " Room");
-                    Console.WriteLine($"{roomsLeft[i]} +(({roomsRight[i]} - {roomsLeft[i]})/2)");
-                    Console.WriteLine($"{roomsLeft[i]} +(({roomsRight[i] - roomsLeft[i]})/2)");
-                    Console.WriteLine($"{roomsLeft[i]} +({(roomsRight[i] - roomsLeft[i])/2})");
-                    Console.WriteLine($"{roomsLeft[i]} +{ ((roomsRight[i] - roomsLeft[i])/2)} ");
-                    Console.WriteLine(roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2));
+                    for (int f = 0; f < 48; f++)
+                    {
+                        map[roomsDown[i] + ((roomsUp[i] - roomsDown[i]) / 2), roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2)] = "Le";
+                    }
                 }
             }
             static void CreateRandomMapV4(bool random)
@@ -1388,9 +1383,6 @@ namespace RogueAttemptMaybe
                     DecideRandomRooms(i);
                 }
                 DecidePlayerPosition();
-                //Rooms
-                //Room checks
-                //Paths
                 //Player and enemies
             }
             static void NewMapV4(bool random)
@@ -1416,13 +1408,13 @@ namespace RogueAttemptMaybe
             }
             static void DrawMap4()
             {
-                //Console.Clear();
+                Console.Clear();
                 //DrawFullMap4();
                 DrawMapDistance();
             }
             static void MapLoadingBar(int length, string message)
             {
-                Console.Clear();    
+                Console.Clear();
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine($"    Map is currently loading");
