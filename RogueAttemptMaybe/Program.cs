@@ -643,7 +643,7 @@ namespace RogueAttemptMaybe
             {
                 if (enemyNumber == 0)
                 {
-                    enemyWeapon = rndEnemyWeapon.Next(0, weapon.Count);
+                    enemyWeapon = rndEnemyWeapon.Next(0, amountOfStarter - 1);
                     currentEnemyDmg = weapon[enemyWeapon].weaponDmg;
                     currentEnemyCrit = weapon[enemyWeapon].weaponCrit;
                     currentEnemyMulti = weapon[enemyWeapon].weaponCritMulti;
