@@ -41,6 +41,14 @@ namespace RogueAttemptMaybe
     // Enemy types Mi
     internal class Program
     {
+        //Controls
+        static ConsoleKey moveDown = ConsoleKey.DownArrow;
+        static ConsoleKey moveUp = ConsoleKey.UpArrow;
+        static ConsoleKey moveLeft = ConsoleKey.LeftArrow;
+        static ConsoleKey moveRight = ConsoleKey.RightArrow;
+        static ConsoleKey selectingKey = ConsoleKey.Enter;
+
+
         static bool[] loaded = { false, false, false, false, false };
         static bool hasInfo = false;
         static bool beeps = true;
@@ -152,9 +160,9 @@ namespace RogueAttemptMaybe
             music3.Start();
             FullScreenWarning();
             musicPlaying = false;
-            MapSizeV4();
+            /*MapSizeV4();
             NewMapV4(true);
-            AwaitMovementKey();
+            AwaitMovementKey();*/
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -196,7 +204,7 @@ namespace RogueAttemptMaybe
             {
                 ConsoleKey select = Console.ReadKey().Key;
                 IsSelecting();
-                if (select == ConsoleKey.Enter)
+                if (select == selectingKey)
                 {
                     currentWeapon = weaponName[selectedWeapon];
                     currentDmg = weaponDmg[selectedWeapon];
@@ -225,7 +233,7 @@ namespace RogueAttemptMaybe
                 EnemyMove();
                 switch (key)
                 {
-                    case ConsoleKey.DownArrow:
+                    case var value when value == moveDown:
                         {
                             if (map[currentPlayerPosition[0] + 1, currentPlayerPosition[1]] == floorCharacter)
                             {
@@ -250,7 +258,7 @@ namespace RogueAttemptMaybe
                             }
                             break;
                         }
-                    case ConsoleKey.UpArrow:
+                    case var value when value == moveUp:
                         {
                             if (map[currentPlayerPosition[0] - 1, currentPlayerPosition[1]] == floorCharacter)
                             {
@@ -275,7 +283,7 @@ namespace RogueAttemptMaybe
                             }
                             break;
                         }
-                    case ConsoleKey.LeftArrow:
+                    case var value when value == moveLeft:
                         {
                             if (map[currentPlayerPosition[0], currentPlayerPosition[1] - 1] == floorCharacter)
                             {
@@ -300,7 +308,7 @@ namespace RogueAttemptMaybe
                             }
                             break;
                         }
-                    case ConsoleKey.RightArrow:
+                    case var value when value == moveRight:
                         {
                             if (map[currentPlayerPosition[0], currentPlayerPosition[1] + 1] == floorCharacter)
                             {
@@ -357,7 +365,7 @@ namespace RogueAttemptMaybe
                 //makes sure you actually use an arrow
                 currentMusic = "looting";
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N || key == ConsoleKey.M || key == ConsoleKey.F)
+                if (key == moveDown || key == moveUp || key == moveLeft || key == moveRight || key == ConsoleKey.N || key == ConsoleKey.M || key == ConsoleKey.F)
                 {
                     Move(key);
                 }
@@ -1669,8 +1677,8 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("This game is W.I.P and anything may be subject to change");
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("Press enter to continue.");
-                Console.ReadLine();
+                Console.WriteLine("Press anything to continue.");
+                Console.ReadKey();
             }
             static void MainMenu()
             {
@@ -1763,7 +1771,7 @@ namespace RogueAttemptMaybe
             static void selectMenu()
             {
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow)
+                if (key == moveDown)
                 {
                     mainMenuSelected += 1;
                     if (mainMenuSelected == 6)
@@ -1772,7 +1780,7 @@ namespace RogueAttemptMaybe
                     }
                     MainMenu();
                 }
-                else if (key == ConsoleKey.UpArrow)
+                else if (key == moveUp)
                 {
                     mainMenuSelected -= 1;
                     if (mainMenuSelected == 0)
@@ -1781,7 +1789,7 @@ namespace RogueAttemptMaybe
                     }
                     MainMenu();
                 }
-                else if (key == ConsoleKey.Enter)
+                else if (key == selectingKey)
                 {
                     switch (mainMenuSelected)
                     {
@@ -1821,7 +1829,7 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("Marlon / Brain Damage Gaming / Gastrikshark");
                 Console.ForegroundColor = ConsoleColor.White;
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.Enter)
+                if (key == selectingKey)
                 {
                     MainMenu();
                 }
@@ -1929,10 +1937,169 @@ namespace RogueAttemptMaybe
                 Console.ForegroundColor = ConsoleColor.White;
                 selectGuide();
             }
+            static void hotKeys()
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 1)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Move Upwards: ");
+                Console.WriteLine(moveUp);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 2)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Move Down: ");
+                Console.WriteLine(moveDown);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 3)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Move Left: ");
+                Console.WriteLine(moveLeft);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 4)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Move Right: ");
+                Console.WriteLine(moveRight);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 5)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("select Key: ");
+                Console.WriteLine(selectingKey);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 6)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Exit");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                selectKey();
+            }
+            static void selectKey()
+            {
+                ConsoleKey key = Console.ReadKey().Key;
+                if (key == moveDown)
+                {
+                    mainMenuSelected += 1;
+                    if (mainMenuSelected == 7)
+                    {
+                        mainMenuSelected = 1;
+                    }
+                    hotKeys();
+                }
+                else if (key == moveUp)
+                {
+                    mainMenuSelected -= 1;
+                    if (mainMenuSelected == 0)
+                    {
+                        mainMenuSelected = 6;
+                    }
+                    hotKeys();
+                }
+                else if (key == selectingKey)
+                {
+                    switch (mainMenuSelected)
+                    {
+                        case 1:
+                            askKey("move up");
+                            break;
+                        case 2:
+                            askKey("move down");
+                            break;
+                        case 3:
+                            askKey("move left");
+                            break;
+                        case 4:
+                            askKey("move right");
+                            break;
+                        case 5:
+                            askKey("select key");
+                            break;
+                        case 6:
+                            mainMenuSelected = 1;
+                            MainMenu();
+                            break;
+                    }
+                }
+                else
+                {
+                    //If key isnt an arrow it restarts
+                    hotKeys();
+                }
+            }
+            static void askKey(string hotkey)
+            {
+                Console.Clear();
+                Console.WriteLine($"New key for {hotkey}:");
+                ConsoleKey key = Console.ReadKey().Key;
+                ConsoleKey[] usedKeys = {moveUp,moveDown,moveLeft,moveRight,selectingKey};
+                bool problem = false;
+                for (int i = 0; i < usedKeys.Length; i++)
+                {
+                    if (key == usedKeys[i])
+                    {
+                        problem = true;
+                    }
+                }
+                if (problem == false)
+                {
+                    if (hotkey == "move up")
+                    {
+                        moveUp = key;
+                    }
+                    else if (hotkey == "move down")
+                    {
+                        moveDown = key;
+                    }
+                    else if (hotkey == "move left")
+                    {
+                        moveLeft = key;
+                    }
+                    else if (hotkey == "move right")
+                    {
+                        moveRight = key;
+                    } else if(hotkey == "select key")
+                    {
+                        selectingKey = key;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("You cant have 2 of the same key!");
+                    Console.ReadKey();
+                }
+                hotKeys();
+            }
             static void selectGuide()
             {
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow)
+                if (key == moveDown)
                 {
                     mainMenuSelected += 1;
                     if (mainMenuSelected == 6)
@@ -1941,7 +2108,7 @@ namespace RogueAttemptMaybe
                     }
                     Guide();
                 }
-                else if (key == ConsoleKey.UpArrow)
+                else if (key == moveUp)
                 {
                     mainMenuSelected -= 1;
                     if (mainMenuSelected == 0)
@@ -1950,7 +2117,7 @@ namespace RogueAttemptMaybe
                     }
                     Guide();
                 }
-                else if (key == ConsoleKey.Enter)
+                else if (key == selectingKey)
                 {
                     switch (mainMenuSelected)
                     {
@@ -1961,7 +2128,7 @@ namespace RogueAttemptMaybe
                             Options();
                             break;
                         case 3:
-                            Options();
+                            hotKeys();
                             break;
                         case 4:
                             currentMusic = "main";
@@ -1976,7 +2143,7 @@ namespace RogueAttemptMaybe
                 else
                 {
                     //If key isnt an arrow it restarts
-                    selectMenu();
+                    selectGuide();
                 }
             }
             static void Tester()
