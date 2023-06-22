@@ -11,12 +11,16 @@ using System.Threading;
 
 namespace RogueAttemptMaybe
 {
+    #region Current Bugs
     //Current bugs:
     //enemies attack your last position.
     //The map. In general.
-
+    #endregion
+    #region Notes
     //Console.Beep(600 , 1000); //, Long quiet beep
     //Console.Beep(750 , 500); //, Short louder beep
+    #endregion
+    #region To-Do list
     //To-Do list:
     //Map R
     //GUI *
@@ -39,14 +43,17 @@ namespace RogueAttemptMaybe
     //HP *      Ma
     //Attack * R/Mi
     // Enemy types Mi
+    #endregion
     internal class Program
     {
+        #region Controls
         //Controls
         static ConsoleKey moveDown = ConsoleKey.DownArrow;
         static ConsoleKey moveUp = ConsoleKey.UpArrow;
         static ConsoleKey moveLeft = ConsoleKey.LeftArrow;
         static ConsoleKey moveRight = ConsoleKey.RightArrow;
         static ConsoleKey selectingKey = ConsoleKey.Enter;
+        #endregion
 
 
         static bool[] loaded = { false, false, false, false, false };
@@ -57,11 +64,14 @@ namespace RogueAttemptMaybe
 
         static bool playerCanAMoveEverywhere = false;
 
+        #region Main Menu
         //Main Menu
         static string name;
         static bool characterHasBeenMade = false;
         static int mainMenuSelected = 1;
+        #endregion
 
+        #region Characters
         //Characters
         const string floorCharacter = "  ";
         const string playerCharacter = "@ ";
@@ -72,6 +82,9 @@ namespace RogueAttemptMaybe
         const string rightConers = "-|";
         const string leftConers = "|-";
         const string inBetweenRooms = "**";
+        #endregion
+
+        #region map
 
         //Map Balancing
         static int[] recommendedMapSize = { 48, 48, 6 };
@@ -112,7 +125,9 @@ namespace RogueAttemptMaybe
         static int checkedRooms = 0;
 
         static int seeingDistance = 16; //Breaks above 18
+        #endregion
 
+        #region Attack
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
         static string[] weapons = File.ReadAllLines("Weapons.txt");
@@ -146,8 +161,8 @@ namespace RogueAttemptMaybe
         static int enemyWeapon;
         static int enemyNumber = 0;
         static Random rndEnemyWeapon = new Random();
+        #endregion
 
-        //Input map here
         static string[,] map = new string[biggestMapSize, biggestMapSize];
         static void Main(string[] args)
         {
