@@ -397,6 +397,7 @@ namespace RogueAttemptMaybe
                     AwaitMovementKey();
                 }
             }
+
             static void EnemyMove()
             {
                 if (enemyAlive == true)
@@ -606,6 +607,7 @@ namespace RogueAttemptMaybe
                     }
                 }
             }
+
             static void GameStart()
             {
                 Console.Clear();
@@ -712,6 +714,7 @@ namespace RogueAttemptMaybe
                 }
                 enemyNumber = enemyNumber + 1;
             }
+
             static void MakeMap4Nothing()
             {
                 try
@@ -1686,6 +1689,7 @@ namespace RogueAttemptMaybe
                     MapSizeV4();
                 }
             }
+
             static void FullScreenWarning()
             {
                 Console.WriteLine("Warning(s): ");
@@ -1702,6 +1706,7 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("Press anything to continue.");
                 Console.ReadKey();
             }
+
             static void MainMenu()
             {
                 //Console.BackgroundColor = ConsoleColor.(Color);
@@ -1959,6 +1964,7 @@ namespace RogueAttemptMaybe
                 Console.ForegroundColor = ConsoleColor.White;
                 selectGuide();
             }
+
             static void hotKeys()
             {
                 Console.Clear();
@@ -2119,6 +2125,7 @@ namespace RogueAttemptMaybe
                 SaveKeys();
                 hotKeys();
             }
+
             static void selectGuide()
             {
                 ConsoleKey key = Console.ReadKey().Key;
@@ -2154,8 +2161,6 @@ namespace RogueAttemptMaybe
                             hotKeys();
                             break;
                         case 4:
-                            currentMusic = "main";
-                            Tester();
                             break;
                         case 5:
                             mainMenuSelected = 1;
@@ -2169,19 +2174,7 @@ namespace RogueAttemptMaybe
                     selectGuide();
                 }
             }
-            static void Tester()
-            {
-                Console.Clear();
-                Console.WriteLine(" | | ");
-                System.Threading.Thread.Sleep(1000);
-                Console.Clear();
-                Console.WriteLine(" - - ");
-                System.Threading.Thread.Sleep(1000);
-                Console.Clear();
-                Console.WriteLine(" | | ");
-                System.Threading.Thread.Sleep(1000);
-                Guide();
-            }
+
             static void musicTrack1()
             {
                 while (beeps == true)
