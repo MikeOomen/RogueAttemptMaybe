@@ -58,7 +58,7 @@ namespace RogueAttemptMaybe
 
         static bool[] loaded = { false, false, false, false, false };
         static bool hasInfo = false;
-        static bool beeps = true;
+        static bool beeps = false;
         static string currentMusic = "boss";
         static bool musicPlaying = false;
 
@@ -167,17 +167,21 @@ namespace RogueAttemptMaybe
         static void Main(string[] args)
         {
             Console.Title = "C# Rogue Game";
+            LoadKeys();
+            #region Music
             Thread music1 = new Thread(new ThreadStart(musicTrack1));
             Thread music2 = new Thread(new ThreadStart(musicTrack2));
             Thread music3 = new Thread(new ThreadStart(musicTrack3));
             music1.Start();
             music2.Start();
             music3.Start();
+            #endregion
             FullScreenWarning();
             musicPlaying = false;
             /*MapSizeV4();
             NewMapV4(true);
             AwaitMovementKey();*/
+            #region Mike Stuffs
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -213,6 +217,8 @@ namespace RogueAttemptMaybe
                     armorSellMulti.Add(float.Parse(data[5]));
                 }
             }
+            #endregion
+            #region Main character creation
             mainMenuSelected = 1;
             MainMenu();
             while (characterHasBeenMade == false)
@@ -243,6 +249,7 @@ namespace RogueAttemptMaybe
                 NewMapV4(true);
                 AwaitMovementKey();
             }
+            #endregion
             static void Move(ConsoleKey key)
             {
                 EnemyMove();
@@ -2109,6 +2116,7 @@ namespace RogueAttemptMaybe
                     Console.WriteLine("You cant have 2 of the same key!");
                     Console.ReadKey();
                 }
+                SaveKeys();
                 hotKeys();
             }
             static void selectGuide()
@@ -2545,6 +2553,62 @@ namespace RogueAttemptMaybe
                     }
                 }
             }
+            #region SavingLoading
+            static void LoadKeys()
+            {
+                // Read and show each line from the file.
+                string line = "";
+                using (StreamReader sr = new StreamReader("PlayerData\\HotKeys.txt"))
+                {
+                    int lineNumber = 0;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line != "Keys:")
+                        {
+                            string ch = line;
+                            ConsoleKey key;
+                            Enum.TryParse<ConsoleKey>(ch.ToString(), out key);
+                            if (lineNumber == 1)
+                            {
+                                moveDown = key;
+                            }
+                            else if (lineNumber == 2)
+                            {
+                                moveUp = key;
+                            }
+                            else if (lineNumber == 3)
+                            {
+                                moveLeft = key;
+                            }
+                            else if (lineNumber == 4)
+                            {
+                                moveRight = key;
+                            }
+                            else if (lineNumber == 5)
+                            {
+                                selectingKey = key;
+                            }
+                        }
+                        lineNumber++;
+                    }
+                }
+            }
+            static void SaveKeys()
+            {
+                // Get the directories currently on the C drive.
+                DirectoryInfo[] cDirs = new DirectoryInfo(@"c:\").GetDirectories();
+                // Write each directory name to a file.
+                using (StreamWriter sw = new StreamWriter("PlayerData\\HotKeys.txt"))
+                {
+                    sw.WriteLine("Keys:");
+                    sw.WriteLine(moveDown);
+                    sw.WriteLine(moveUp);
+                    sw.WriteLine(moveLeft);
+                    sw.WriteLine(moveRight);
+                    sw.WriteLine(selectingKey);
+                }
+            }
+            #endregion
         }
     }
 }
