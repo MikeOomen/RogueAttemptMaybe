@@ -1432,6 +1432,7 @@ namespace RogueAttemptMaybe
                 RoomPaths();
                 MapLoadingBar(5, "Done!");
                 fixMiddle();
+                //MiddleRoomSides();
                 for (int i = 0; i < amountOfRooms; i++)
                 {
                     map[roomsPosLengths[i], roomsPosWidths[i]] = "A" + i;
