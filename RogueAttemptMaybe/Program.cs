@@ -82,6 +82,7 @@ namespace RogueAttemptMaybe
         const string rightConers = "-|";
         const string leftConers = "|-";
         const string inBetweenRooms = "**";
+        const string chestCharacter = "CH";
         #endregion
 
         #region map
@@ -90,6 +91,7 @@ namespace RogueAttemptMaybe
         static int[] recommendedMapSize = { 48, 48, 6 };
         const int biggestMapSize = 128 + 2; //First number is actual size
         const int smallestMapSize = 32;
+        static int amountOfChests = 4;
 
         //Map General
         static int total = 0;
@@ -386,7 +388,7 @@ namespace RogueAttemptMaybe
             {
                 //makes sure you actually use an arrow
                 currentMusic = "looting";
-                ConsoleKey key = Console.ReadKey().Key;
+                ConsoleKey key = Console.ReadKey(true).Key;
                 if (key == moveDown || key == moveUp || key == moveLeft || key == moveRight || key == ConsoleKey.N || key == ConsoleKey.M || key == ConsoleKey.F)
                 {
                     Move(key);
@@ -1134,18 +1136,22 @@ namespace RogueAttemptMaybe
                     Console.WriteLine(roomsPosLengths[i]);
                     Console.WriteLine(roomsPosLengths[bestPerRoom[i]] + "Best room");
                     Console.WriteLine(i + " Room");
-                    for (int j = roomsPosLengths[i]; j > roomsPosLengths[bestPerRoom[i]]; j--)
+                    for (int j = roomMidL[i]; j > roomMidL[bestPerRoom[i]]; j--)
                     {
                         try
                         {
-                            map[j, roomsPosWidths[i]] = floorCharacter;
-                            if (map[j, roomsPosWidths[i] + 1] == inBetweenRooms)
+                            if (j-1 <= -1 || roomsPosWidths[i]-1 <= -1)
                             {
-                                map[j, roomsPosWidths[i] + 1] = "|*";
+                                Console.Beep(300, 100); //, Long quiet beep
                             }
-                            if (map[j, roomsPosWidths[i] - 1] == inBetweenRooms)
+                            map[j, roomMidW[i]] = floorCharacter;
+                            if (map[j, roomMidW[i] + 1] == inBetweenRooms)
                             {
-                                map[j, roomsPosWidths[i] - 1] = "*|";
+                                map[j, roomMidW[i] + 1] = "|*";
+                            }
+                            if (map[j, roomMidW[i] - 1] == inBetweenRooms)
+                            {
+                                map[j, roomMidW[i] - 1] = "*|";
                             }
                             maxL = j;
                         }
@@ -1154,18 +1160,22 @@ namespace RogueAttemptMaybe
 
                         }
                     }
-                    for (int j = roomsPosLengths[i]; j < roomsPosLengths[bestPerRoom[i]]; j++)
+                    for (int j = roomMidL[i]; j < roomMidL[bestPerRoom[i]]; j++)
                     {
                         try
                         {
-                            map[j, roomsPosWidths[i]] = floorCharacter;
-                            if (map[j, roomsPosWidths[i] + 1] == inBetweenRooms)
+                            if (j - 1 <= -1 || roomsPosWidths[i] - 1 <= -1)
                             {
-                                map[j, roomsPosWidths[i] + 1] = "|*";
+                                Console.Beep(300, 100); //, Long quiet beep
                             }
-                            if (map[j, roomsPosWidths[i] - 1] == inBetweenRooms)
+                            map[j, roomMidW[i]] = floorCharacter;
+                            if (map[j, roomMidW[i] + 1] == inBetweenRooms)
                             {
-                                map[j, roomsPosWidths[i] - 1] = "*|";
+                                map[j, roomMidW[i] + 1] = "|*";
+                            }
+                            if (map[j, roomMidW[i] - 1] == inBetweenRooms)
+                            {
+                                map[j, roomMidW[i] - 1] = "*|";
                             }
                             maxL = j;
                         }
@@ -1174,7 +1184,7 @@ namespace RogueAttemptMaybe
 
                         }
                     }
-                    for (int j = roomsPosWidths[i]; j > roomsPosWidths[bestPerRoom[i]]; j--)
+                    for (int j = roomMidW[i]; j > roomMidW[bestPerRoom[i]]; j--)
                     {
                         try
                         {
@@ -1193,7 +1203,7 @@ namespace RogueAttemptMaybe
 
                         }
                     }
-                    for (int j = roomsPosWidths[i]; j < roomsPosWidths[bestPerRoom[i]]; j++)
+                    for (int j = roomMidW[i]; j < roomMidW[bestPerRoom[i]]; j++)
                     {
                         try
                         {
@@ -1216,21 +1226,21 @@ namespace RogueAttemptMaybe
                     }
                     try
                     {
-                        if (map[maxL + 1, roomsPosWidths[i] + 1] == inBetweenRooms)
+                        if (map[maxL + 1, roomMidW[i] + 1] == inBetweenRooms)
                         {
-                            map[maxL + 1, roomsPosWidths[i] + 1] = "|*";
+                            map[maxL + 1, roomMidW[i] + 1] = "|*";
                         }
-                        if (map[maxL - 1, roomsPosWidths[i] + 1] == inBetweenRooms)
+                        if (map[maxL - 1, roomMidW[i] + 1] == inBetweenRooms)
                         {
-                            map[maxL - 1, roomsPosWidths[i] + 1] = "|*";
+                            map[maxL - 1, roomMidW[i] + 1] = "|*";
                         }
-                        if (map[maxL + 1, roomsPosWidths[i] - 1] == inBetweenRooms)
+                        if (map[maxL + 1, roomMidW[i] - 1] == inBetweenRooms)
                         {
-                            map[maxL + 1, roomsPosWidths[i] - 1] = "*|";
+                            map[maxL + 1, roomMidW[i] - 1] = "*|";
                         }
-                        if (map[maxL - 1, roomsPosWidths[i] - 1] == inBetweenRooms)
+                        if (map[maxL - 1, roomMidW[i] - 1] == inBetweenRooms)
                         {
-                            map[maxL - 1, roomsPosWidths[i] - 1] = "*|";
+                            map[maxL - 1, roomMidW[i] - 1] = "*|";
                         }
                     }
                     catch (IndexOutOfRangeException)
@@ -1329,66 +1339,74 @@ namespace RogueAttemptMaybe
             }
             static void MapColors(int length, int width)
             {
+                ConsoleColor fg = ConsoleColor.White;
+                ConsoleColor bg = ConsoleColor.Black;
                 switch (map[length, width])
                 {
                     case inBetweenRooms:
                         {
                             Console.ForegroundColor = ConsoleColor.DarkGray;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case playerCharacter:
                         {
                             Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = bg;
                             break;
                         }
-                    /*case floorCharacter:
+                    case chestCharacter:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.BackgroundColor = bg;
                             break;
-                        }*/
+                        }
+                    case floorCharacter:
+                        {
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
+                            break;
+                        }
                     case outerUp:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case outerSideL:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case outerSideR:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case rightConers:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case leftConers:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case enemy1:
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     default:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                 }
@@ -1400,6 +1418,71 @@ namespace RogueAttemptMaybe
                     for (int f = 0; f < 48; f++)
                     {
                         map[roomsDown[i] + ((roomsUp[i] - roomsDown[i]) / 2), roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2)] = "Le";
+                        roomMidL[i] = roomsDown[i] + ((roomsUp[i] - roomsDown[i]) / 2);
+                        roomMidW[i] = roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2);
+                    }
+                }
+            }
+            static void DecideRandomChests()
+            {
+                int amountWorking = 1;
+                while(amountWorking <= amountOfChests)
+                {
+                    Random rnd = new Random();
+                    int room = rnd.Next(0,amountOfRooms + 1);
+                    Random rand = new Random();
+                    int side = rnd.Next(1,5);
+                    total = 0;
+                    int length = 0;
+                    for (int width = 0; total < mapLength * mapWidth; width++)
+                    {
+                        total = width * length;
+                        if (length-1 > 1)
+                        {
+                            if (width == roomsLeft[room] && length == (roomsUp[room] + roomsDown[room]) / 2 && side == 1)
+                            {
+                                if (map[length, width] == floorCharacter)
+                                {
+                                    continue;
+                                }
+                                map[length, width+1] = chestCharacter;
+                                amountWorking++;
+                            }
+                            if (width == roomsRight[room] && length == (roomsUp[room] + roomsDown[room]) / 2 && side == 2)
+                            {
+                                if (map[length, width] == floorCharacter)
+                                {
+                                    continue;
+                                }
+                                map[length, width - 1] = chestCharacter;
+                                amountWorking++;
+                            }
+
+                            if (length == roomsUp[room] && width == (roomsRight[room] + roomsLeft[room]) / 2 && side == 3)
+                            {
+                                if (map[length, width] == floorCharacter)
+                                {
+                                    continue;
+                                }
+                                map[length-1, width] = chestCharacter;
+                                amountWorking++;
+                            }
+                            if (length == roomsDown[room] && width == (roomsRight[room] + roomsLeft[room]) / 2 && side == 4)
+                            {
+                                if (map[length, width] == floorCharacter)
+                                {
+                                    continue;
+                                }
+                                map[length+1, width] = chestCharacter;
+                                amountWorking++;
+                            }
+                        }
+
+                        if (width > mapWidth)
+                        {
+                            width = -1;
+                            length++;
+                        }
                     }
                 }
             }
@@ -1427,16 +1510,17 @@ namespace RogueAttemptMaybe
                 {
                     CreateRandomMapV4(true);
                 }
+                fixMiddle();
                 GenerateRoomPositions();
                 //MiddleRoomSides();
                 RoomPaths();
                 MapLoadingBar(5, "Done!");
-                fixMiddle();
                 //MiddleRoomSides();
                 for (int i = 0; i < amountOfRooms; i++)
                 {
-                    map[roomsPosLengths[i], roomsPosWidths[i]] = "A" + i;
+                    //map[roomsPosLengths[i], roomsPosWidths[i]] = "A" + i;
                 }
+                DecideRandomChests();
                 DrawMap4();
                 AwaitMovementKey();
             }
