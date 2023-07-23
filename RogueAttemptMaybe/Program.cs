@@ -89,7 +89,7 @@ namespace RogueAttemptMaybe
 
         //Map Balancing
         static int[] recommendedMapSize = { 48, 48, 6 };
-        const int biggestMapSize = 128 + 2; //First number is actual size
+        const int biggestMapSize = 100 + 2; //First number is actual size
         const int smallestMapSize = 32;
         static int amountOfChests = 4;
 
@@ -123,7 +123,7 @@ namespace RogueAttemptMaybe
         static int[] roomsUp = new int[maxRooms];
         static int[] roomsDown = new int[maxRooms];
 
-        static int[] bestPerRoom = new int[1000];
+        static int[] bestPerRoom = new int[15];
         static int checkedRooms = 0;
 
         static int seeingDistance = 16; //Breaks above 18
@@ -1108,8 +1108,8 @@ namespace RogueAttemptMaybe
                 }
                 for (int i = 0; i < amountOfRooms - 1; i++)
                 {
-                    int bestForRoom = 100;
-                    int bestScore = 100;
+                    int bestForRoom = 0;
+                    int bestScore = 0;
                     for (int j = 0; j < amountOfRooms; j++)
                     {
                         if (i != j || j < i)
@@ -1133,9 +1133,13 @@ namespace RogueAttemptMaybe
                     {
                         Console.WriteLine(roomsPosLengths[j] + " Room " + j);
                     }
-                    Console.WriteLine(roomsPosLengths[i]);
-                    Console.WriteLine(roomsPosLengths[bestPerRoom[i]] + "Best room");
-                    Console.WriteLine(i + " Room");
+                    //Console.WriteLine(roomsPosLengths[i]);
+                    //Console.WriteLine(roomsPosLengths[bestPerRoom[i]] + "Best room");
+                    //Console.WriteLine(i + " Room");
+                    for (int room = 0; room < bestPerRoom.Length; room++)
+                    {
+                        Console.WriteLine(bestPerRoom[room] + " For room " + room);
+                    }
                     for (int j = roomMidL[i]; j > roomMidL[bestPerRoom[i]]; j--)
                     {
                         try
@@ -1610,169 +1614,12 @@ namespace RogueAttemptMaybe
             static void MapSizeV4()
             {
                 currentMusic = "loading";
-                bool problem = false;
                 Console.Clear();
                 specificmapbool = false;
-                Console.WriteLine($"Map Generation {version}");
-                int biggestMap = biggestMapSize - 2;
-                Console.WriteLine($"Warning: Max size is {biggestMap}!");
-                Console.WriteLine($"Warning: Min size is {smallestMapSize}!");
-                Console.WriteLine($"Recommended: {recommendedMapSize[0]}x{recommendedMapSize[1]} with {recommendedMapSize[2]} rooms.");
-                Console.WriteLine("Map Length");
-                string answerL = "32";
-                try
-                {
-                    answerL = Console.ReadLine();
-                    if (answerL == "seed")
-                    {
-                        specificmapbool = true;
-                        //askSeed();
-                    }
-                    int result = Int32.Parse(answerL);
-                }
-                catch (FormatException)
-                {
-                    if (answerL == "")
-                    {
-                        answerL = "nothing";
-                    }
-                    Console.Clear();
-                    Console.WriteLine("Error 1:");
-                    Console.WriteLine($"Cannot convert {answerL} to a number.");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    problem = true;
-                }
-                if (problem == false)
-                {
-                    if (Int32.Parse(answerL) > biggestMapSize - 2)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 2:");
-                        Console.WriteLine("Answer too big");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    else if (Int32.Parse(answerL) < smallestMapSize)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 3:");
-                        Console.WriteLine("Answer too small");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    mapLength = Int32.Parse(answerL);
-                }
-                Console.WriteLine("Map Width");
-                string answerW = "32";
-                try
-                {
-                    if (problem == false)
-                    {
-                        answerW = Console.ReadLine();
-                        int result = Int32.Parse(answerW);
-                    }
-                }
-                catch (FormatException)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 1:");
-                    Console.WriteLine($"Cannot convert {answerW} to a number.");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    problem = true;
-                }
-                if (problem == false)
-                {
-                    if (Int32.Parse(answerW) > biggestMapSize - 2)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 2:");
-                        Console.WriteLine("Answer too big");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    else if (Int32.Parse(answerW) < smallestMapSize)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 3:");
-                        Console.WriteLine("Answer too small");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    mapWidth = Int32.Parse(answerW);
-                }
-                Console.WriteLine("Amount of Rooms");
-                string answerR = "2";
-                try
-                {
-                    if (problem == false)
-                    {
-                        answerR = Console.ReadLine();
-                        int result = Int32.Parse(answerR);
-                    }
-                }
-                catch (FormatException)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 1:");
-                    Console.WriteLine($"Cannot convert {answerR} to a number.");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    problem = true;
-                }
-                if (problem == false)
-                {
-                    if (Int32.Parse(answerR) > maxRooms)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 2:");
-                        Console.WriteLine($"Answer too big , {maxRooms} is the maximum.");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    else if (Int32.Parse(answerR) < minRooms)
-                    {
-                        if (problem == false)
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Error 3:");
-                            Console.WriteLine($"Answer too small , {minRooms} is the minimum");
-                            Console.WriteLine("Press enter to try again");
-                            Console.ReadLine();
-                            problem = true;
-                        }
-                    }
-                    amountOfRooms = Int32.Parse(answerR);
-                }
-                if (mapLength * mapWidth < (((maxRoomSize + 3) * (maxRoomSize + 3)) * amountOfRooms) * 2)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 6:");
-                    Console.WriteLine("Not enough map space to fit so many rooms!");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    problem = true;
-                }
-                innerMapWidth = mapWidth - 2;
-                innerMapLength = mapLength - 2;
-                Console.WriteLine($"{innerMapWidth} Inner W");
-                Console.WriteLine($"{innerMapLength} Inner L");
-                Console.WriteLine($"{mapWidth} Outer W");
-                Console.WriteLine($"{mapLength} Outer L");
-                Console.WriteLine($"{amountOfRooms} Rooms");
-                if (problem == true)
-                {
-                    mapLength = 0;
-                    mapWidth = 0;
-                    amountOfRooms = 0;
-                    MapSizeV4();
-                }
+                mapLength = 48;
+                mapWidth = 48;
+                amountOfRooms = 6;
+                
             }
 
             static void FullScreenWarning()
