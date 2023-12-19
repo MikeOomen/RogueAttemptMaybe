@@ -15,6 +15,7 @@ namespace RogueAttemptMaybe
     //Current bugs:
     //enemies attack your last position.
     //The map. In general.
+    //My eyes are in pain
     #endregion
     #region Notes
     //Console.Beep(600 , 1000); //, Long quiet beep
