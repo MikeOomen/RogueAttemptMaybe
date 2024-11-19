@@ -11,12 +11,17 @@ using System.Threading;
 
 namespace RogueAttemptMaybe
 {
+    #region Current Bugs
     //Current bugs:
     //enemies attack your last position.
     //The map. In general.
-
+    //My eyes are in pain
+    #endregion
+    #region Notes
     //Console.Beep(600 , 1000); //, Long quiet beep
     //Console.Beep(750 , 500); //, Short louder beep
+    #endregion
+    #region To-Do list
     //To-Do list:
     //Map R
     //GUI *
@@ -39,21 +44,35 @@ namespace RogueAttemptMaybe
     //HP *      Ma
     //Attack * R/Mi
     // Enemy types Mi
+    #endregion
     internal class Program
     {
+        #region Controls
+        //Controls
+        static ConsoleKey moveDown = ConsoleKey.DownArrow;
+        static ConsoleKey moveUp = ConsoleKey.UpArrow;
+        static ConsoleKey moveLeft = ConsoleKey.LeftArrow;
+        static ConsoleKey moveRight = ConsoleKey.RightArrow;
+        static ConsoleKey selectingKey = ConsoleKey.Enter;
+        #endregion
+
+
         static bool[] loaded = { false, false, false, false, false };
         static bool hasInfo = false;
-        static bool beeps = true;
+        static bool beeps = false;
         static string currentMusic = "boss";
         static bool musicPlaying = false;
 
         static bool playerCanAMoveEverywhere = false;
 
+        #region Main Menu
         //Main Menu
         static string name;
         static bool characterHasBeenMade = false;
         static int mainMenuSelected = 1;
+        #endregion
 
+        #region Characters
         //Characters
         const string floorCharacter = "  ";
         const string playerCharacter = "@ ";
@@ -64,11 +83,16 @@ namespace RogueAttemptMaybe
         const string rightConers = "-|";
         const string leftConers = "|-";
         const string inBetweenRooms = "**";
+        const string chestCharacter = "CH";
+        #endregion
+
+        #region map
 
         //Map Balancing
         static int[] recommendedMapSize = { 48, 48, 6 };
-        const int biggestMapSize = 128 + 2; //First number is actual size
+        const int biggestMapSize = 100 + 2; //First number is actual size
         const int smallestMapSize = 32;
+        static int amountOfChests = 4;
 
         //Map General
         static int total = 0;
@@ -100,11 +124,13 @@ namespace RogueAttemptMaybe
         static int[] roomsUp = new int[maxRooms];
         static int[] roomsDown = new int[maxRooms];
 
-        static int[] bestPerRoom = new int[1000];
+        static int[] bestPerRoom = new int[15];
         static int checkedRooms = 0;
 
         static int seeingDistance = 16; //Breaks above 18
+        #endregion
 
+        #region Attack
         //Attack
         static string[] starterWeapons = File.ReadAllLines("StarterWeapons.txt");
         static string[] weapons = File.ReadAllLines("Weapons.txt");
@@ -138,23 +164,27 @@ namespace RogueAttemptMaybe
         static int enemyWeapon;
         static int enemyNumber = 0;
         static Random rndEnemyWeapon = new Random();
+        #endregion
 
-        //Input map here
         static string[,] map = new string[biggestMapSize, biggestMapSize];
         static void Main(string[] args)
         {
             Console.Title = "C# Rogue Game";
+            LoadKeys();
+            #region Music
             Thread music1 = new Thread(new ThreadStart(musicTrack1));
             Thread music2 = new Thread(new ThreadStart(musicTrack2));
             Thread music3 = new Thread(new ThreadStart(musicTrack3));
             music1.Start();
             music2.Start();
             music3.Start();
+            #endregion
             FullScreenWarning();
             musicPlaying = false;
             /*MapSizeV4();
             NewMapV4(true);
             AwaitMovementKey();*/
+            #region Mike Stuffs
             for (int i = 0; i < starterWeapons.Length; i++)
             {
                 string[] data = starterWeapons[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -190,13 +220,15 @@ namespace RogueAttemptMaybe
                     armorSellMulti.Add(float.Parse(data[5]));
                 }
             }
+            #endregion
+            #region Main character creation
             mainMenuSelected = 1;
             MainMenu();
             while (characterHasBeenMade == false)
             {
                 ConsoleKey select = Console.ReadKey().Key;
                 IsSelecting();
-                if (select == ConsoleKey.Enter)
+                if (select == selectingKey)
                 {
                     currentWeapon = weaponName[selectedWeapon];
                     currentDmg = weaponDmg[selectedWeapon];
@@ -220,12 +252,13 @@ namespace RogueAttemptMaybe
                 NewMapV4(true);
                 AwaitMovementKey();
             }
+            #endregion
             static void Move(ConsoleKey key)
             {
                 EnemyMove();
                 switch (key)
                 {
-                    case ConsoleKey.DownArrow:
+                    case var value when value == moveDown:
                         {
                             if (map[currentPlayerPosition[0] + 1, currentPlayerPosition[1]] == floorCharacter)
                             {
@@ -250,7 +283,7 @@ namespace RogueAttemptMaybe
                             }
                             break;
                         }
-                    case ConsoleKey.UpArrow:
+                    case var value when value == moveUp:
                         {
                             if (map[currentPlayerPosition[0] - 1, currentPlayerPosition[1]] == floorCharacter)
                             {
@@ -275,7 +308,7 @@ namespace RogueAttemptMaybe
                             }
                             break;
                         }
-                    case ConsoleKey.LeftArrow:
+                    case var value when value == moveLeft:
                         {
                             if (map[currentPlayerPosition[0], currentPlayerPosition[1] - 1] == floorCharacter)
                             {
@@ -300,7 +333,7 @@ namespace RogueAttemptMaybe
                             }
                             break;
                         }
-                    case ConsoleKey.RightArrow:
+                    case var value when value == moveRight:
                         {
                             if (map[currentPlayerPosition[0], currentPlayerPosition[1] + 1] == floorCharacter)
                             {
@@ -356,8 +389,8 @@ namespace RogueAttemptMaybe
             {
                 //makes sure you actually use an arrow
                 currentMusic = "looting";
-                ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow || key == ConsoleKey.N || key == ConsoleKey.M || key == ConsoleKey.F)
+                ConsoleKey key = Console.ReadKey(true).Key;
+                if (key == moveDown || key == moveUp || key == moveLeft || key == moveRight || key == ConsoleKey.N || key == ConsoleKey.M || key == ConsoleKey.F)
                 {
                     Move(key);
                 }
@@ -367,6 +400,7 @@ namespace RogueAttemptMaybe
                     AwaitMovementKey();
                 }
             }
+
             static void EnemyMove()
             {
                 if (enemyAlive == true)
@@ -576,6 +610,7 @@ namespace RogueAttemptMaybe
                     }
                 }
             }
+
             static void GameStart()
             {
                 Console.Clear();
@@ -682,6 +717,7 @@ namespace RogueAttemptMaybe
                 }
                 enemyNumber = enemyNumber + 1;
             }
+
             static void MakeMap4Nothing()
             {
                 try
@@ -1073,8 +1109,8 @@ namespace RogueAttemptMaybe
                 }
                 for (int i = 0; i < amountOfRooms - 1; i++)
                 {
-                    int bestForRoom = 100;
-                    int bestScore = 100;
+                    int bestForRoom = 0;
+                    int bestScore = 0;
                     for (int j = 0; j < amountOfRooms; j++)
                     {
                         if (i != j || j < i)
@@ -1098,21 +1134,29 @@ namespace RogueAttemptMaybe
                     {
                         Console.WriteLine(roomsPosLengths[j] + " Room " + j);
                     }
-                    Console.WriteLine(roomsPosLengths[i]);
-                    Console.WriteLine(roomsPosLengths[bestPerRoom[i]] + "Best room");
-                    Console.WriteLine(i + " Room");
-                    for (int j = roomsPosLengths[i]; j > roomsPosLengths[bestPerRoom[i]]; j--)
+                    //Console.WriteLine(roomsPosLengths[i]);
+                    //Console.WriteLine(roomsPosLengths[bestPerRoom[i]] + "Best room");
+                    //Console.WriteLine(i + " Room");
+                    for (int room = 0; room < bestPerRoom.Length; room++)
+                    {
+                        Console.WriteLine(bestPerRoom[room] + " For room " + room);
+                    }
+                    for (int j = roomMidL[i]; j > roomMidL[bestPerRoom[i]]; j--)
                     {
                         try
                         {
-                            map[j, roomsPosWidths[i]] = floorCharacter;
-                            if (map[j, roomsPosWidths[i] + 1] == inBetweenRooms)
+                            if (j-1 <= -1 || roomsPosWidths[i]-1 <= -1)
                             {
-                                map[j, roomsPosWidths[i] + 1] = "|*";
+                                Console.Beep(300, 100); //, Long quiet beep
                             }
-                            if (map[j, roomsPosWidths[i] - 1] == inBetweenRooms)
+                            map[j, roomMidW[i]] = floorCharacter;
+                            if (map[j, roomMidW[i] + 1] == inBetweenRooms)
                             {
-                                map[j, roomsPosWidths[i] - 1] = "*|";
+                                map[j, roomMidW[i] + 1] = "|*";
+                            }
+                            if (map[j, roomMidW[i] - 1] == inBetweenRooms)
+                            {
+                                map[j, roomMidW[i] - 1] = "*|";
                             }
                             maxL = j;
                         }
@@ -1121,18 +1165,22 @@ namespace RogueAttemptMaybe
 
                         }
                     }
-                    for (int j = roomsPosLengths[i]; j < roomsPosLengths[bestPerRoom[i]]; j++)
+                    for (int j = roomMidL[i]; j < roomMidL[bestPerRoom[i]]; j++)
                     {
                         try
                         {
-                            map[j, roomsPosWidths[i]] = floorCharacter;
-                            if (map[j, roomsPosWidths[i] + 1] == inBetweenRooms)
+                            if (j - 1 <= -1 || roomsPosWidths[i] - 1 <= -1)
                             {
-                                map[j, roomsPosWidths[i] + 1] = "|*";
+                                Console.Beep(300, 100); //, Long quiet beep
                             }
-                            if (map[j, roomsPosWidths[i] - 1] == inBetweenRooms)
+                            map[j, roomMidW[i]] = floorCharacter;
+                            if (map[j, roomMidW[i] + 1] == inBetweenRooms)
                             {
-                                map[j, roomsPosWidths[i] - 1] = "*|";
+                                map[j, roomMidW[i] + 1] = "|*";
+                            }
+                            if (map[j, roomMidW[i] - 1] == inBetweenRooms)
+                            {
+                                map[j, roomMidW[i] - 1] = "*|";
                             }
                             maxL = j;
                         }
@@ -1141,7 +1189,7 @@ namespace RogueAttemptMaybe
 
                         }
                     }
-                    for (int j = roomsPosWidths[i]; j > roomsPosWidths[bestPerRoom[i]]; j--)
+                    for (int j = roomMidW[i]; j > roomMidW[bestPerRoom[i]]; j--)
                     {
                         try
                         {
@@ -1160,7 +1208,7 @@ namespace RogueAttemptMaybe
 
                         }
                     }
-                    for (int j = roomsPosWidths[i]; j < roomsPosWidths[bestPerRoom[i]]; j++)
+                    for (int j = roomMidW[i]; j < roomMidW[bestPerRoom[i]]; j++)
                     {
                         try
                         {
@@ -1183,21 +1231,21 @@ namespace RogueAttemptMaybe
                     }
                     try
                     {
-                        if (map[maxL + 1, roomsPosWidths[i] + 1] == inBetweenRooms)
+                        if (map[maxL + 1, roomMidW[i] + 1] == inBetweenRooms)
                         {
-                            map[maxL + 1, roomsPosWidths[i] + 1] = "|*";
+                            map[maxL + 1, roomMidW[i] + 1] = "|*";
                         }
-                        if (map[maxL - 1, roomsPosWidths[i] + 1] == inBetweenRooms)
+                        if (map[maxL - 1, roomMidW[i] + 1] == inBetweenRooms)
                         {
-                            map[maxL - 1, roomsPosWidths[i] + 1] = "|*";
+                            map[maxL - 1, roomMidW[i] + 1] = "|*";
                         }
-                        if (map[maxL + 1, roomsPosWidths[i] - 1] == inBetweenRooms)
+                        if (map[maxL + 1, roomMidW[i] - 1] == inBetweenRooms)
                         {
-                            map[maxL + 1, roomsPosWidths[i] - 1] = "*|";
+                            map[maxL + 1, roomMidW[i] - 1] = "*|";
                         }
-                        if (map[maxL - 1, roomsPosWidths[i] - 1] == inBetweenRooms)
+                        if (map[maxL - 1, roomMidW[i] - 1] == inBetweenRooms)
                         {
-                            map[maxL - 1, roomsPosWidths[i] - 1] = "*|";
+                            map[maxL - 1, roomMidW[i] - 1] = "*|";
                         }
                     }
                     catch (IndexOutOfRangeException)
@@ -1296,66 +1344,74 @@ namespace RogueAttemptMaybe
             }
             static void MapColors(int length, int width)
             {
+                ConsoleColor fg = ConsoleColor.White;
+                ConsoleColor bg = ConsoleColor.Black;
                 switch (map[length, width])
                 {
                     case inBetweenRooms:
                         {
                             Console.ForegroundColor = ConsoleColor.DarkGray;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case playerCharacter:
                         {
                             Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = bg;
                             break;
                         }
-                    /*case floorCharacter:
+                    case chestCharacter:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.BackgroundColor = bg;
                             break;
-                        }*/
+                        }
+                    case floorCharacter:
+                        {
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
+                            break;
+                        }
                     case outerUp:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case outerSideL:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case outerSideR:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case rightConers:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case leftConers:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     case enemy1:
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                     default:
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.ForegroundColor = fg;
+                            Console.BackgroundColor = bg;
                             break;
                         }
                 }
@@ -1364,15 +1420,75 @@ namespace RogueAttemptMaybe
             {
                 for (int i = 0; i < amountOfRooms; i++)
                 {
-                    roomMidL[i] = roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2);
-                    roomMidW[i] = roomsDown[i] + ((roomsUp[i] - roomsDown[i]) / 2);
-                    map[roomMidL[i], roomMidW[i]] = "B" + i;
-                    Console.WriteLine(i + " Room");
-                    Console.WriteLine($"{roomsLeft[i]} +(({roomsRight[i]} - {roomsLeft[i]})/2)");
-                    Console.WriteLine($"{roomsLeft[i]} +(({roomsRight[i] - roomsLeft[i]})/2)");
-                    Console.WriteLine($"{roomsLeft[i]} +({(roomsRight[i] - roomsLeft[i]) / 2})");
-                    Console.WriteLine($"{roomsLeft[i]} +{((roomsRight[i] - roomsLeft[i]) / 2)} ");
-                    Console.WriteLine(roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2));
+                    for (int f = 0; f < 48; f++)
+                    {
+                        map[roomsDown[i] + ((roomsUp[i] - roomsDown[i]) / 2), roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2)] = "Le";
+                        roomMidL[i] = roomsDown[i] + ((roomsUp[i] - roomsDown[i]) / 2);
+                        roomMidW[i] = roomsLeft[i] + ((roomsRight[i] - roomsLeft[i]) / 2);
+                    }
+                }
+            }
+            static void DecideRandomChests()
+            {
+                int amountWorking = 1;
+                while(amountWorking <= amountOfChests)
+                {
+                    Random rnd = new Random();
+                    int room = rnd.Next(0,amountOfRooms + 1);
+                    Random rand = new Random();
+                    int side = rnd.Next(1,5);
+                    total = 0;
+                    int length = 0;
+                    for (int width = 0; total < mapLength * mapWidth; width++)
+                    {
+                        total = width * length;
+                        if (length-1 > 1)
+                        {
+                            if (width == roomsLeft[room] && length == (roomsUp[room] + roomsDown[room]) / 2 && side == 1)
+                            {
+                                if (map[length, width] == floorCharacter)
+                                {
+                                    continue;
+                                }
+                                map[length, width+1] = chestCharacter;
+                                amountWorking++;
+                            }
+                            if (width == roomsRight[room] && length == (roomsUp[room] + roomsDown[room]) / 2 && side == 2)
+                            {
+                                if (map[length, width] == floorCharacter)
+                                {
+                                    continue;
+                                }
+                                map[length, width - 1] = chestCharacter;
+                                amountWorking++;
+                            }
+
+                            if (length == roomsUp[room] && width == (roomsRight[room] + roomsLeft[room]) / 2 && side == 3)
+                            {
+                                if (map[length, width] == floorCharacter)
+                                {
+                                    continue;
+                                }
+                                map[length-1, width] = chestCharacter;
+                                amountWorking++;
+                            }
+                            if (length == roomsDown[room] && width == (roomsRight[room] + roomsLeft[room]) / 2 && side == 4)
+                            {
+                                if (map[length, width] == floorCharacter)
+                                {
+                                    continue;
+                                }
+                                map[length+1, width] = chestCharacter;
+                                amountWorking++;
+                            }
+                        }
+
+                        if (width > mapWidth)
+                        {
+                            width = -1;
+                            length++;
+                        }
+                    }
                 }
             }
             static void CreateRandomMapV4(bool random)
@@ -1399,15 +1515,17 @@ namespace RogueAttemptMaybe
                 {
                     CreateRandomMapV4(true);
                 }
+                fixMiddle();
                 GenerateRoomPositions();
                 //MiddleRoomSides();
                 RoomPaths();
                 MapLoadingBar(5, "Done!");
-                fixMiddle();
+                //MiddleRoomSides();
                 for (int i = 0; i < amountOfRooms; i++)
                 {
-                    map[roomsPosLengths[i], roomsPosWidths[i]] = "A" + i;
+                    //map[roomsPosLengths[i], roomsPosWidths[i]] = "A" + i;
                 }
+                DecideRandomChests();
                 DrawMap4();
                 AwaitMovementKey();
             }
@@ -1497,170 +1615,14 @@ namespace RogueAttemptMaybe
             static void MapSizeV4()
             {
                 currentMusic = "loading";
-                bool problem = false;
                 Console.Clear();
                 specificmapbool = false;
-                Console.WriteLine($"Map Generation {version}");
-                int biggestMap = biggestMapSize - 2;
-                Console.WriteLine($"Warning: Max size is {biggestMap}!");
-                Console.WriteLine($"Warning: Min size is {smallestMapSize}!");
-                Console.WriteLine($"Recommended: {recommendedMapSize[0]}x{recommendedMapSize[1]} with {recommendedMapSize[2]} rooms.");
-                Console.WriteLine("Map Length");
-                string answerL = "32";
-                try
-                {
-                    answerL = Console.ReadLine();
-                    if (answerL == "seed")
-                    {
-                        specificmapbool = true;
-                        //askSeed();
-                    }
-                    int result = Int32.Parse(answerL);
-                }
-                catch (FormatException)
-                {
-                    if (answerL == "")
-                    {
-                        answerL = "nothing";
-                    }
-                    Console.Clear();
-                    Console.WriteLine("Error 1:");
-                    Console.WriteLine($"Cannot convert {answerL} to a number.");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    problem = true;
-                }
-                if (problem == false)
-                {
-                    if (Int32.Parse(answerL) > biggestMapSize - 2)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 2:");
-                        Console.WriteLine("Answer too big");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    else if (Int32.Parse(answerL) < smallestMapSize)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 3:");
-                        Console.WriteLine("Answer too small");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    mapLength = Int32.Parse(answerL);
-                }
-                Console.WriteLine("Map Width");
-                string answerW = "32";
-                try
-                {
-                    if (problem == false)
-                    {
-                        answerW = Console.ReadLine();
-                        int result = Int32.Parse(answerW);
-                    }
-                }
-                catch (FormatException)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 1:");
-                    Console.WriteLine($"Cannot convert {answerW} to a number.");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    problem = true;
-                }
-                if (problem == false)
-                {
-                    if (Int32.Parse(answerW) > biggestMapSize - 2)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 2:");
-                        Console.WriteLine("Answer too big");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    else if (Int32.Parse(answerW) < smallestMapSize)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 3:");
-                        Console.WriteLine("Answer too small");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    mapWidth = Int32.Parse(answerW);
-                }
-                Console.WriteLine("Amount of Rooms");
-                string answerR = "2";
-                try
-                {
-                    if (problem == false)
-                    {
-                        answerR = Console.ReadLine();
-                        int result = Int32.Parse(answerR);
-                    }
-                }
-                catch (FormatException)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 1:");
-                    Console.WriteLine($"Cannot convert {answerR} to a number.");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    problem = true;
-                }
-                if (problem == false)
-                {
-                    if (Int32.Parse(answerR) > maxRooms)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Error 2:");
-                        Console.WriteLine($"Answer too big , {maxRooms} is the maximum.");
-                        Console.WriteLine("Press enter to try again");
-                        Console.ReadLine();
-                        problem = true;
-                    }
-                    else if (Int32.Parse(answerR) < minRooms)
-                    {
-                        if (problem == false)
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Error 3:");
-                            Console.WriteLine($"Answer too small , {minRooms} is the minimum");
-                            Console.WriteLine("Press enter to try again");
-                            Console.ReadLine();
-                            problem = true;
-                        }
-                    }
-                    amountOfRooms = Int32.Parse(answerR);
-                }
-                if (mapLength * mapWidth < (((maxRoomSize + 3) * (maxRoomSize + 3)) * amountOfRooms) * 2)
-                {
-                    Console.Clear();
-                    Console.WriteLine("Error 6:");
-                    Console.WriteLine("Not enough map space to fit so many rooms!");
-                    Console.WriteLine("Press enter to try again");
-                    Console.ReadLine();
-                    problem = true;
-                }
-                innerMapWidth = mapWidth - 2;
-                innerMapLength = mapLength - 2;
-                Console.WriteLine($"{innerMapWidth} Inner W");
-                Console.WriteLine($"{innerMapLength} Inner L");
-                Console.WriteLine($"{mapWidth} Outer W");
-                Console.WriteLine($"{mapLength} Outer L");
-                Console.WriteLine($"{amountOfRooms} Rooms");
-                if (problem == true)
-                {
-                    mapLength = 0;
-                    mapWidth = 0;
-                    amountOfRooms = 0;
-                    MapSizeV4();
-                }
+                mapLength = 48;
+                mapWidth = 48;
+                amountOfRooms = 6;
+                
             }
+
             static void FullScreenWarning()
             {
                 Console.WriteLine("Warning(s): ");
@@ -1674,9 +1636,10 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("This game is W.I.P and anything may be subject to change");
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("Press enter to continue.");
-                Console.ReadLine();
+                Console.WriteLine("Press anything to continue.");
+                Console.ReadKey();
             }
+
             static void MainMenu()
             {
                 //Console.BackgroundColor = ConsoleColor.(Color);
@@ -1768,7 +1731,7 @@ namespace RogueAttemptMaybe
             static void selectMenu()
             {
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow)
+                if (key == moveDown)
                 {
                     mainMenuSelected += 1;
                     if (mainMenuSelected == 6)
@@ -1777,7 +1740,7 @@ namespace RogueAttemptMaybe
                     }
                     MainMenu();
                 }
-                else if (key == ConsoleKey.UpArrow)
+                else if (key == moveUp)
                 {
                     mainMenuSelected -= 1;
                     if (mainMenuSelected == 0)
@@ -1786,7 +1749,7 @@ namespace RogueAttemptMaybe
                     }
                     MainMenu();
                 }
-                else if (key == ConsoleKey.Enter)
+                else if (key == selectingKey)
                 {
                     switch (mainMenuSelected)
                     {
@@ -1826,7 +1789,7 @@ namespace RogueAttemptMaybe
                 Console.WriteLine("Marlon / Brain Damage Gaming / Gastrikshark");
                 Console.ForegroundColor = ConsoleColor.White;
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.Enter)
+                if (key == selectingKey)
                 {
                     MainMenu();
                 }
@@ -1934,10 +1897,172 @@ namespace RogueAttemptMaybe
                 Console.ForegroundColor = ConsoleColor.White;
                 selectGuide();
             }
+
+            static void hotKeys()
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 1)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Move Upwards: ");
+                Console.WriteLine(moveUp);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 2)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Move Down: ");
+                Console.WriteLine(moveDown);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 3)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Move Left: ");
+                Console.WriteLine(moveLeft);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 4)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Move Right: ");
+                Console.WriteLine(moveRight);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 5)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("select Key: ");
+                Console.WriteLine(selectingKey);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.White;
+                if (mainMenuSelected == 6)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                Console.Write("Exit");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                selectKey();
+            }
+            static void selectKey()
+            {
+                ConsoleKey key = Console.ReadKey().Key;
+                if (key == moveDown)
+                {
+                    mainMenuSelected += 1;
+                    if (mainMenuSelected == 7)
+                    {
+                        mainMenuSelected = 1;
+                    }
+                    hotKeys();
+                }
+                else if (key == moveUp)
+                {
+                    mainMenuSelected -= 1;
+                    if (mainMenuSelected == 0)
+                    {
+                        mainMenuSelected = 6;
+                    }
+                    hotKeys();
+                }
+                else if (key == selectingKey)
+                {
+                    switch (mainMenuSelected)
+                    {
+                        case 1:
+                            askKey("move up");
+                            break;
+                        case 2:
+                            askKey("move down");
+                            break;
+                        case 3:
+                            askKey("move left");
+                            break;
+                        case 4:
+                            askKey("move right");
+                            break;
+                        case 5:
+                            askKey("select key");
+                            break;
+                        case 6:
+                            mainMenuSelected = 1;
+                            MainMenu();
+                            break;
+                    }
+                }
+                else
+                {
+                    //If key isnt an arrow it restarts
+                    hotKeys();
+                }
+            }
+            static void askKey(string hotkey)
+            {
+                Console.Clear();
+                Console.WriteLine($"New key for {hotkey}:");
+                ConsoleKey key = Console.ReadKey().Key;
+                ConsoleKey[] usedKeys = {moveUp,moveDown,moveLeft,moveRight,selectingKey};
+                bool problem = false;
+                for (int i = 0; i < usedKeys.Length; i++)
+                {
+                    if (key == usedKeys[i])
+                    {
+                        problem = true;
+                    }
+                }
+                if (problem == false)
+                {
+                    if (hotkey == "move up")
+                    {
+                        moveUp = key;
+                    }
+                    else if (hotkey == "move down")
+                    {
+                        moveDown = key;
+                    }
+                    else if (hotkey == "move left")
+                    {
+                        moveLeft = key;
+                    }
+                    else if (hotkey == "move right")
+                    {
+                        moveRight = key;
+                    } else if(hotkey == "select key")
+                    {
+                        selectingKey = key;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("You cant have 2 of the same key!");
+                    Console.ReadKey();
+                }
+                SaveKeys();
+                hotKeys();
+            }
+
             static void selectGuide()
             {
                 ConsoleKey key = Console.ReadKey().Key;
-                if (key == ConsoleKey.DownArrow)
+                if (key == moveDown)
                 {
                     mainMenuSelected += 1;
                     if (mainMenuSelected == 6)
@@ -1946,7 +2071,7 @@ namespace RogueAttemptMaybe
                     }
                     Guide();
                 }
-                else if (key == ConsoleKey.UpArrow)
+                else if (key == moveUp)
                 {
                     mainMenuSelected -= 1;
                     if (mainMenuSelected == 0)
@@ -1955,7 +2080,7 @@ namespace RogueAttemptMaybe
                     }
                     Guide();
                 }
-                else if (key == ConsoleKey.Enter)
+                else if (key == selectingKey)
                 {
                     switch (mainMenuSelected)
                     {
@@ -1966,11 +2091,9 @@ namespace RogueAttemptMaybe
                             Options();
                             break;
                         case 3:
-                            Options();
+                            hotKeys();
                             break;
                         case 4:
-                            currentMusic = "main";
-                            Tester();
                             break;
                         case 5:
                             mainMenuSelected = 1;
@@ -1981,22 +2104,10 @@ namespace RogueAttemptMaybe
                 else
                 {
                     //If key isnt an arrow it restarts
-                    selectMenu();
+                    selectGuide();
                 }
             }
-            static void Tester()
-            {
-                Console.Clear();
-                Console.WriteLine(" | | ");
-                System.Threading.Thread.Sleep(1000);
-                Console.Clear();
-                Console.WriteLine(" - - ");
-                System.Threading.Thread.Sleep(1000);
-                Console.Clear();
-                Console.WriteLine(" | | ");
-                System.Threading.Thread.Sleep(1000);
-                Guide();
-            }
+
             static void musicTrack1()
             {
                 while (beeps == true)
@@ -2368,6 +2479,62 @@ namespace RogueAttemptMaybe
                     }
                 }
             }
+            #region SavingLoading
+            static void LoadKeys()
+            {
+                // Read and show each line from the file.
+                string line = "";
+                using (StreamReader sr = new StreamReader("PlayerData\\HotKeys.txt"))
+                {
+                    int lineNumber = 0;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line != "Keys:")
+                        {
+                            string ch = line;
+                            ConsoleKey key;
+                            Enum.TryParse<ConsoleKey>(ch.ToString(), out key);
+                            if (lineNumber == 1)
+                            {
+                                moveDown = key;
+                            }
+                            else if (lineNumber == 2)
+                            {
+                                moveUp = key;
+                            }
+                            else if (lineNumber == 3)
+                            {
+                                moveLeft = key;
+                            }
+                            else if (lineNumber == 4)
+                            {
+                                moveRight = key;
+                            }
+                            else if (lineNumber == 5)
+                            {
+                                selectingKey = key;
+                            }
+                        }
+                        lineNumber++;
+                    }
+                }
+            }
+            static void SaveKeys()
+            {
+                // Get the directories currently on the C drive.
+                DirectoryInfo[] cDirs = new DirectoryInfo(@"c:\").GetDirectories();
+                // Write each directory name to a file.
+                using (StreamWriter sw = new StreamWriter("PlayerData\\HotKeys.txt"))
+                {
+                    sw.WriteLine("Keys:");
+                    sw.WriteLine(moveDown);
+                    sw.WriteLine(moveUp);
+                    sw.WriteLine(moveLeft);
+                    sw.WriteLine(moveRight);
+                    sw.WriteLine(selectingKey);
+                }
+            }
+            #endregion
         }
     }
 }
